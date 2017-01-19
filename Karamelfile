@@ -1,0 +1,7 @@
+dependencies: 
+  - recipe: logstash::install
+    global:  
+      - elastic::install
+  - recipe: logstash::default
+    global:  
+      - elastic::default

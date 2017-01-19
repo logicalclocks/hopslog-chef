@@ -1,0 +1,39 @@
+
+input {
+  log4j {
+  host => "<%= @my_ip %>"
+  port => 3456
+  }
+}
+
+filter {
+  mutate {
+  add_field => [ "project", "" ]
+  }
+  mutate {
+  add_field => [ "jobname", "" ]
+  }
+  mutate {
+  split => ["application", ","]
+  }
+  mutate {
+  replace => [ "project", "%{[application][0]}" ]
+  }
+  mutate {
+  replace => [ "jobname", "%{[application][1]}" ]
+  }
+  mutate {
+  replace => [ "application", "%{[application][2]}" ]
+  }
+}
+
+output {
+  stdout {}
+}
+
+output {
+       elasticsearch {
+         hosts => ["<%= @elastic_addr %>"]
+    	   index => "%{project}"
+       }
+}
