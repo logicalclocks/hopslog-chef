@@ -107,9 +107,21 @@ else #sysv
 end
 
 
+node.override['kibana']['base_dir'] = node.hopslog.base_dir
+node.override['kibana']['user'] = node.hopslog.user
+node.override['kibana']['group'] = node.hopslog.group
+node.override['kibana']['kibana4_version'] = node.hopslog.kibana_version
+node.override['kibana']['install_method'] = "source"
+
+include_recipe "kibana::kibana4"
+
 if node.kagent.enabled == "true" 
    kagent_config service_name do
      service service_name
      log_file "#{node.logstash.base_dir}/logstash.log"
+   end
+   kagent_config "kibana" do
+     service "kibana"
+     log_file "#{node.kibana.base_dir}/kibana.log"
    end
 end

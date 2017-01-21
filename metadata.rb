@@ -39,8 +39,8 @@ attribute "hopslog/kibana_url",
           :description => "Url to hopslog binaries",
           :type => "string"
 
-attribute "logstash/dir",
-          :description => "Parent directory to install hopslog in (/srv is default)",
+attribute "hopslog/dir",
+          :description => "Parent directory to install logstash and kibana in (/srv is default)",
           :type => "string"
 
 attribute "logstash/pid_file",
