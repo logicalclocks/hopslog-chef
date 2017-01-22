@@ -23,14 +23,32 @@ suites:
 suites:
   - name: default
     run_list:
+      - recipe[kagent::install]
+      - recipe[elastic::install]
+      - recipe[elastic::default]
       - recipe[hopslog::install]
       - recipe[hopslog::default]
     attributes:
+         kagent:
+            dir: '/srv/hops'
+            user: 'glassfish'
+            group: 'glassfish'
+            default:
+                private_ips: ["10.0.2.15"]
          hopslog:
+            dir: '/srv/hops'
+            user: 'glassfish'
+            group: 'glassfish'
             test: true
             enabled: "false"
             private_ips: ["10.0.2.15"]
             public_ips: ["10.0.2.15"]
+         elastic:
+            dir: '/srv/hops' 
+            user: 'glassfish'
+            group: 'glassfish'
+            default:
+                private_ips: ["10.0.2.15"]
          private_ips: ["10.0.2.15"]
          public_ips: ["10.0.2.15"]
          vagrant: "true"

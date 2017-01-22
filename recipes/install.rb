@@ -34,7 +34,7 @@ logstash_downloaded = "#{node.logstash.home}/.logstash.extracted_#{node.logstash
 bash 'extract_logstash' do
         user "root"
         code <<-EOH
-                tar -xf #{cached_package_filename} -C #{node.logstash.dir}
+                tar -xf #{cached_package_filename} -C #{node.hopslog.dir}
                 chown -R #{node.hopslog.user}:#{node.hopslog.group} #{node.logstash.home}
                 cd #{node.logstash.home}
                 touch #{logstash_downloaded}
@@ -55,7 +55,7 @@ link node.logstash.base_dir do
 end
 
 
-directory "#{node.logstas.base_dir}/log" do
+directory "#{node.logstash.base_dir}/log" do
   owner node.hopslog.user
   group node.hopslog.group
   mode "750"
@@ -63,7 +63,73 @@ directory "#{node.logstas.base_dir}/log" do
 end
 
 
-directory "#{node.logstas.base_dir}/conf" do
+directory "#{node.logstash.base_dir}/conf" do
+  owner node.hopslog.user
+  group node.hopslog.group
+  mode "750"
+  action :create
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package_url = "#{node.kibana.url}"
+base_package_filename = File.basename(package_url)
+cached_package_filename = "/tmp/#{base_package_filename}"
+
+remote_file cached_package_filename do
+  source package_url
+  owner "root"
+  mode "0644"
+  action :create_if_missing
+end
+
+
+kibana_downloaded = "#{node.kibana.home}/.kibana.extracted_#{node.kibana.version}"
+# Extract kibana
+bash 'extract_kibana' do
+        user "root"
+        code <<-EOH
+                tar -xf #{cached_package_filename} -C #{node.hopslog.dir}
+                chown -R #{node.hopslog.user}:#{node.hopslog.group} #{node.kibana.home}
+                cd #{node.kibana.home}
+                touch #{kibana_downloaded}
+                chown #{node.hopslog.user} #{kibana_downloaded}
+        EOH
+     not_if { ::File.exists?( kibana_downloaded ) }
+end
+
+file node.kibana.base_dir do
+  action :delete
+  force_unlink true
+end
+
+link node.kibana.base_dir do
+  owner node.hopslog.user
+  group node.hopslog.group
+  to node.kibana.home
+end
+
+
+directory "#{node.kibana.base_dir}/log" do
+  owner node.hopslog.user
+  group node.hopslog.group
+  mode "750"
+  action :create
+end
+
+
+directory "#{node.kibana.base_dir}/conf" do
   owner node.hopslog.user
   group node.hopslog.group
   mode "750"

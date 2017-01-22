@@ -15,6 +15,7 @@ depends 'java'
 depends 'kagent'
 depends 'elastic'
 
+
 recipe "hopslog::install", "Installs Logstash and Kibana Server"
 recipe "hopslog::default", "configures Logstash and Kibana Server"
 recipe "hopslog::purge", "Deletes the Logstash and Kibana Servers"

@@ -1,4 +1,3 @@
-
 input {
   log4j {
   host => "<%= @my_ip %>"
@@ -35,5 +34,9 @@ output {
        elasticsearch {
          hosts => ["<%= @elastic_addr %>"]
     	   index => "%{project}"
-       }
+    	     #template_name => "demo_admin000"
+    	       #template => "/tmp/elastic-template.json"
+    	         #template_overwrite => "true"
+    		   #manage_template => "false"
+		   }
 }

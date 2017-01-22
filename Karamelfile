@@ -1,7 +1,7 @@
 dependencies: 
-  - recipe: logstash::install
+  - recipe: hopslog::install
     global:  
       - elastic::install
-  - recipe: logstash::default
+  - recipe: hopslog::default
     global:  
       - elastic::default
