@@ -110,7 +110,7 @@ end
 if node.kagent.enabled == "true" 
    kagent_config "kibana" do
      service "kibana"
-     log_file "#{node.kibana.base_dir}/kibana.log"
+     log_file "#{node.kibana.base_dir}/log/kibana.log"
    end
 end
 

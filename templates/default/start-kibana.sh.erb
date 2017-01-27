@@ -11,5 +11,5 @@ if [ -f $PID_FILE ] ; then
 fi
 
 
-nohup <%= node.kibana.base_dir %>/bin/kibana  &
-#echo $! > $PID_FILE
+nohup <%= node.kibana.base_dir %>/bin/kibana 2>&1 > <%= node.kibana.base_dir %>/log/kibana.log &
+echo $! > $PID_FILE
