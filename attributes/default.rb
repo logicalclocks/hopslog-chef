@@ -36,3 +36,4 @@ default.kibana.home                       = node.hopslog.dir + "/kibana-" + "#{n
 default.kibana.base_dir                   = node.hopslog.dir + "/kibana"
 default.kibana.log_dir                    = node.hopslog.base_dir + "/log"
 default.kibana.pid_file                   = "/tmp/kibana.pid"
+default.kibana.default_index		  = "hopsdefault"
