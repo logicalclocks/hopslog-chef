@@ -71,7 +71,7 @@ pid.file: <%= node.kibana.pid_file %>
 
 # If you would like to send the log output to a file you can set the path below.
 # logging.dest: stdout
-logging.dest: <%= node.kibana.base_dir %>/kibana.log
+logging.dest: <%= node.kibana.log_dir %>/kibana.log
 
 # Set this to true to suppress all logging output.
 # logging.silent: false
