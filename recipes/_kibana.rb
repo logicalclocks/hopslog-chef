@@ -28,7 +28,7 @@ template"#{node.kibana.base_dir}/config/kibana.yml" do
   group node.hopslog.group
   mode 0655
   variables({ 
-     :my_ip => my_private_ip,
+     :my_private_ip => my_private_ip,
      :elastic_addr => elastic
            })
 end

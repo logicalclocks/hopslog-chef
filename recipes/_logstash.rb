@@ -16,7 +16,7 @@ template"#{node.logstash.base_dir}/conf/spark-streaming.conf" do
   group node.hopslog.group
   mode 0655
   variables({ 
-     :my_ip => my_private_ip,
+     :my_private_ip => my_private_ip,
      :elastic_addr => elastic
            })
 end
