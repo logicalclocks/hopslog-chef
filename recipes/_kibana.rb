@@ -17,7 +17,7 @@ bash 'add_default_index_for_kibana' do
         user "root"
         code <<-EOH
             set -e
-	    curl -XPUT "#{elastic}/.kibana/index-pattern/#{node.kibana.default_index} -d '{"title" : "#{node.kibana.default_index}"}"
+	    curl -XPUT "#{elastic}/.kibana/index-pattern/#{node.kibana.default_index} -d '{"title" : "#{node.kibana.default_index}"}'"
         EOH
 end
 
@@ -25,7 +25,7 @@ bash 'add_default_index_for_kibana' do
         user "root"
         code <<-EOH
             set -e
-	    curl -XPUT "#{elastic}/.kibana/config/#{node.kibana.version} -d '{"defaultIndex" : "#{node.kibana.default_index}"}"
+	    curl -XPUT "#{elastic}/.kibana/config/#{node.kibana.version} -d '{"defaultIndex" : "#{node.kibana.default_index}"}'"
         EOH
 end
 
