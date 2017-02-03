@@ -45,7 +45,7 @@ fi
 
 if [ $res -eq 0 ] ; then
  echo "Killed logstash"
-elif [ $res -eq $NOT_FOUND ] ; then
+elif [[ $res -eq $NOT_FOUND ]] ; then
     echo "Could not find logstash process to kill"
 fi
 
