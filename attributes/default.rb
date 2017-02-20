@@ -13,7 +13,7 @@ default.hopslog.dir                       = "/srv"
 #
 
 
-default.logstash.version                  = "2.3.4"
+default.logstash.version                  = "2.4.1"
 default.logstash.url                      = "#{node.download_url}/logstash-#{node.logstash.version}.tar.gz"
 default.logstash.http.port                = ""
 
