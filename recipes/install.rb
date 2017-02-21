@@ -17,6 +17,11 @@ end
 
 include_recipe "java"
 
+#
+# Logstash
+#
+
+
 package_url = "#{node.logstash.url}"
 base_package_filename = File.basename(package_url)
 cached_package_filename = "/tmp/#{base_package_filename}"
@@ -71,17 +76,9 @@ directory "#{node.logstash.base_dir}/conf" do
 end
 
 
-
-
-
-
-
-
-
-
-
-
-
+#
+# Kibana
+#
 
 package_url = "#{node.kibana.url}"
 base_package_filename = File.basename(package_url)
@@ -134,6 +131,21 @@ directory "#{node.kibana.base_dir}/conf" do
   group node.hopslog.group
   mode "750"
   action :create
+end
+
+#
+# Filebeat
+#
+
+package_url = "#{node.filebeat.url}"
+base_package_filename = File.basename(package_url)
+cached_package_filename = "/tmp/#{base_package_filename}"
+
+remote_file cached_package_filename do
+  source package_url
+  owner "root"
+  mode "0644"
+  action :create_if_missing
 end
 
 
