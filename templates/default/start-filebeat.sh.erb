@@ -11,6 +11,6 @@ if [ -f $PID_FILE ] ; then
 fi
 
 
-<%= node.filebeat.base_dir %>/bin/filebeat -c <%= node.filebeat.base_dir %>/config/filebeat.yml -e
+<%= node.filebeat.base_dir %>/filebeat -c <%= node.filebeat.base_dir %>/config/filebeat.yml -e
 #2>&1 > <%= node.filebeat.base_dir %>/log/filebeat.log &
 echo $! > $PID_FILE
