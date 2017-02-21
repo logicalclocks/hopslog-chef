@@ -135,3 +135,37 @@ directory "#{node.kibana.base_dir}/conf" do
   mode "750"
   action :create
 end
+
+
+filebeat_downloaded = "#{node.filebeat.home}/.filebeat.extracted_#{node.filebeat.version}"
+# Extract filebeat
+bash 'extract_filebeat' do
+        user "root"
+        code <<-EOH
+                tar -xf #{cached_package_filename} -C #{node.hopslog.dir}
+                chown -R #{node.hopslog.user}:#{node.hopslog.group} #{node.filebeat.home}
+                cd #{node.filebeat.home}
+                touch #{filebeat_downloaded}
+                chown #{node.hopslog.user} #{filebeat_downloaded}
+        EOH
+     not_if { ::File.exists?( filebeat_downloaded ) }
+end
+
+file node.filebeat.base_dir do
+  action :delete
+  force_unlink true
+end
+
+link node.filebeat.base_dir do
+  owner node.hopslog.user
+  group node.hopslog.group
+  to node.filebeat.home
+end
+
+
+directory "#{node.filebeat.base_dir}/log" do
+  owner node.hopslog.user
+  group node.hopslog.group
+  mode "750"
+  action :create
+end
