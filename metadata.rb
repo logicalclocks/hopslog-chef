@@ -36,7 +36,7 @@ attribute "logstash/version",
           :description => "Version of logstash to use",
           :type => "string"
 
-attribute "hopslog/kibana_url",
+attribute "kibana/url",
           :description => "Url to hopslog binaries",
           :type => "string"
 
@@ -48,3 +48,14 @@ attribute "logstash/pid_file",
           :description => "Change the location for the pid_file.",
           :type => "string"
 
+attribute "filebeat/url",
+          :description => "Url to filebeat binaries",
+          :type => "string"
+
+attribute "filebeat/version",
+          :description => "Filebeat version",
+          :type => "string"
+
+attribute "filebeat/read_logs",
+          :description => "Path to log files read by filebeat (e.g., /srv/hops/domain1/logs/*.log)",
+          :type => "string"

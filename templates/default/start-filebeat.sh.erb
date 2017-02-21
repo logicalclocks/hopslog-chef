@@ -1,0 +1,16 @@
+#!/bin/bash
+
+PID_FILE=<%= node.filebeat.pid_file %>
+if [ -f $PID_FILE ] ; then
+ PID=`cat $PID_FILE`
+ kill -0 $PID 2>&1 > /dev/null
+ if [ $? -eq 0 ] ; then
+     echo "A Filebeat server is already running. Kill it first."
+     exit 1
+ fi
+fi
+
+
+<%= node.filebeat.base_dir %>/bin/filebeat -c <%= node.filebeat.base_dir %>/config/filebeat.yml -e
+#2>&1 > <%= node.filebeat.base_dir %>/log/filebeat.log &
+echo $! > $PID_FILE

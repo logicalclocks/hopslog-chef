@@ -1,0 +1,26 @@
+
+- input_type: log
+
+  # Paths that should be crawled and fetched. Glob based paths.
+  paths:
+	- /srv/hops/domain1/logs/*.log
+
+
+output.kafka:
+  # initial brokers for reading cluster metadata
+  hosts: ["10.0.2.15:9091"]
+
+  # message topic selection + partitioning
+  topic: 'yanzi'
+  partition.round_robin:
+	reachable_only: false
+
+  required_acks: 1
+  compression: none
+  max_message_bytes: 1000000
+
+  ssl.certificate_authorities: ["/srv/hops/domain1/config/ca/certs/ca.cert.pem"]
+  ssl.certificate: "/srv/hops/domain1/config/ca/intermediate/certs/yanzi2__meb10000.cert.pem"
+  ssl.key: "/srv/hops/domain1/config/ca/intermediate/private/yanzi2__meb10000.key.pem"
+  ssl.verification_mode: none
+
