@@ -2,12 +2,11 @@ my_private_ip = my_private_ip()
 
 kafka_endpoint = private_recipe_ip("kkafka", "default") + ":#{node.kkafka.broker.port}"
 
-file "#{node.filebeat.base_dir}/conf/filebeat-site.xml" do
+file "#{node.filebeat.base_dir}/filebeat.xml" do
   action :delete
 end
 
-
-template"#{node.filebeat.base_dir}/config/filebeat.yml" do
+template"#{node.filebeat.base_dir}/filebeat.yml" do
   source "filebeat.yml.erb"
   owner node.hopslog.user
   group node.hopslog.group
@@ -16,6 +15,14 @@ template"#{node.filebeat.base_dir}/config/filebeat.yml" do
      :my_private_ip => my_private_ip,
      :kafka_endpoint => kafka_endpoint
            })
+end
+
+
+directory "#{node.filebeat.base_dir}/bin" do
+  owner node.hopslog.user
+  group node.hopslog.group
+  mode "750"
+  action :create
 end
 
 

@@ -31,7 +31,7 @@ end
 
 
 
-file "#{node.kibana.base_dir}/conf/kibana-site.xml" do
+file "#{node.kibana.base_dir}/config/kibana.xml" do
   action :delete
 end
 
@@ -127,6 +127,3 @@ if node.kagent.enabled == "true"
      log_file "#{node.kibana.base_dir}/log/kibana.log"
    end
 end
-
-
-
