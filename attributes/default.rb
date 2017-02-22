@@ -1,6 +1,7 @@
 include_attribute "elastic"
 include_attribute "elasticsearch"
 include_attribute "kagent"
+include_attribute "kkafka"
 
 default.hopslog.user                      = node.elastic.user
 default.hopslog.group                     = node.elastic.group
