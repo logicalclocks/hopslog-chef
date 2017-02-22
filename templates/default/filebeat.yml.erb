@@ -4,7 +4,7 @@ filebeat.prospectors:
 
   # Paths that should be crawled and fetched. Glob based paths.
   paths:
-	- <%= node.filebeat.read_logs %>
+   - <%= node.filebeat.read_logs %>
 
 
 output.kafka:
@@ -16,7 +16,7 @@ output.kafka:
   # message topic selection + partitioning
   topic: 'yanzi'
   partition.round_robin:
-	reachable_only: false
+   reachable_only: false
 
   required_acks: 1
   compression: none
