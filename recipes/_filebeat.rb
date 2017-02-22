@@ -100,10 +100,10 @@ end
 
 
 if node.kagent.enabled == "true" 
-   kagent_config "filebeat" do
-     service "filebeat"
-     log_file "#{node.filebeat.base_dir}/log/filebeat.log"
-   end
+   # kagent_config "filebeat" do
+   #   service "filebeat"
+   #   log_file "#{node.filebeat.base_dir}/log/filebeat.log"
+   # end
 end
 
 
