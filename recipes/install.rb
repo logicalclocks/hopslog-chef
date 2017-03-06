@@ -1,7 +1,13 @@
+group node.hopslog.group do
+  action :create
+  not_if "getent group #{node.hopslog.group}"
+end
+
 
 user node.hopslog.user do
-  home "/home/#{node.hopslog.user}"
   action :create
+  gid node.hopslog.group
+  home "/home/#{node.hopslog.user}"  
   system true
   shell "/bin/bash"
   manage_home true
