@@ -5,7 +5,7 @@ include_attribute "kkafka"
 
 default.hopslog.user                      = node.elastic.user
 default.hopslog.group                     = node.elastic.group
-default.hopslog.dir                       = "/srv"
+default.hopslog.dir                       = node.install.dir.empty? ? node.install.dir : "/srv"
 
 #
 # Logstash
