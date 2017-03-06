@@ -59,3 +59,8 @@ attribute "filebeat/version",
 attribute "filebeat/read_logs",
           :description => "Path to log files read by filebeat (e.g., /srv/hops/domain1/logs/*.log)",
           :type => "string"
+
+attribute "install/dir",
+          :description => "Set to a base directory under which we will install.",
+          :type => "string"
+
