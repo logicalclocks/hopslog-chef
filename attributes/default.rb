@@ -3,8 +3,8 @@ include_attribute "elasticsearch"
 include_attribute "kagent"
 include_attribute "kkafka"
 
-default.hopslog.user                      = node.elastic.user
-default.hopslog.group                     = node.elastic.group
+default.hopslog.user                      = node.install.user.empty? ? node.elastic.user : node.install.user
+default.hopslog.group                     = node.install.user.empty? ? node.elastic.group : node.install.user
 default.hopslog.dir                       = node.install.dir.empty? ? "/srv" : node.install.dir
 
 #
