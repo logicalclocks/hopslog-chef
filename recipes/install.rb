@@ -54,11 +54,6 @@ bash 'extract_logstash' do
      not_if { ::File.exists?( logstash_downloaded ) }
 end
 
-file node.logstash.base_dir do
-  action :delete
-  force_unlink true
-end
-
 link node.logstash.base_dir do
   owner node.hopslog.user
   group node.hopslog.group
@@ -112,11 +107,6 @@ bash 'extract_kibana' do
      not_if { ::File.exists?( kibana_downloaded ) }
 end
 
-file node.kibana.base_dir do
-  action :delete
-  force_unlink true
-end
-
 link node.kibana.base_dir do
   owner node.hopslog.user
   group node.hopslog.group
@@ -167,11 +157,6 @@ bash 'extract_filebeat' do
                 chown #{node.hopslog.user} #{filebeat_downloaded}
         EOH
      not_if { ::File.exists?( filebeat_downloaded ) }
-end
-
-file node.filebeat.base_dir do
-  action :delete
-  force_unlink true
 end
 
 link node.filebeat.base_dir do
