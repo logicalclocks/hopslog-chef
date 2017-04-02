@@ -3,7 +3,7 @@
 PID_FILE=/tmp/kibana.pid
 
 function kill_named {
-    PID=`ps aux | grep -i kibana | grep -v bash | grep -v chef | awk '{print $2}'`
+    PID=`ps aux | grep -i kibana | grep -v bash | grep -v chef | grep -v grep | awk '{print $2}'`
     if [ "$PID" != "" ] ; then
 	kill -9 $PID > /dev/null 2>&1
         res=$?

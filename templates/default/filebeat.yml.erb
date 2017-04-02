@@ -9,7 +9,6 @@ filebeat.prospectors:
 
 output.kafka:
   # initial brokers for reading cluster metadata
-#  hosts: ["10.0.2.15:9091"]
   hosts: ["<%= @kafka_endpoint %>"]
 
 
