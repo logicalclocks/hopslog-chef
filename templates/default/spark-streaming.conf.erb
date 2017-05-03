@@ -13,6 +13,9 @@ filter {
   add_field => [ "jobname", "" ]
   }
   mutate {
+  split => ["jobid", ","]
+  }
+  mutate {
   split => ["application", ","]
   }
   mutate {
@@ -22,8 +25,12 @@ filter {
   replace => [ "jobname", "%{[application][1]}" ]
   }
   mutate {
-  replace => [ "application", "%{[application][2]}" ]
+  replace => [ "jobid", "%{[application][2]}" ]
   }
+  mutate {
+  replace => [ "application", "%{[application][3]}" ]
+  }
+
 }
 
 #output {
@@ -33,10 +40,6 @@ filter {
 output {
        elasticsearch {
          hosts => ["<%= @elastic_addr %>"]
-    	   index => "%{project}"
-    	     #template_name => "demo_admin000"
-    	       #template => "/tmp/elastic-template.json"
-    	         #template_overwrite => "true"
-    		   #manage_template => "false"
-		   }
+         index => "%{project}"
+       }
 }
