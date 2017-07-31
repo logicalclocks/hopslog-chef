@@ -21,7 +21,7 @@ output.kafka:
   compression: none
   max_message_bytes: 1000000
 
-#  ssl.certificate_authorities: ["/srv/hops/domain1/config/ca/certs/ca.cert.pem"]
-#  ssl.certificate: "/srv/hops/domain1/config/ca/intermediate/certs/yanzi2__meb10000.cert.pem"
-#  ssl.key: "/srv/hops/domain1/config/ca/intermediate/private/yanzi2__meb10000.key.pem"
+#  ssl.certificate_authorities: ["<%= node['hopsworks']['certs_dir'] %>/ca/certs/ca.cert.pem"]
+#  ssl.certificate: "<%= node['hopsworks']['certs_dir'] %>/ca/intermediate/certs/yanzi2__meb10000.cert.pem"
+#  ssl.key: "<%= node['hopsworks']['certs_dir'] %>/ca/intermediate/private/yanzi2__meb10000.key.pem"
   ssl.verification_mode: none

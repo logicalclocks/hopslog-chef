@@ -106,5 +106,3 @@ if node.kagent.enabled == "true"
    # end
 end
 
-
-

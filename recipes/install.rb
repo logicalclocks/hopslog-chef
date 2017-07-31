@@ -30,7 +30,7 @@ include_recipe "java"
 
 package_url = "#{node.logstash.url}"
 base_package_filename = File.basename(package_url)
-cached_package_filename = "/tmp/#{base_package_filename}"
+cached_package_filename = "#{Chef::Config[:file_cache_path]}/#{base_package_filename}"
 
 remote_file cached_package_filename do
   source package_url
@@ -83,7 +83,7 @@ end
 
 package_url = "#{node.kibana.url}"
 base_package_filename = File.basename(package_url)
-cached_package_filename = "/tmp/#{base_package_filename}"
+cached_package_filename = "#{Chef::Config[:file_cache_path]}/#{base_package_filename}"
 
 remote_file cached_package_filename do
   source package_url
@@ -135,7 +135,7 @@ end
 
 package_url = "#{node.filebeat.url}"
 base_package_filename = File.basename(package_url)
-cached_package_filename = "/tmp/#{base_package_filename}"
+cached_package_filename = "#{Chef::Config[:file_cache_path]}/#{base_package_filename}"
 
 remote_file cached_package_filename do
   source package_url
