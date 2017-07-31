@@ -39,6 +39,13 @@ remote_file cached_package_filename do
   action :create_if_missing
 end
 
+directory node.hopslog.dir do
+  owner node.hopslog.user
+  group node.hopslog.group
+  mode "755"
+  action :create
+  not_if { File.directory?("#{node.hopslog.dir}") }
+end
 
 logstash_downloaded = "#{node.logstash.home}/.logstash.extracted_#{node.logstash.version}"
 # Extract logstash
