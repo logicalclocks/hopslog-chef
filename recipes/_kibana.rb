@@ -94,7 +94,7 @@ if node.kibana.systemd == "true"
     group "root"
     mode 0754
     notifies :enable, resources(:service => service_name)
-    notifies :restart, resources(:service => service_name), :immediately
+    notifies :restart, resources(:service => service_name)
   end
 
   kagent_config service_name do
