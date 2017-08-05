@@ -44,4 +44,6 @@ default.filebeat.base_dir                 = node.hopslog.dir + "/filebeat"
 default.filebeat.systemd                  = "true"
 default.filebeat.pid_file                 = "/tmp/filebeat.pid"
 
-default.filebeat.read_logs                 = ""
+default.filebeat.read_logs                = ""
+
+default.filebeat.skip                     = "true"

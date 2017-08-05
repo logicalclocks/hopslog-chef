@@ -71,7 +71,7 @@ if node.logstash.systemd == "true"
     notifies :start, resources(:service => service_name), :immediately
   end
 
-  kagent_config "reload_logstash_daemon" do
+  kagent_config service_name do
     action :systemd_reload
   end  
 
@@ -96,7 +96,7 @@ end
 
 
 if node.kagent.enabled == "true" 
-   kagent_config service_name do
+   kagent_config 'config_logstash' do
      service service_name
      log_file "#{node.logstash.base_dir}/logstash.log"
    end
