@@ -97,7 +97,7 @@ if node.kibana.systemd == "true"
     notifies :restart, resources(:service => service_name)
   end
 
-  kagent_config service_name do
+  kagent_config "reloading #{service_name}" do
     action :systemd_reload
   end  
 
@@ -122,8 +122,8 @@ end
 
 
 if node.kagent.enabled == "true" 
-   kagent_config "kibana_update" do
-     service "kibana"
+   kagent_config service_name do
+     service "ELK"
      log_file "#{node.kibana.base_dir}/log/kibana.log"
    end
 end

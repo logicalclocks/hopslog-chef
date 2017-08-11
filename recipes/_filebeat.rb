@@ -75,7 +75,7 @@ if node.filebeat.systemd == "true"
     notifies :restart, resources(:service => service_name)
   end
 
-  kagent_config service_name do
+  kagent_config 'resarting #{service_name}' do
     action :systemd_reload
   end  
 
@@ -100,8 +100,8 @@ end
 
 
 if node.kagent.enabled == "true" 
-   kagent_config "config_filebeat" do
-     service "filebeat"
+   kagent_config service_name do
+     service "ELK"
      log_file "#{node.filebeat.base_dir}/log/filebeat.log"
    end
 end
