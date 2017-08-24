@@ -108,6 +108,7 @@ bash 'extract_kibana' do
         code <<-EOH
                 tar -xf #{cached_package_filename} -C #{node.hopslog.dir}
                 chown -R #{node.hopslog.user}:#{node.hopslog.group} #{node.kibana.home}
+                chmod 750 #{node.kibana.home}
                 cd #{node.kibana.home}
                 touch #{kibana_downloaded}
                 chown #{node.hopslog.user} #{kibana_downloaded}
@@ -160,6 +161,7 @@ bash 'extract_filebeat' do
         code <<-EOH
                 tar -xf #{cached_package_filename} -C #{node.hopslog.dir}
                 chown -R #{node.hopslog.user}:#{node.hopslog.group} #{node.filebeat.home}
+                chmod 750 #{node.filebeat.home}
                 cd #{node.filebeat.home}
                 touch #{filebeat_downloaded}
                 chown #{node.hopslog.user} #{filebeat_downloaded}
