@@ -93,7 +93,9 @@ if node.kibana.systemd == "true"
     owner "root"
     group "root"
     mode 0754
+if node.services.enabled == "true"
     notifies :enable, resources(:service => service_name)
+end
     notifies :restart, resources(:service => service_name)
   end
 
@@ -122,8 +124,8 @@ end
 
 
 if node.kagent.enabled == "true" 
-   kagent_config "kibana_update" do
-     service "kibana"
+   kagent_config service_name do
+     service "ELK"
      log_file "#{node.kibana.base_dir}/log/kibana.log"
    end
 end
