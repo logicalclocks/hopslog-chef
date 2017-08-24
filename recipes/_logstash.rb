@@ -1,13 +1,7 @@
 my_private_ip = my_private_ip()
-#my_public_ip = my_public_ip()
 
 
 elastic = private_recipe_ip("elastic", "default") + ":#{node.elastic.port}"
-
-
-# file "#{node.logstash.base_dir}/conf/logstash-site.xml" do
-#   action :delete
-# end
 
 
 template"#{node.logstash.base_dir}/conf/spark-streaming.conf" do

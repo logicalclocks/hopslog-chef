@@ -54,6 +54,7 @@ bash 'extract_logstash' do
         code <<-EOH
                 tar -xf #{cached_package_filename} -C #{node.hopslog.dir}
                 chown -R #{node.hopslog.user}:#{node.hopslog.group} #{node.logstash.home}
+                chmod 750 #{node.logstash.home}
                 cd #{node.logstash.home}
                 touch #{logstash_downloaded}
                 chown #{node.hopslog.user} #{logstash_downloaded}
