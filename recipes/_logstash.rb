@@ -4,6 +4,29 @@ my_private_ip = my_private_ip()
 elastic = private_recipe_ip("elastic", "default") + ":#{node.elastic.port}"
 
 
+# Add spark log4j.properties file to HDFS. Used by Logstash.
+
+template "#{Chef::Config["file_cache_path"]}/log4j.properties" do
+  source "app.log4j.properties.erb"
+  owner node[:hopslog][:user]
+  mode 0750
+  action :create
+  variables({
+              :private_ip => my_private_ip
+            })
+end
+
+logs_dir="/user/#{node["hadoop_spark"]["user"]}"
+
+hops_hdfs_directory "#{Chef::Config["file_cache_path"]}/log4j.properties" do
+  action :put_as_superuser
+  owner node["hadoop_spark"]["user"]
+  group node["hops"]["group"]
+  mode "1775"
+  dest "#{logs_dir}/log4j.properties"
+end
+
+
 template"#{node.logstash.base_dir}/conf/spark-streaming.conf" do
   source "spark-streaming.conf.erb"
   owner node.hopslog.user
