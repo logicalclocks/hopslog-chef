@@ -5,3 +5,4 @@ dependencies:
   - recipe: hopslog::default
     global:  
       - elastic::default
+      - hops::dn
