@@ -47,3 +47,7 @@ default.filebeat.pid_file                 = "/tmp/filebeat.pid"
 default.filebeat.read_logs                = ""
 
 default.filebeat.skip                     = "true"
+
+
+default['hopslog']['private_ips']         = ['10.0.2.15']
+default['hopslog']['public_ips']          = ['10.0.2.15']

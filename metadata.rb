@@ -73,3 +73,11 @@ attribute "install/dir",
 attribute "install/user",
           :description => "User to install the services as",
           :type => "string"
+
+attribute "hopslog/private_ips",
+          :description => "Set ip addresses",
+          :type => "array"
+
+attribute "hopslog/public_ips",
+          :description => "Set ip addresses",
+          :type => "array"
