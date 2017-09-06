@@ -15,10 +15,10 @@
 
 # Variables
 
-START_PROG="<%= node.logstash.base_dir %>/bin/start-logstash.sh"
-STOP_PROG="<%= node.logstash.base_dir %>/bin/stop-logstash.sh"  
-PID_FILE=<%= node.logstash.pid_file %>
-EXEC_WITH_USER="su <%= node.hopslog.user %> -c"
+START_PROG="<%= node['logstash']['base_dir'] %>/bin/start-logstash.sh"
+STOP_PROG="<%= node['logstash']['base_dir'] %>/bin/stop-logstash.sh"  
+PID_FILE=<%= node['logstash']['pid_file'] %>
+EXEC_WITH_USER="su <%= node['hopslog']['user'] %> -c"
 
 start() {
   ulimit -n 65000 2>&1 > /dev/null

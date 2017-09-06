@@ -3,11 +3,11 @@ Description = kibana Server
 After = syslog.target network.target remote-fs.target
 
 [Service]
-User = <%= node.hopslog.user %>
+User = <%= node['hopslog']['user'] %>
 
-PIDFile = <%= node.kibana.pid_file %>
-ExecStart = <%= node.kibana.base_dir %>/bin/start-kibana.sh
-ExecStop = <%= node.kibana.base_dir %>/bin/stop-kibana.sh
+PIDFile = <%= node['kibana']['pid_file'] %>
+ExecStart = <%= node['kibana']['base_dir'] %>/bin/start-kibana.sh
+ExecStop = <%= node['kibana']['base_dir'] %>/bin/stop-kibana.sh
 LimitNOFILE = 20000
 
 Type = forking

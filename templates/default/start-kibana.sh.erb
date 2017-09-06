@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PID_FILE=<%= node.kibana.pid_file %>
+PID_FILE=<%= node['kibana']['pid_file'] %>
 if [ -f $PID_FILE ] ; then
  PID=`cat $PID_FILE`
  kill -0 $PID 2>&1 > /dev/null
@@ -11,5 +11,5 @@ if [ -f $PID_FILE ] ; then
 fi
 
 
-nohup <%= node.kibana.base_dir %>/bin/kibana 2>&1 > <%= node.kibana.base_dir %>/log/kibana.log &
+nohup <%= node['kibana']['base_dir'] %>/bin/kibana 2>&1 > <%= node['kibana']['base_dir'] %>/log/kibana.log &
 echo $! > $PID_FILE

@@ -1,15 +1,15 @@
 my_private_ip = my_private_ip()
 
-kafka_endpoint = private_recipe_ip("kkafka", "default") + ":#{node.kkafka.broker.port}"
+kafka_endpoint = private_recipe_ip("kkafka", "default") + ":#{node['kkafka']['broker']['port']}"
 
-file "#{node.filebeat.base_dir}/filebeat.xml" do
+file "#{node['filebeat']['base_dir']}/filebeat.xml" do
   action :delete
 end
 
-template"#{node.filebeat.base_dir}/filebeat.yml" do
+template"#{node['filebeat']['base_dir']}/filebeat.yml" do
   source "filebeat.yml.erb"
-  owner node.hopslog.user
-  group node.hopslog.group
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
   mode 0655
   variables({ 
      :my_private_ip => my_private_ip,
@@ -18,40 +18,40 @@ template"#{node.filebeat.base_dir}/filebeat.yml" do
 end
 
 
-directory "#{node.filebeat.base_dir}/bin" do
-  owner node.hopslog.user
-  group node.hopslog.group
+directory "#{node['filebeat']['base_dir']}/bin" do
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
   mode "750"
   action :create
 end
 
 
-template"#{node.filebeat.base_dir}/bin/start-filebeat.sh" do
+template"#{node['filebeat']['base_dir']}/bin/start-filebeat.sh" do
   source "start-filebeat.sh.erb"
-  owner node.hopslog.user
-  group node.hopslog.group
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
   mode 0750
 end
 
-template"#{node.filebeat.base_dir}/bin/stop-filebeat.sh" do
+template"#{node['filebeat']['base_dir']}/bin/stop-filebeat.sh" do
   source "stop-filebeat.sh.erb"
-  owner node.hopslog.user
-  group node.hopslog.group
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
   mode 0750
 end
 
 
-case node.platform
+case node['platform']
 when "ubuntu"
- if node.platform_version.to_f <= 14.04
-   node.override.filebeat.systemd = "false"
+ if node['platform_version'].to_f <= 14.04
+   node.override['filebeat']['systemd'] = "false"
  end
 end
 
 
 service_name="filebeat"
 
-if node.filebeat.systemd == "true"
+if node['filebeat']['systemd'] == "true"
 
   service service_name do
     provider Chef::Provider::Service::Systemd
@@ -59,7 +59,7 @@ if node.filebeat.systemd == "true"
     action :nothing
   end
 
-  case node.platform_family
+  case node['platform_family']
   when "rhel"
     systemd_script = "/usr/lib/systemd/system/#{service_name}.service" 
   when "debian"
@@ -71,7 +71,7 @@ if node.filebeat.systemd == "true"
     owner "root"
     group "root"
     mode 0754
-if node.services.enabled == "true"
+if node['services']['enabled'] == "true"
     notifies :enable, resources(:service => service_name)
 end
     notifies :restart, resources(:service => service_name)
@@ -91,8 +91,8 @@ else #sysv
 
   template "/etc/init.d/#{service_name}" do
     source "#{service_name}.erb"
-    owner node.hopslog.user
-    group node.hopslog.group
+    owner node['hopslog']['user']
+    group node['hopslog']['group']
     mode 0754
     notifies :enable, resources(:service => service_name)
     notifies :restart, resources(:service => service_name), :immediately
@@ -101,10 +101,10 @@ else #sysv
 end
 
 
-if node.kagent.enabled == "true" 
+if node['kagent']['enabled'] == "true" 
    kagent_config service_name do
      service "ELK"
-     log_file "#{node.filebeat.base_dir}/log/filebeat.log"
+     log_file "#{node['filebeat']['base_dir']}/log/filebeat.log"
    end
 end
 

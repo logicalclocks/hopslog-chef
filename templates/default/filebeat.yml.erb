@@ -4,7 +4,7 @@ filebeat.prospectors:
 
   # Paths that should be crawled and fetched. Glob based paths.
   paths:
-   - <%= node.filebeat.read_logs %>
+   - <%= node['filebeat']['read_logs'] %>
 
 
 output.kafka:

@@ -15,10 +15,10 @@
 
 # Variables
 
-START_PROG="<%= node.filebeat.base_dir %>/bin/start-filebeat.sh"
-STOP_PROG="<%= node.filebeat.base_dir %>/bin/stop-filebeat.sh"  
-PID_FILE=<%= node.filebeat.pid_file %>
-EXEC_WITH_USER="su <%= node.hopslog.user %> -c"
+START_PROG="<%= node['filebeat']['base_dir'] %>/bin/start-filebeat.sh"
+STOP_PROG="<%= node['filebeat']['base_dir'] %>/bin/stop-filebeat.sh"  
+PID_FILE=<%= node['filebeat']['pid_file'] %>
+EXEC_WITH_USER="su <%= node['hopslog']['user'] %> -c"
 
 start() {
   ulimit -n 65000 2>&1 > /dev/null

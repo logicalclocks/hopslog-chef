@@ -15,10 +15,10 @@
 
 # Variables
 
-START_PROG="<%= node.kibana.base_dir %>/bin/start-kibana.sh"
-STOP_PROG="<%= node.kibana.base_dir %>/bin/stop-kibana.sh"  
-PID_FILE=<%= node.kibana.pid_file %>
-EXEC_WITH_USER="su <%= node.hopslog.user %> -c"
+START_PROG="<%= node['kibana']['base_dir'] %>/bin/start-kibana.sh"
+STOP_PROG="<%= node['kibana']['base_dir'] %>/bin/stop-kibana.sh"  
+PID_FILE=<%= node['kibana']['pid_file'] %>
+EXEC_WITH_USER="su <%= node['hopslog']['user'] %> -c"
 
 start() {
   ulimit -n 65000 2>&1 > /dev/null
