@@ -21,19 +21,19 @@
     ignore_failure true
   end
 
-  directory node[:logstash][:home] do
+  directory node['logstash']['home'] do
     recursive true
     action :delete
     ignore_failure true
   end
 
-  link node[:logstash][:base_dir] do
+  link node['logstash']['base_dir'] do
     action :delete
     ignore_failure true
   end
 
 
-package_url = "#{node.logstash.url}"
+package_url = "#{node['logstash']['url']}"
 base_package_filename = File.basename(package_url)
 cached_package_filename = "/tmp/#{base_package_filename}"
 

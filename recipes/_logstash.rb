@@ -1,14 +1,14 @@
 my_private_ip = my_private_ip()
 
 
-elastic = private_recipe_ip("elastic", "default") + ":#{node.elastic.port}"
+elastic = private_recipe_ip("elastic", "default") + ":#{node['elastic']['port']}"
 
 
 # Add spark log4j.properties file to HDFS. Used by Logstash.
 
-template "#{Chef::Config["file_cache_path"]}/log4j.properties" do
+template "#{Chef::Config['file_cache_path']}/log4j.properties" do
   source "app.log4j.properties.erb"
-  owner node[:hopslog][:user]
+  owner node['hopslog']['user']
   mode 0750
   action :create
   variables({
@@ -16,21 +16,21 @@ template "#{Chef::Config["file_cache_path"]}/log4j.properties" do
             })
 end
 
-logs_dir="/user/#{node["hadoop_spark"]["user"]}"
+logs_dir="/user/#{node['hadoop_spark']['user']}"
 
-hops_hdfs_directory "#{Chef::Config["file_cache_path"]}/log4j.properties" do
+hops_hdfs_directory "#{Chef::Config['file_cache_path']}/log4j.properties" do
   action :put_as_superuser
-  owner node["hadoop_spark"]["user"]
-  group node["hops"]["group"]
+  owner node['hadoop_spark']['user']
+  group node['hops']['group']
   mode "1775"
   dest "#{logs_dir}/log4j.properties"
 end
 
 
-template"#{node.logstash.base_dir}/conf/spark-streaming.conf" do
+template"#{node['logstash']['base_dir']}/conf/spark-streaming.conf" do
   source "spark-streaming.conf.erb"
-  owner node.hopslog.user
-  group node.hopslog.group
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
   mode 0655
   variables({ 
      :my_private_ip => my_private_ip,
@@ -39,32 +39,32 @@ template"#{node.logstash.base_dir}/conf/spark-streaming.conf" do
 end
 
 
-template"#{node.logstash.base_dir}/bin/start-logstash.sh" do
+template"#{node['logstash']['base_dir']}/bin/start-logstash.sh" do
   source "start-logstash.sh.erb"
-  owner node.hopslog.user
-  group node.hopslog.group
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
   mode 0750
 end
 
-template"#{node.logstash.base_dir}/bin/stop-logstash.sh" do
+template"#{node['logstash']['base_dir']}/bin/stop-logstash.sh" do
   source "stop-logstash.sh.erb"
-  owner node.hopslog.user
-  group node.hopslog.group
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
   mode 0750
 end
 
 
-case node.platform
+case node['platform']
 when "ubuntu"
- if node.platform_version.to_f <= 14.04
-   node.override.logstash.systemd = "false"
+ if node['platform_version'].to_f <= 14.04
+   node.override['logstash']['systemd'] = "false"
  end
 end
 
 
 service_name="logstash"
 
-if node.logstash.systemd == "true"
+if node['logstash']['systemd'] == "true"
 
   service service_name do
     provider Chef::Provider::Service::Systemd
@@ -72,7 +72,7 @@ if node.logstash.systemd == "true"
     action :nothing
   end
 
-  case node.platform_family
+  case node['platform_family']
   when "rhel"
     systemd_script = "/usr/lib/systemd/system/#{service_name}.service" 
   when "debian"
@@ -84,7 +84,7 @@ if node.logstash.systemd == "true"
     owner "root"
     group "root"
     mode 0754
-if node.services.enabled == "true"
+if node['services']['enabled'] == "true"
     notifies :enable, resources(:service => service_name)
 end
     notifies :restart, resources(:service => service_name)
@@ -104,8 +104,8 @@ else #sysv
 
   template "/etc/init.d/#{service_name}" do
     source "#{service_name}.erb"
-    owner node.hopslog.user
-    group node.hopslog.group
+    owner node['hopslog']['user']
+    group node['hopslog']['group']
     mode 0754
     notifies :enable, resources(:service => service_name)
     notifies :restart, resources(:service => service_name), :immediately
@@ -114,9 +114,9 @@ else #sysv
 end
 
 
-if node.kagent.enabled == "true" 
+if node['kagent']['enabled'] == "true" 
    kagent_config service_name do
      service "ELK"
-     log_file "#{node.logstash.base_dir}/logstash.log"
+     log_file "#{node['logstash']['base_dir']}/logstash.log"
    end
 end

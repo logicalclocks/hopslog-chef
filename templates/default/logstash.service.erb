@@ -3,11 +3,11 @@ Description = logstash Server
 After = syslog.target network.target remote-fs.target
 
 [Service]
-User = <%= node.hopslog.user %>
+User = <%= node['hopslog']['user'] %>
 
-PIDFile = <%= node.logstash.pid_file %>
-ExecStart = <%= node.logstash.base_dir %>/bin/start-logstash.sh
-ExecStop = <%= node.logstash.base_dir %>/bin/stop-logstash.sh
+PIDFile = <%= node['logstash']['pid_file'] %>
+ExecStart = <%= node['logstash']['base_dir'] %>/bin/start-logstash.sh
+ExecStop = <%= node['logstash']['base_dir'] %>/bin/stop-logstash.sh
 LimitNOFILE = 20000
 
 Type = forking

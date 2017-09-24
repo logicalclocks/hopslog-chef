@@ -3,10 +3,10 @@ Description = filebeat Server
 After = syslog.target network.target remote-fs.target
 
 [Service]
-User = <%= node.hopslog.user %>
-PIDFile = <%= node.filebeat.pid_file %>
-ExecStart = <%= node.filebeat.base_dir %>/bin/start-filebeat.sh
-ExecStop = <%= node.filebeat.base_dir %>/bin/stop-filebeat.sh
+User = <%= node['hopslog']['user'] %>
+PIDFile = <%= node['filebeat']['pid_file'] %>
+ExecStart = <%= node['filebeat']['base_dir'] %>/bin/start-filebeat.sh
+ExecStop = <%= node['filebeat']['base_dir'] %>/bin/stop-filebeat.sh
 LimitNOFILE = 20000
 
 Type = forking

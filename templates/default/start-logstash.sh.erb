@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PID_FILE=<%= node.logstash.pid_file %>
+PID_FILE=<%= node['logstash']['pid_file'] %>
 if [ -f $PID_FILE ] ; then
  PID=`cat $PID_FILE`
  kill -0 $PID 2>&1 > /dev/null
@@ -10,5 +10,5 @@ if [ -f $PID_FILE ] ; then
  fi
 fi
 
-nohup <%= node.logstash.base_dir %>/bin/logstash -f <%= node.logstash.base_dir %>/conf/spark-streaming.conf -l <%= node.logstash.base_dir %>/log/logstash-spark-streaming.log 2>&1 > /dev/null &
+nohup <%= node['logstash']['base_dir'] %>/bin/logstash -f <%= node['logstash']['base_dir'] %>/conf/spark-streaming.conf -l <%= node['logstash']['base_dir'] %>/log/logstash-spark-streaming.log 2>&1 > /dev/null &
 echo $! > $PID_FILE
