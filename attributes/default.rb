@@ -12,7 +12,7 @@ default['hopslog']['dir']                       = node['install']['dir'].empty? 
 #
 default['logstash']['version']                  = "2.4.1"
 default['logstash']['url']                      = "#{node['download_url']}/logstash-#{node['logstash']['version']}.tar.gz"
-default['logstash']['http']['port']                = ""
+default['logstash']['http']['port']             = "3456"
 
 default['logstash']['systemd']                  = "true"
 default['logstash']['home']                     = node['hopslog']['dir'] + "/logstash-" + "#{node['logstash']['version']}"
