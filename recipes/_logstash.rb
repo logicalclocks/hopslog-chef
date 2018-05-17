@@ -9,7 +9,7 @@ elastic = private_recipe_ip("elastic", "default") + ":#{node['elastic']['port']}
 template "#{Chef::Config['file_cache_path']}/log4j.properties" do
   source "app.log4j.properties.erb"
   owner node['hopslog']['user']
-  owner node['hopslog']['group']
+  group node['hopslog']['group']
   mode 0755
   action :create
   variables({
