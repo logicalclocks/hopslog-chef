@@ -6,4 +6,3 @@ dependencies:
     global:  
       - elastic::default
       - hops::dn
-      - spark::yarn
