@@ -16,7 +16,6 @@ depends 'kagent'
 depends 'elastic'
 depends 'kkafka'
 depends 'hops'
-depends 'hadoop_spark'
 
 recipe "hopslog::install", "Installs Logstash and Kibana Server"
 recipe "hopslog::default", "configures Logstash and Kibana Server"
