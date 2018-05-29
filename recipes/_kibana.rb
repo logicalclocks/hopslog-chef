@@ -2,7 +2,7 @@ my_private_ip = my_private_ip()
 
 
 elastic = private_recipe_ip("elastic", "default") + ":#{node['elastic']['port']}"
-kibana = private_recipe_ip("kibana", "default") + ":#{node['kibana']['port']}"
+kibana = private_recipe_ip("hopslog", "default") + ":#{node['kibana']['port']}"
 
 
 
@@ -11,15 +11,6 @@ bash 'add_elastic_index_for_kibana' do
         code <<-EOH
             set -e
             curl -XPUT "#{elastic}/#{node['kibana']['default_index']}?pretty"
-        EOH
-end
-
-bash 'add_default_index_for_kibana' do
-        user "root"
-        code <<-EOH
-            set -e
-	        curl -f -XPOST -H "Content-Type: application/json" -H "kbn-xsrf: required" #{kibana}/api/saved_objects/index-pattern/hopsdefault -d '{"attributes":{"title":"hopsdefault"}}'
-	        curl -f -XPOST -H "Content-Type: application/json" -H "kbn-xsrf: required" #{kibana}/api/kibana/settings/defaultIndex -d "{\"value\":\"hopsdefault\"}"
         EOH
 end
 
@@ -120,4 +111,13 @@ if node['kagent']['enabled'] == "true"
      service "ELK"
      log_file "#{node['kibana']['base_dir']}/log/kibana.log"
    end
+end
+
+bash 'add_default_index_for_kibana' do
+        user "root"
+        code <<-EOH
+            set -e
+	        curl -f -XPOST -H "Content-Type: application/json" -H "kbn-xsrf: required" #{kibana}/api/saved_objects/index-pattern/hopsdefault -d '{"attributes":{"title":"hopsdefault"}}'
+	        curl -f -XPOST -H "Content-Type: application/json" -H "kbn-xsrf: required" #{kibana}/api/kibana/settings/defaultIndex -d "{\"value\":\"hopsdefault\"}"
+        EOH
 end
