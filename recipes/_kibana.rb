@@ -113,11 +113,27 @@ if node['kagent']['enabled'] == "true"
    end
 end
 
-bash 'add_default_index_for_kibana' do
-        user "root"
-        code <<-EOH
-            set -e
-	        curl -f -XPOST -H "Content-Type: application/json" -H "kbn-xsrf: required" #{kibana}/api/saved_objects/index-pattern/hopsdefault -d '{"attributes":{"title":"hopsdefault"}}'
-	        curl -f -XPOST -H "Content-Type: application/json" -H "kbn-xsrf: required" #{kibana}/api/kibana/settings/defaultIndex -d "{\"value\":\"hopsdefault\"}"
-        EOH
+numRetries=10
+retryDelay=20
+
+http_request 'create index pattern' do
+  action :post
+  url 'http://#{kibana}/api/saved_objects/index-pattern/hopsdefault'
+  message '{"attributes":{"title":"hopsdefault"}}'
+  headers({kbn-xsrf' => 'required',
+    'Content-Type' => 'application/json'
+  })
+  retries numRetries
+  retry_delay retryDelay
+end
+
+http_request 'set default index' do
+  action :post
+  url 'http://#{kibana}/api/kibana/settings/defaultIndex'
+  message '{"value":"hopsdefault"}'
+  headers({kbn-xsrf' => 'required',
+    'Content-Type' => 'application/json'
+  })
+  retries numRetries
+  retry_delay retryDelay
 end
