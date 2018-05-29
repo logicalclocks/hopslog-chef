@@ -18,8 +18,8 @@ bash 'add_default_index_for_kibana' do
         user "root"
         code <<-EOH
             set -e
-	        id=$(curl -f -XPOST -H "Content-Type: application/json" -H "kbn-xsrf: required" #{kibana}/api/saved_objects/index-pattern -d '{"attributes":{"title":"hopsdefault"}}' | jq -r '.id')
-	        curl -XPOST -H "Content-Type: application/json" -H "kbn-xsrf: required" #{kibana}/api/kibana/settings/defaultIndex -d "{\"value\":\"$id\"}"
+	        curl -f -XPOST -H "Content-Type: application/json" -H "kbn-xsrf: required" #{kibana}/api/saved_objects/index-pattern/hopsdefault -d '{"attributes":{"title":"hopsdefault"}}'
+	        curl -f -XPOST -H "Content-Type: application/json" -H "kbn-xsrf: required" #{kibana}/api/kibana/settings/defaultIndex -d "{\"value\":\"hopsdefault\"}"
         EOH
 end
 
