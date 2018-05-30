@@ -120,7 +120,7 @@ http_request 'create index pattern' do
   action :post
   url 'http://#{kibana}/api/saved_objects/index-pattern/hopsdefault'
   message '{"attributes":{"title":"hopsdefault"}}'
-  headers({kbn-xsrf' => 'required',
+  headers({'kbn-xsrf' => 'required',
     'Content-Type' => 'application/json'
   })
   retries numRetries
@@ -131,7 +131,7 @@ http_request 'set default index' do
   action :post
   url 'http://#{kibana}/api/kibana/settings/defaultIndex'
   message '{"value":"hopsdefault"}'
-  headers({kbn-xsrf' => 'required',
+  headers({'kbn-xsrf' => 'required',
     'Content-Type' => 'application/json'
   })
   retries numRetries
