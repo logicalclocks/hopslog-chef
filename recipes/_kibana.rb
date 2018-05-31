@@ -106,13 +106,6 @@ end
 numRetries=10
 retryDelay=20
 
-http_request 'add_elastic_index_for_kibana' do
-  action :put
-  url "http://#{elastic}/#{node['kibana']['default_index']}?pretty"
-  retries numRetries
-  retry_delay retryDelay
-end
-
 http_request 'create index pattern' do
   action :post
   url "http://#{kibana}/api/saved_objects/index-pattern/hopsdefault"
