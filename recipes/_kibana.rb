@@ -5,13 +5,11 @@ elastic = private_recipe_ip("elastic", "default") + ":#{node['elastic']['port']}
 kibana = private_recipe_ip("hopslog", "default") + ":#{node['kibana']['port']}"
 
 
-
-bash 'add_elastic_index_for_kibana' do
-        user "root"
-        code <<-EOH
-            set -e
-            curl -XPUT "#{elastic}/#{node['kibana']['default_index']}?pretty"
-        EOH
+http_request 'add_elastic_index_for_kibana' do
+  action :put
+  url "#{elastic}/#{node['kibana']['default_index']}?pretty"
+  retries numRetries
+  retry_delay retryDelay
 end
 
 file "#{node['kibana']['base_dir']}/config/kibana.xml" do
