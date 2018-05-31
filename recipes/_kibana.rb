@@ -106,10 +106,12 @@ end
 numRetries=10
 retryDelay=20
 
+default_pattern = node['elastic']['default_kibana_index']
+
 http_request 'create index pattern' do
   action :post
-  url "http://#{kibana}/api/saved_objects/index-pattern/hopsdefault"
-  message '{"attributes":{"title":"hopsdefault"}}'
+  url "http://#{kibana}/api/saved_objects/index-pattern/#{default_pattern}"
+  message '{"attributes":{"title":"#{default_pattern}"}}'
   headers({'kbn-xsrf' => 'required',
     'Content-Type' => 'application/json'
   })
@@ -120,7 +122,7 @@ end
 http_request 'set default index' do
   action :post
   url "http://#{kibana}/api/kibana/settings/defaultIndex"
-  message '{"value":"hopsdefault"}'
+  message '{"value":"#{default_pattern}"}'
   headers({'kbn-xsrf' => 'required',
     'Content-Type' => 'application/json'
   })
