@@ -4,14 +4,6 @@ my_private_ip = my_private_ip()
 elastic = private_recipe_ip("elastic", "default") + ":#{node['elastic']['port']}"
 kibana = private_recipe_ip("hopslog", "default") + ":#{node['kibana']['port']}"
 
-
-http_request 'add_elastic_index_for_kibana' do
-  action :put
-  url "#{elastic}/#{node['kibana']['default_index']}?pretty"
-  retries numRetries
-  retry_delay retryDelay
-end
-
 file "#{node['kibana']['base_dir']}/config/kibana.xml" do
   action :delete
 end
@@ -113,6 +105,13 @@ end
 
 numRetries=10
 retryDelay=20
+
+http_request 'add_elastic_index_for_kibana' do
+  action :put
+  url "#{elastic}/#{node['kibana']['default_index']}?pretty"
+  retries numRetries
+  retry_delay retryDelay
+end
 
 http_request 'create index pattern' do
   action :post
