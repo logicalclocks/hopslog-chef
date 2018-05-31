@@ -108,7 +108,7 @@ retryDelay=20
 
 http_request 'add_elastic_index_for_kibana' do
   action :put
-  url "#{elastic}/#{node['kibana']['default_index']}?pretty"
+  url "http://#{elastic}/#{node['kibana']['default_index']}?pretty"
   retries numRetries
   retry_delay retryDelay
 end
