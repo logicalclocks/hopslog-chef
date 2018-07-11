@@ -1,6 +1,6 @@
 my_private_ip = my_private_ip()
 
-kafka_endpoint = private_recipe_ip("kkafka", "default") + ":#{node['kkafka']['broker']['port']}"
+logstash_endpoint = private_recipe_ip("hopslog", "default") + ":#{node['hopslog']['logstash']['http']['port']}"
 
 file "#{node['filebeat']['base_dir']}/filebeat.xml" do
   action :delete
@@ -8,19 +8,19 @@ end
 
 template"#{node['filebeat']['base_dir']}/filebeat.yml" do
   source "filebeat.yml.erb"
-  owner node['hopslog']['user']
-  group node['hopslog']['group']
+  owner node['hops']['yarn']['user']
+  group node['hops']['yarn']['group']
   mode 0655
   variables({ 
      :my_private_ip => my_private_ip,
-     :kafka_endpoint => kafka_endpoint
+     :logstash_endpoint => logstash_endpoint
            })
 end
 
 
 directory "#{node['filebeat']['base_dir']}/bin" do
-  owner node['hopslog']['user']
-  group node['hopslog']['group']
+  owner node['hops']['yarn']['user']
+  group node['hops']['yarn']['group']
   mode "750"
   action :create
 end
@@ -28,15 +28,15 @@ end
 
 template"#{node['filebeat']['base_dir']}/bin/start-filebeat.sh" do
   source "start-filebeat.sh.erb"
-  owner node['hopslog']['user']
-  group node['hopslog']['group']
+  owner node['hops']['yarn']['user']
+  group node['hops']['yarn']['group']
   mode 0750
 end
 
 template"#{node['filebeat']['base_dir']}/bin/stop-filebeat.sh" do
   source "stop-filebeat.sh.erb"
-  owner node['hopslog']['user']
-  group node['hopslog']['group']
+  owner node['hops']['yarn']['user']
+  group node['hops']['yarn']['group']
   mode 0750
 end
 

@@ -14,7 +14,6 @@ end
 depends 'java'
 depends 'kagent'
 depends 'elastic'
-depends 'kkafka'
 depends 'hops'
 
 recipe "hopslog::install", "Installs Logstash and Kibana Server"

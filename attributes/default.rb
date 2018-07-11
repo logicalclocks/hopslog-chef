@@ -1,7 +1,7 @@
+include_attribute "hops"
 include_attribute "elastic"
 include_attribute "elasticsearch"
 include_attribute "kagent"
-include_attribute "kkafka"
 
 default['hopslog']['user']                      = node['install']['user'].empty? ? node['elastic']['user'] : node['install']['user']
 default['hopslog']['group']                     = node['install']['user'].empty? ? node['elastic']['group'] : node['install']['user']
@@ -44,7 +44,7 @@ default['filebeat']['systemd']                  = "true"
 default['filebeat']['pid_file']                 = "/tmp/filebeat.pid"
 default['filebeat']['port']                     = "5000"
 
-default['filebeat']['read_logs']                = ""
+default['filebeat']['read_logs']                = node['hops']['base_dir'] + "/logs/userlogs/**/"
 
 default['filebeat']['skip']                     = "true"
 
