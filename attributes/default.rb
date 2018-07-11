@@ -42,6 +42,7 @@ default['filebeat']['home']                     = node['hopslog']['dir'] + "/fil
 default['filebeat']['base_dir']                 = node['hopslog']['dir'] + "/filebeat"
 default['filebeat']['systemd']                  = "true"
 default['filebeat']['pid_file']                 = "/tmp/filebeat.pid"
+default['filebeat']['port']                     = "5000"
 
 default['filebeat']['read_logs']                = ""
 
