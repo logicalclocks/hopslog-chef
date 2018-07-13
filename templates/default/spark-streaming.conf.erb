@@ -20,7 +20,7 @@ filter {
   }
 
   grok {
-    match => {"message" => "(?<templogdate>%{YEAR}-%{MONTHNUM2}-%{MONTHDAY} %{HOUR}:%{MINUTE}:%{SECOND}.%{NONNEGINT}) %{LOGLEVEL:priority} (?<jobinfo>.+,.+,.+,.+) (?<logger_name>[A-Za-z0-9$_.]+): %{GREEDYDATA:log_message}"}
+    match => {"message" => "(?<templogdate>%{YEAR}-%{MONTHNUM2}-%{MONTHDAY} %{HOUR}:%{MINUTE}:%{SECOND}.%{NONNEGINT}) %{LOGLEVEL:priority} %{DATA:jobinfo} %{DATA:logger_name}: %{GREEDYDATA:log_message}"}
   }
 
   mutate {
