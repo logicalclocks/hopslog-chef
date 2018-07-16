@@ -22,6 +22,11 @@ filter {
   grok {
     match => {"message" => "(?<templogdate>%{YEAR}-%{MONTHNUM2}-%{MONTHDAY} %{HOUR}:%{MINUTE}:%{SECOND}.%{NONNEGINT}) %{LOGLEVEL:priority} %{DATA:jobinfo} %{DATA:logger_name}: %{GREEDYDATA:log_message}"}
   }
+  
+  #Ignore failed parse enties. Grok filter has been tested with http://grokconstructor.appspot.com
+  if "_grokparsefailure" in [tags] {
+    drop { }
+  }
 
   mutate {
     split => ["jobinfo", ","]
