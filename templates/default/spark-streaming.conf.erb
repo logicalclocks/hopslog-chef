@@ -1,6 +1,6 @@
 input {
   beats {
-    host => "<%= @my_ip %>" 
+    #host => "<%= @my_ip %>" 
     port => <%= node['filebeat']['port'] %>
   }
 }
@@ -54,16 +54,14 @@ filter {
   }
 
   mutate {
-    remove_field => [ "message", "source" , "templogdate", "prospector", "beat", "host", "jobinfo"]
+    remove_field => [ "message", "source" , "templogdate", "prospector", "beat", "jobinfo"]
   }
 
 }
 
-
 output {
   elasticsearch {
     hosts => ["<%= @elastic_addr %>"]
-    index => "%{project}"
-    document_type => "logs" 
+    index => "%{project}_logs-%{+YYYY.MM.dd}"
   }
 }
