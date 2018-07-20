@@ -112,6 +112,7 @@ http_request 'create kibana index' do
   action :put
   url "http://#{elastic}/.kibana"
   headers({'Content-Type' => 'application/json'})
+  message '{}'
   retries numRetries
   retry_delay retryDelay
 end
