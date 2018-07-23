@@ -6,3 +6,6 @@ dependencies:
     global:  
       - elastic::default
       - hops::dn
+  - recipe: hopslog::_filebeat
+    global:
+      - hopslog::default
