@@ -11,5 +11,5 @@ if [ -f $PID_FILE ] ; then
 fi
 
 
-nohup <%= node['filebeat']['base_dir'] %>/filebeat -c <%= node['filebeat']['base_dir'] %>/filebeat.yml --path.logs <%= node['filebeat']['base_dir'] %>/logs &
+nohup <%= node['filebeat']['base_dir'] %>/filebeat -c <%= node['filebeat']['base_dir'] %>/filebeat.yml --path.logs <%= node['filebeat']['base_dir'] %>/log &
 echo $! > $PID_FILE
