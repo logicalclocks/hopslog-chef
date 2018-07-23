@@ -1,6 +1,6 @@
 my_private_ip = my_private_ip()
 
-logstash_endpoint = private_recipe_ip("hopslog", "default") + ":#{node['hopslog']['logstash']['http']['port']}"
+logstash_endpoint = private_recipe_ip("hopslog", "default") + ":#{node['logstash']['http']['port']}"
 
 file "#{node['filebeat']['base_dir']}/filebeat.xml" do
   action :delete
@@ -91,8 +91,8 @@ else #sysv
 
   template "/etc/init.d/#{service_name}" do
     source "#{service_name}.erb"
-    owner node['hopslog']['user']
-    group node['hopslog']['group']
+    owner node['hops']['yarn']['user']
+    group node['hops']['yarn']['group']
     mode 0754
     notifies :enable, resources(:service => service_name)
     notifies :restart, resources(:service => service_name), :immediately
