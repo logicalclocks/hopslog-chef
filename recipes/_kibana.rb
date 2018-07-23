@@ -120,7 +120,7 @@ end
 http_request 'put default kibana index pattern' do
   action :put
   url "http://#{elastic}/.kibana/doc/index-pattern:#{default_pattern}"
-  message "\"type\" : \"index-pattern\",\"index-pattern\" : {\"title\" : \"#{default_pattern}\"}"
+  message '{"type" : "index-pattern","index-pattern" : {"title" : "#{default_pattern}"}}'
   headers({'Content-Type' => 'application/json'})
   retries numRetries
   retry_delay retryDelay
@@ -128,8 +128,8 @@ end
 
 http_request 'set default index' do
   action :put
-  url "http://#{kibana}/.kibana/doc/config:#{node['logstash']['version']"
-  message "\"type\" : \"config\",\"config\" : {\"defaultIndex\" : \"#{default_pattern}\"}"
+  url "http://#{elastic}/.kibana/doc/config:#{node['logstash']['version']}"
+  message '{"type" : "config","config" : {"defaultIndex" : "#{default_pattern}"}}'
   headers({'kbn-xsrf' => 'required',
     'Content-Type' => 'application/json'
   })
