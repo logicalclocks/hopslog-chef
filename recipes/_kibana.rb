@@ -135,16 +135,16 @@ http_request 'set default index' do
   retry_delay retryDelay
 end
 
-http_request 'create index pattern in kibana' do
-  action :post
-  url "http://#{kibana}/api/saved_objects/index-pattern/#{default_pattern}"
-  message "{\"attributes\":{\"title\":\"#{default_pattern}\"}}"
-  headers({'kbn-xsrf' => 'required',
-    'Content-Type' => 'application/json'
-  })
-  retries numRetries
-  retry_delay retryDelay
-end
+#http_request 'create index pattern in kibana' do
+#  action :post
+#  url "http://#{kibana}/api/saved_objects/index-pattern/#{default_pattern}"
+#  message "{\"attributes\":{\"title\":\"#{default_pattern}\"}}"
+#  headers({'kbn-xsrf' => 'required',
+#    'Content-Type' => 'application/json'
+#  })
+#  retries numRetries
+#  retry_delay retryDelay
+#end
 
 http_request 'set default index in kibana' do
   action :post
