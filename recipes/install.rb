@@ -77,7 +77,7 @@ directory "#{node['logstash']['base_dir']}/log" do
 end
 
 
-directory "#{node['logstash']['base_dir']}/conf" do
+directory "#{node['logstash']['base_dir']}/config" do
   owner node['hopslog']['user']
   group node['hopslog']['group']
   mode "750"
