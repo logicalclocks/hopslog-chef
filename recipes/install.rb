@@ -21,6 +21,12 @@ group node['hopslog']['group'] do
 end
 
 
+group node['hops']['yarn']['user'] do
+  action :create
+  not_if "getent group #{node['hops']['yarn']['user']}"
+end
+
+
 user node['hops']['yarn']['user'] do
   home "/home/#{node['hops']['yarn']['user']}"
   gid node['hops']['yarn']['user']
