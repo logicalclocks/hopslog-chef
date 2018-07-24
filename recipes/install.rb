@@ -21,6 +21,18 @@ group node['hopslog']['group'] do
 end
 
 
+user node['hops']['yarn']['user'] do
+  home "/home/#{node['hops']['yarn']['user']}"
+  gid node['hops']['yarn']['user']
+  system true
+  shell "/bin/bash"
+  manage_home true
+  action :create
+  not_if "getent passwd #{node['hops']['yarn']['user']}"
+end
+
+
+
 include_recipe "java"
 
 #
