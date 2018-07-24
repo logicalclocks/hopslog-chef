@@ -130,9 +130,7 @@ http_request 'set default index' do
   action :put
   url "http://#{elastic}/.kibana/doc/config:#{node['logstash']['version']}"
   message "{\"type\" : \"config\",\"config\" : {\"defaultIndex\" : \"#{default_pattern}\"}}"
-  headers({'kbn-xsrf' => 'required',
-    'Content-Type' => 'application/json'
-  })
+  headers({'Content-Type' => 'application/json'})
   retries numRetries
   retry_delay retryDelay
 end
