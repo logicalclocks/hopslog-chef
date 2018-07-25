@@ -1,6 +1,6 @@
 my_private_ip = my_private_ip()
 
-logstash_endpoint = private_recipe_ip("hopslog", "default") + ":#{node['logstash']['http']['port']}"
+logstash_endpoint = private_recipe_ip("hopslog", "default") + ":#{node['logstash']['beats']['port']}"
 
 file "#{node['filebeat']['base_dir']}/filebeat.xml" do
   action :delete

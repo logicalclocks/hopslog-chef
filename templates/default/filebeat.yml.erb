@@ -11,4 +11,4 @@ filebeat.prospectors:
 
 output:
   logstash:
-    hosts: ["10.0.2.15:5000"]
+    hosts: ["<%= @logstash_endpoint %>"]

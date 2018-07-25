@@ -1,7 +1,7 @@
 input {
   beats {
     #host => "<%= @my_ip %>" 
-    port => <%= node['filebeat']['port'] %>
+    port => <%= node['logstash']['beats']['port'] %>
   }
 }
 
