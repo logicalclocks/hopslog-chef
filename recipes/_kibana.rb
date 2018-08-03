@@ -129,3 +129,9 @@ if node['kagent']['enabled'] == "true"
      log_file "#{node['kibana']['base_dir']}/log/kibana.log"
    end
 end
+
+if node['install']['upgrade'] == "true"
+  kagent_config "#{service_name}" do
+    action :systemd_reload
+  end
+end  
