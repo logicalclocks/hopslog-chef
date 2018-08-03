@@ -4,7 +4,7 @@ name             "hopslog"
 license          "Apache v2.0"
 description      "Installs/Configures Logstash and Kibana for Hopsworks"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version          "0.5.0"
+version          "0.6.0"
 source_url       "https://github.com/hopshadoop/hopslog-chef"
 
 %w{ ubuntu debian centos }.each do |os|
@@ -16,7 +16,6 @@ depends 'kagent'
 depends 'elastic'
 depends 'kkafka'
 depends 'hops'
-depends 'hadoop_spark'
 
 recipe "hopslog::install", "Installs Logstash and Kibana Server"
 recipe "hopslog::default", "configures Logstash and Kibana Server"

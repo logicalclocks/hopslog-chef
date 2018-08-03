@@ -10,7 +10,6 @@ cookbook 'kkafka', github: "hopshadoop/kafka-cookbook", branch: "master"
 
 cookbook 'conda', github: "hopshadoop/conda-chef", branch: "master"
 cookbook 'hops', github: "hopshadoop/hops-hadoop-chef", branch: "master"
-cookbook 'hadoop_spark', github: "hopshadoop/spark-chef", branch: "master"
 
 cookbook 'elasticsearch', '~> 2.4.0'
 
