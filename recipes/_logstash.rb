@@ -3,7 +3,7 @@ my_private_ip = my_private_ip()
 
 elastic = private_recipe_ip("elastic", "default") + ":#{node['elastic']['port']}"
 
-template"#{node['logstash']['base_dir']}/conf/spark-streaming.conf" do
+template"#{node['logstash']['base_dir']}/config/spark-streaming.conf" do
   source "spark-streaming.conf.erb"
   owner node['hopslog']['user']
   group node['hopslog']['group']

@@ -1,7 +1,7 @@
 input {
-  log4j {
-  host => "<%= @my_ip %>"
-  port => 3456
+  beats {
+    #host => "<%= @my_ip %>" 
+    port => <%= node['logstash']['beats']['port'] %>
   }
 }
 
@@ -13,33 +13,55 @@ filter {
   add_field => [ "jobname", "" ]
   }
   mutate {
-  split => ["jobid", ","]
+  add_field => [ "jobid", ""]
   }
   mutate {
-  split => ["application", ","]
+  add_field => [ "application", ""]
+  }
+
+  grok {
+    match => {"message" => "(?<templogdate>%{YEAR}-%{MONTHNUM2}-%{MONTHDAY} %{HOUR}:%{MINUTE}:%{SECOND}.%{NONNEGINT}) %{LOGLEVEL:priority} %{DATA:jobinfo} %{DATA:logger_name}: %{GREEDYDATA:log_message}"}
+  }
+  
+  #Ignore failed parse enties. Grok filter has been tested with http://grokconstructor.appspot.com
+  if "_grokparsefailure" in [tags] {
+    drop { }
+  }
+
+  mutate {
+    split => ["jobinfo", ","]
+  }
+
+  date {
+    match  => [ "templogdate", ISO8601 ]
+    target => "logdate"
   }
   mutate {
-  replace => [ "project", "%{[application][0]}" ]
+     copy => { "[beat][hostname]" => "host" }
+  }
+
+  mutate {
+    replace => [ "project", "%{[jobinfo][0]}"]
   }
   mutate {
-  replace => [ "jobname", "%{[application][1]}" ]
+    replace => [ "jobname", "%{[jobinfo][1]}"]
   }
   mutate {
-  replace => [ "jobid", "%{[application][2]}" ]
+    replace => [ "jobid", "%{[jobinfo][2]}"]
   }
   mutate {
-  replace => [ "application", "%{[application][3]}" ]
+    replace => [ "application", "%{[jobinfo][3]}"]
+  }
+
+  mutate {
+    remove_field => [ "message", "source" , "templogdate", "prospector", "beat", "jobinfo"]
   }
 
 }
 
-#output {
-#  stdout {}
-#}
-
 output {
-       elasticsearch {
-         hosts => ["<%= @elastic_addr %>"]
-         index => "%{project}"
-       }
+  elasticsearch {
+    hosts => ["<%= @elastic_addr %>"]
+    index => "%{project}_logs-%{+YYYY.MM.dd}"
+  }
 }

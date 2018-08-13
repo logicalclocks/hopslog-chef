@@ -2,34 +2,7 @@ my_private_ip = my_private_ip()
 
 
 elastic = private_recipe_ip("elastic", "default") + ":#{node['elastic']['port']}"
-
-
-
-bash 'add_elastic_index_for_kibana' do
-        user "root"
-        code <<-EOH
-            set -e
-            curl -XPUT "#{elastic}/#{node['kibana']['default_index']}?pretty"
-        EOH
-end
-
-bash 'add_default_index_for_kibana' do
-        user "root"
-        code <<-EOH
-            set -e
-	    curl -XPUT #{elastic}/.kibana/index-pattern/#{node['kibana']['default_index']} -d '{"title" : "#{node['kibana']['default_index']}"}'
-        EOH
-end
-
-bash 'add_default_index_for_kibana' do
-        user "root"
-        code <<-EOH
-            set -e
-	    curl -XPUT #{elastic}/.kibana/config/#{node['kibana']['version']} -d '{"defaultIndex" : "#{node['kibana']['default_index']}"}'
-        EOH
-end
-
-
+kibana = private_recipe_ip("hopslog", "default") + ":#{node['kibana']['port']}"
 
 file "#{node['kibana']['base_dir']}/config/kibana.xml" do
   action :delete
@@ -135,3 +108,57 @@ if node['install']['upgrade'] == "true"
     action :systemd_reload
   end
 end  
+numRetries=10
+retryDelay=20
+
+default_pattern = node['elastic']['default_kibana_index']
+
+#http_request 'create kibana index' do
+#  action :put
+#  url "http://#{elastic}/.kibana"
+#  headers({'Content-Type' => 'application/json'})
+#  message '{}'
+#  retries numRetries
+#  retry_delay retryDelay
+#end
+
+#http_request 'put default kibana index pattern' do
+#  action :put
+#  url "http://#{elastic}/.kibana/doc/index-pattern:#{default_pattern}"
+#  message "{\"type\" : \"index-pattern\",\"index-pattern\" : {\"title\" : \"#{default_pattern}\"}}"
+#  headers({'Content-Type' => 'application/json'})
+#  retries numRetries
+#  retry_delay retryDelay
+#end
+
+#http_request 'set default index' do
+#  action :put
+#  url "http://#{elastic}/.kibana/doc/config:#{node['logstash']['version']}"
+#  message "{\"type\" : \"config\",\"config\" : {\"defaultIndex\" : \"#{default_pattern}\"}}"
+#  headers({'Content-Type' => 'application/json'})
+#  retries numRetries
+#  retry_delay retryDelay
+#end
+
+http_request 'create index pattern in kibana' do
+  action :post
+  url "http://#{kibana}/api/saved_objects/index-pattern/#{default_pattern}"
+  message "{\"attributes\":{\"title\":\"#{default_pattern}\"}}"
+  headers({'kbn-xsrf' => 'required',
+    'Content-Type' => 'application/json'
+  })
+  retries numRetries
+  retry_delay retryDelay
+end
+
+http_request 'set default index in kibana' do
+  action :post
+  url "http://#{kibana}/api/kibana/settings/defaultIndex"
+  message "{\"value\":\"#{default_pattern}\"}"
+  headers({'kbn-xsrf' => 'required',
+    'Content-Type' => 'application/json'
+  })
+  retries numRetries
+  retry_delay retryDelay
+end
+

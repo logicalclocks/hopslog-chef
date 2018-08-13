@@ -1,8 +1,12 @@
 dependencies: 
   - recipe: hopslog::install
-    global:  
+    global:
+      - hops::install  
       - elastic::install
   - recipe: hopslog::default
     global:  
       - elastic::default
       - hops::dn
+  - recipe: hopslog::_filebeat
+    global:
+      - hopslog::default

@@ -1,27 +1,14 @@
 filebeat.prospectors:
 
-- input_type: log
-
+- type: log
   # Paths that should be crawled and fetched. Glob based paths.
   paths:
    - <%= node['filebeat']['read_logs'] %>
+  multiline:
+    pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
+    negate: true
+    match: after
 
-
-output.kafka:
-  # initial brokers for reading cluster metadata
-  hosts: ["<%= @kafka_endpoint %>"]
-
-
-  # message topic selection + partitioning
-  topic: 'yanzi'
-  partition.round_robin:
-   reachable_only: false
-
-  required_acks: 1
-  compression: none
-  max_message_bytes: 1000000
-
-#  ssl.certificate_authorities: ["<%= node['hopsworks']['certs_dir'] %>/ca/certs/ca.cert.pem"]
-#  ssl.certificate: "<%= node['hopsworks']['certs_dir'] %>/ca/intermediate/certs/yanzi2__meb10000.cert.pem"
-#  ssl.key: "<%= node['hopsworks']['certs_dir'] %>/ca/intermediate/private/yanzi2__meb10000.key.pem"
-  ssl.verification_mode: none
+output:
+  logstash:
+    hosts: ["<%= @logstash_endpoint %>"]

@@ -21,6 +21,24 @@ group node['hopslog']['group'] do
 end
 
 
+group node['hops']['yarn']['user'] do
+  action :create
+  not_if "getent group #{node['hops']['yarn']['user']}"
+end
+
+
+user node['hops']['yarn']['user'] do
+  home "/home/#{node['hops']['yarn']['user']}"
+  gid node['hops']['yarn']['user']
+  system true
+  shell "/bin/bash"
+  manage_home true
+  action :create
+  not_if "getent passwd #{node['hops']['yarn']['user']}"
+end
+
+
+
 include_recipe "java"
 
 #
@@ -77,7 +95,7 @@ directory "#{node['logstash']['base_dir']}/log" do
 end
 
 
-directory "#{node['logstash']['base_dir']}/conf" do
+directory "#{node['logstash']['base_dir']}/config" do
   owner node['hopslog']['user']
   group node['hopslog']['group']
   mode "750"
@@ -160,25 +178,25 @@ bash 'extract_filebeat' do
         user "root"
         code <<-EOH
                 tar -xf #{cached_package_filename} -C #{node['hopslog']['dir']}
-                chown -R #{node['hopslog']['user']}:#{node['hopslog']['group']} #{node['filebeat']['home']}
+                chown -R #{node['hops']['yarn']['user']}:#{node['hops']['yarn']['group']} #{node['filebeat']['home']}
                 chmod 750 #{node['filebeat']['home']}
                 cd #{node['filebeat']['home']}
                 touch #{filebeat_downloaded}
-                chown #{node['hopslog']['user']} #{filebeat_downloaded}
+                chown #{node['hops']['yarn']['user']} #{filebeat_downloaded}
         EOH
      not_if { ::File.exists?( filebeat_downloaded ) }
 end
 
 link node['filebeat']['base_dir'] do
-  owner node['hopslog']['user']
-  group node['hopslog']['group']
+  owner node['hops']['yarn']['user']
+  group node['hops']['yarn']['group']
   to node['filebeat']['home']
 end
 
 
 directory "#{node['filebeat']['base_dir']}/log" do
-  owner node['hopslog']['user']
-  group node['hopslog']['group']
+  owner node['hops']['yarn']['user']
+  group node['hops']['yarn']['group']
   mode "750"
   action :create
 end
