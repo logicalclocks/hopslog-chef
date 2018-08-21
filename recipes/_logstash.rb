@@ -96,3 +96,9 @@ if node['kagent']['enabled'] == "true"
      log_file "#{node['logstash']['base_dir']}/logstash.log"
    end
 end
+
+if node['install']['upgrade'] == "true"
+  kagent_config "#{service_name}" do
+    action :systemd_reload
+  end
+end  

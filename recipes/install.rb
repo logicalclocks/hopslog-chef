@@ -7,10 +7,8 @@ end
 user node['hopslog']['user'] do
   action :create
   gid node['hopslog']['group']
-  home "/home/#{node['hopslog']['user']}"  
   system true
   shell "/bin/bash"
-  manage_home true
   not_if "getent passwd #{node['hopslog']['user']}"
 end
 
