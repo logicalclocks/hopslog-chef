@@ -19,15 +19,15 @@ group node['hopslog']['group'] do
 end
 
 
-group node['hops']['yarn']['user'] do
+group node['hops']['group'] do
   action :create
-  not_if "getent group #{node['hops']['yarn']['user']}"
+  not_if "getent group #{node['hops']['group']}"
 end
 
 
 user node['hops']['yarn']['user'] do
   home "/home/#{node['hops']['yarn']['user']}"
-  gid node['hops']['yarn']['user']
+  gid node['hops']['group']
   system true
   shell "/bin/bash"
   manage_home true
