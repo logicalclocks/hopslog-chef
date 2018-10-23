@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PID_FILE=<%= node['filebeat']['pid_file'] %>
+PID_FILE=<%= @pid %>
 if [ -f $PID_FILE ] ; then
  PID=`cat $PID_FILE`
  kill -0 $PID 2>&1 > /dev/null
@@ -11,5 +11,5 @@ if [ -f $PID_FILE ] ; then
 fi
 
 
-nohup <%= node['filebeat']['base_dir'] %>/filebeat -c <%= node['filebeat']['base_dir'] %>/filebeat.yml --path.logs <%= node['filebeat']['base_dir'] %>/log &
+nohup <%= node['filebeat']['base_dir'] %>/filebeat -c <%= @config_file %> &
 echo $! > $PID_FILE

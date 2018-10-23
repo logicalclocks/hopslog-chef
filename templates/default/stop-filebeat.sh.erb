@@ -1,9 +1,9 @@
 #!/bin/bash
 
-PID_FILE=<%= node['filebeat']['pid_file'] %>
+PID_FILE=<%= @pid %>
 
 function kill_named {
-    PID=`ps aux | grep -i filebeat | grep -v bash | grep -v chef | grep -v grep | awk '{print $2}'`
+    PID=`ps aux | grep -i filebeat | grep -i <%= @user => | grep -v bash | grep -v chef | grep -v grep | awk '{print $2}'`
     if [ "$PID" != "" ] ; then
 	kill -9 $PID > /dev/null 2>&1
         res=$?
