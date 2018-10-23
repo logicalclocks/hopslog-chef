@@ -4,7 +4,7 @@ After = syslog.target network.target remote-fs.target
 
 [Service]
 User = <%= @user %>
-PIDFile = <%= pid %>
+PIDFile = <%= @pid %>
 ExecStart = <%= @exec_start %>
 ExecStop = <%= @exec_stop %>
 LimitNOFILE = 20000

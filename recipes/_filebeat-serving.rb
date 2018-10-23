@@ -6,6 +6,14 @@ file "#{node['filebeat']['base_dir']}/filebeat.xml" do
   action :delete
 end
 
+log_glob = "#{node['hopslog']['dir']}/staging/serving/**/*.log"
+if node.attribute?("hopsworks")
+  if node['hopsworks'].attribute?("staging_dir")
+    log_glob = "#{node['hopsworks']['staging_dir']}/serving/**/*.log"
+  end
+end
+
+
 tfserving_user = node['install']['user'].empty? ? "tfserving" : node['install']['user'] 
 tfserving_group = node['install']['user'].empty? ? "tfserving" : node['install']['user'] 
 if node.attribute?("tfserving") 
@@ -23,7 +31,7 @@ template"#{node['filebeat']['base_dir']}/filebeat-serving.yml" do
   group tfserving_group 
   mode 0655
   variables({ 
-    :paths => node['filebeat']['serving_read_logs'],
+    :paths => log_globe, 
     :multiline => false,
     :my_private_ip => my_private_ip,
     :logstash_endpoint => logstash_endpoint,

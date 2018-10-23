@@ -56,8 +56,8 @@ attribute "filebeat/version",
           :description => "Filebeat version",
           :type => "string"
 
-attribute "filebeat/read_logs",
-          :description => "Path to log files read by filebeat (e.g., /srv/hops/domain1/logs/*.log)",
+attribute "filebeat/spark_read_logs",
+          :description => "Path to log files read by filebeat for spark (e.g., /srv/hops/domain1/logs/*.log)",
           :type => "string"
 
 attribute "filebeat/skip",
