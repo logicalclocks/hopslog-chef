@@ -46,6 +46,7 @@ default['filebeat']['pid_dir']                 = "/tmp"
 default['filebeat']['port']                     = "5000"
 
 default['filebeat']['spark_read_logs']          = node['hops']['base_dir'] + "/logs/userlogs/**/"
+default['filebeat']['serving_read_logs']        = node['hopsworks']['staging_dir'].empty? "#{node['hopslog']['dir']}/staging/serving/**/*.log" : node['hopsworks']['staging_dir'] + "/serving/**/*.log"
 
 default['filebeat']['skip']                     = "true"
 
