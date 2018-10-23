@@ -11,5 +11,5 @@ if [ -f $PID_FILE ] ; then
 fi
 
 
-nohup <%= node['filebeat']['base_dir'] %>/filebeat -c <%= @config_file %> &
+nohup <%= node['filebeat']['base_dir'] %>/filebeat -c <%= node['filebeat']['base_dir'] %>/<%= @config_file %> &
 echo $! > $PID_FILE
