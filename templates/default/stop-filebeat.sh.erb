@@ -3,7 +3,7 @@
 PID_FILE=<%= @pid %>
 
 function kill_named {
-    PID=`ps aux | grep -i filebeat | grep -i <%= @user => | grep -v bash | grep -v chef | grep -v grep | awk '{print $2}'`
+    PID=`ps aux | grep -i filebeat | grep -i <%= @user %> | grep -v bash | grep -v chef | grep -v grep | awk '{print $2}'`
     if [ "$PID" != "" ] ; then
 	kill -9 $PID > /dev/null 2>&1
         res=$?
@@ -29,8 +29,8 @@ else
     timeout=0
     while [ $timeout -lt $wait_pid_removed ] ; do
 	sleep 1
-	kill -0 $PID > /dev/null 2>&1 
-        if [ $? -ne 0 ] ; then 
+	kill -0 $PID > /dev/null 2>&1
+        if [ $? -ne 0 ] ; then
           break
         fi
 	echo -n "."
