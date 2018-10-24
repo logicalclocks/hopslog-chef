@@ -5,11 +5,11 @@ metadata
 
 cookbook 'java'
 
-cookbook 'kagent', github: "logicalclocks/kagent-chef", branch: "master"
-cookbook 'elastic', github: "logicalclocks/elasticsearch-chef", branch: "master"
-cookbook 'kkafka', github: "logicalclocks/kafka-cookbook", branch: "master"
-cookbook 'conda', github: "logicalclocks/conda-chef", branch: "master"
-cookbook 'hops', github: "logicalclocks/hops-hadoop-chef", branch: "master"
+cookbook 'kagent', github: "logicalclocks/kagent-chef", branch: "0.6"
+cookbook 'elastic', github: "logicalclocks/elasticsearch-chef", branch: "0.6"
+cookbook 'kkafka', github: "logicalclocks/kafka-cookbook", branch: "0.6"
+cookbook 'conda', github: "logicalclocks/conda-chef", branch: "0.6"
+cookbook 'hops', github: "logicalclocks/hops-hadoop-chef", branch: "0.6"
 
 cookbook 'elasticsearch', '~> 4.0.0'
 
