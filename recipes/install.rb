@@ -179,7 +179,7 @@ bash 'extract_filebeat' do
         user "root"
         code <<-EOH
                 tar -xf #{cached_package_filename} -C #{node['hopslog']['dir']}
-                chwon -R  #{node['hopslog']['user']}:#{node['hopslog']['group']} #{node['filebeat']['home']}
+                chown -R #{node['hopslog']['user']}:#{node['hopslog']['group']} #{node['filebeat']['home']}
                 chmod 750 #{node['filebeat']['home']}
                 cd #{node['filebeat']['home']}
                 touch #{filebeat_downloaded}
