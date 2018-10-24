@@ -18,7 +18,6 @@ group node['hopslog']['group'] do
   append true
 end
 
-
 group node['hops']['group'] do
   action :create
   not_if "getent group #{node['hops']['group']}"
@@ -35,14 +34,30 @@ user node['hops']['yarn']['user'] do
   not_if "getent passwd #{node['hops']['yarn']['user']}"
 end
 
+group node['hopslog']['group'] do
+  action :modify
+  members ["#{node['hops']['yarn']['user']}"]
+  append true
+end
 
+tfserving_user = node['install']['user'].empty? ? "tfserving" : node['install']['user'] 
+if node.attribute?("tfserving") 
+  if node['tfserving'].attribute?("user")
+    tfserving_user = node['tfserving']['user']
+  end
+end
+
+group node['hopslog']['group'] do
+  action :modify
+  members [tfserving_user]
+  append true
+end
 
 include_recipe "java"
 
 #
 # Logstash
 #
-
 
 package_url = "#{node['logstash']['url']}"
 base_package_filename = File.basename(package_url)
@@ -176,25 +191,38 @@ bash 'extract_filebeat' do
         user "root"
         code <<-EOH
                 tar -xf #{cached_package_filename} -C #{node['hopslog']['dir']}
-                chown -R #{node['hops']['yarn']['user']}:#{node['hops']['yarn']['group']} #{node['filebeat']['home']}
+                chwon -R  #{node['hopslog']['user']}:#{node['hopslog']['group']} #{node['filebeat']['home']}
                 chmod 750 #{node['filebeat']['home']}
                 cd #{node['filebeat']['home']}
                 touch #{filebeat_downloaded}
-                chown #{node['hops']['yarn']['user']} #{filebeat_downloaded}
+                chown #{node['hopslog']['user']} #{filebeat_downloaded}
         EOH
      not_if { ::File.exists?( filebeat_downloaded ) }
 end
 
 link node['filebeat']['base_dir'] do
-  owner node['hops']['yarn']['user']
-  group node['hops']['yarn']['group']
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
   to node['filebeat']['home']
 end
 
+directory "#{node['filebeat']['base_dir']}/bin" do
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
+  mode "755"
+  action :create
+end
 
 directory "#{node['filebeat']['base_dir']}/log" do
-  owner node['hops']['yarn']['user']
-  group node['hops']['yarn']['group']
-  mode "750"
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
+  mode "770"
+  action :create
+end
+
+directory "#{node['filebeat']['base_dir']}/data" do
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
+  mode "770"
   action :create
 end

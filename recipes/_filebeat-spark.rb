@@ -20,13 +20,6 @@ template"#{node['filebeat']['base_dir']}/filebeat-spark.yml" do
   })
 end
 
-directory "#{node['filebeat']['base_dir']}/bin" do
-  owner node['hops']['yarn']['user']
-  group node['hops']['yarn']['group']
-  mode "755"
-  action :create
-end
-
 template "#{node['filebeat']['base_dir']}/bin/start-filebeat-spark.sh" do
   source "start-filebeat.sh.erb"
   owner node['hops']['yarn']['user']

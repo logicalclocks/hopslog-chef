@@ -21,4 +21,5 @@ logging.files:
     name: <%= @log_name %> 
     keepfiles: 7
     permissions: 0644
-  
+
+path.data: <%= node['filebeat']['base_dir'] %>/<%= @log_name %>

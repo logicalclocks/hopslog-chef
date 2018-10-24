@@ -39,13 +39,6 @@ template"#{node['filebeat']['base_dir']}/filebeat-serving.yml" do
   })
 end
 
-directory "#{node['filebeat']['base_dir']}/bin" do
-  owner tfserving_user 
-  group tfserving_group 
-  mode "755"
-  action :create
-end
-
 template "#{node['filebeat']['base_dir']}/bin/start-filebeat-serving.sh" do
   source "start-filebeat.sh.erb"
   owner tfserving_user
