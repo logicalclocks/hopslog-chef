@@ -12,7 +12,8 @@ default['hopslog']['dir']                       = node['install']['dir'].empty? 
 #
 default['logstash']['version']                  = "6.2.3"
 default['logstash']['url']                      = "#{node['download_url']}/logstash-#{node['logstash']['version']}.tar.gz"
-default['logstash']['beats']['port']            = "5044"
+default['logstash']['beats']['spark_port']      = "5044"
+default['logstash']['beats']['serving_port']    = "5045"
 
 default['logstash']['systemd']                  = "true"
 default['logstash']['home']                     = node['hopslog']['dir'] + "/logstash-" + "#{node['logstash']['version']}"
@@ -41,13 +42,12 @@ default['filebeat']['url']                      = "#{node['download_url']}/fileb
 default['filebeat']['home']                     = node['hopslog']['dir'] + "/filebeat-" + "#{node['filebeat']['version']}-linux-x86_64"
 default['filebeat']['base_dir']                 = node['hopslog']['dir'] + "/filebeat"
 default['filebeat']['systemd']                  = "true"
-default['filebeat']['pid_file']                 = "/tmp/filebeat.pid"
+default['filebeat']['pid_dir']                 = "/tmp"
 default['filebeat']['port']                     = "5000"
 
-default['filebeat']['read_logs']                = node['hops']['base_dir'] + "/logs/userlogs/**/"
+default['filebeat']['spark_read_logs']          = node['hops']['base_dir'] + "/logs/userlogs/**/"
 
 default['filebeat']['skip']                     = "true"
-
 
 default['hopslog']['private_ips']         = ['10.0.2.15']
 default['hopslog']['public_ips']          = ['10.0.2.15']
