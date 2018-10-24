@@ -40,18 +40,6 @@ group node['hopslog']['group'] do
   append true
 end
 
-tfserving_user = node['install']['user'].empty? ? "tfserving" : node['install']['user'] 
-if node.attribute?("tfserving") 
-  if node['tfserving'].attribute?("user")
-    tfserving_user = node['tfserving']['user']
-  end
-end
-
-group node['hopslog']['group'] do
-  action :modify
-  members [tfserving_user]
-  append true
-end
 
 include_recipe "java"
 

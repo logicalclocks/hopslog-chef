@@ -25,6 +25,12 @@ if node.attribute?("tfserving")
   end
 end
 
+group node['hopslog']['group'] do
+  action :modify
+  members [tfserving_user]
+  append true
+end
+
 template"#{node['filebeat']['base_dir']}/filebeat-serving.yml" do
   source "filebeat.yml.erb"
   user tfserving_user
