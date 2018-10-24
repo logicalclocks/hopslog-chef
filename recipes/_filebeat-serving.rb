@@ -37,7 +37,7 @@ template"#{node['filebeat']['base_dir']}/filebeat-serving.yml" do
   group tfserving_group 
   mode 0655
   variables({ 
-    :paths => log_globe, 
+    :paths => log_glob, 
     :multiline => false,
     :my_private_ip => my_private_ip,
     :logstash_endpoint => logstash_endpoint,
