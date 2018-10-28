@@ -124,14 +124,12 @@ end
 
 # Update old projects with new kibana saved objects etc. 
 # It makes the same kibana requests as the project controller in Hopsworks.
-
+exec = "#{node['ndb']['scripts_dir']}/mysql-client.sh"
 bash 'add_kibana_indices_for_old_projects' do
         user "root"
         code <<-EOH
             set -e
-            curl -XPUT "#{elastic}/#{node['kibana']['default_index']}?pretty"
-            #!/bin/bash
-	    /srv/hops/mysql-cluster/ndb/scripts/mysql-client.sh -ss -e "select projectname from hopsworks.project order by projectname" | while read projectname;
+	    #{exec} -ss -e \"select projectname from hopsworks.project order by projectname\" | while read projectname;
 	    do
 	      #skip first line if it contains slash character. Used to skip "Using socket: /tmp/mysql.sock
 	      if [[ "$projectname" != *\/* ]]; then
