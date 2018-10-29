@@ -4,13 +4,10 @@ my_private_ip = my_private_ip()
 elastic = private_recipe_ip("elastic", "default") + ":#{node['elastic']['port']}"
 kibana = private_recipe_ip("hopslog", "default") + ":#{node['kibana']['port']}"
 
-# delete default index created from previous hopsworks versions
-http_request 'delete old hopsworks default index pattern directly from elasticsearch' do
-  action :delete
-  url "http://#{elastic}/#{default_pattern}"
-  retries numRetries
-  retry_delay retryDelay
-end
+numRetries=10
+retryDelay=20
+
+default_pattern = node['elastic']['default_kibana_index']
 
 # delete .kibana index created from previous hopsworks versions 
 http_request 'delete old hopsworks .kibana index directly from elasticsearch' do
@@ -94,10 +91,6 @@ if node['install']['upgrade'] == "true"
     action :systemd_reload
   end
 end  
-numRetries=10
-retryDelay=20
-
-default_pattern = node['elastic']['default_kibana_index']
 
 http_request 'create index pattern in kibana' do
   action :post
