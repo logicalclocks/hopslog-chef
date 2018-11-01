@@ -115,6 +115,17 @@ http_request 'set default index in kibana' do
   retry_delay retryDelay
 end
 
+template"#{node['kibana']['base_dir']}/config/hops_upgrade_060.sh" do
+  source "hops_upgrade_060.sh.erb"
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
+  mode 0655
+  variables({
+     :kibana_addr => kibana,
+     :elastic_addr => elastic
+           })
+end
+
 
 # Update old projects with new kibana saved objects etc. 
 # It makes the same kibana requests as the project controller in Hopsworks.
@@ -126,17 +137,8 @@ bash 'add_kibana_indices_for_old_projects' do
 	    #{exec} -ss -e \"select projectname from hopsworks.project order by projectname\" | while read projectname;
 	    do
 	      #skip first line if it contains slash character. Used to skip "Using socket: /tmp/mysql.sock
-	      if [[ "$projectname" != *\/* ]]; then
-  	        echo "1. Creating kibana index pattern for logs: ${projectname}"
-  	        curl -XPOST "#{kibana}/api/saved_objects/index-pattern/${projectname}_logs-*" -H "kbn-xsrf:required" -H "Content-Type:application/json" -d '{"attributes": {"title": "\"$projectname\'_logs-*"}}'
-  	        echo "2. Creating kibana index pattern for logs: ${projectname}"
-  	        curl -XPUT "#{elastic}/${projectname}_experiments"
-  	        echo "3. Creating kibana index pattern for experiments: ${projectname}"
-  	        curl -XPOST "#{kibana}/api/saved_objects/index-pattern/${projectname}_experiments" -H "kbn-xsrf:required" -H "Content-Type:application/json" -d '{"attributes": {"title": "\"${projectname}\'_experiments"}}'
-  	        echo "4. Creating kibana experiments summary search: ${projectname}"
-  	        curl -XPOST "#{kibana}/api/saved_objects/search/${projectname}_experiments_summary-search?overwrite=true" -H "kbn-xsrf:required" -H "Content-Type:application/json" -d '{"attributes":{"title":"Experiments summary","description":"","hits":0,"columns":["_id","user","name","start","finished","status","module","function","hyperparameter","metric"],"sort":["start","desc"],"version":1,"kibanaSavedObjectMeta":{"searchSourceJSON":"{\"index\":\"\"$projectname\'_experiments\",\"highlightAll\":true,\"version\":true,\"query\":{\"language\":\"lucene\",\"query\":\"\"},\"filter\":[]}"}}}'
-  	        echo "5. Creating kibana experiments summary dashboard: ${projectname}"
-  	        curl -XPOST "#{kibana}/api/saved_objects/dashboard/${projectname}_experiments_summary-dashboard?overwrite=true" -H "kbn-xsrf:required" -H "Content-Type:application/json" -d '{"attributes":{"title":"Experiments summary dashboard","hits":0,"description":"A summary of all experiments run in this project","panelsJSON":"[{\"gridData\":{\"h\":9,\"i\":\"1\",\"w\":12,\"x\":0,\"y\":0},\"id\":\"\"$projectname\'_experiments_summary-search\",\"panelIndex\":\"1\",\"type\":\"search\",\"version\":\"6.2.3\"}]","optionsJSON":"{\"darkTheme\":false,\"hidePanelTitles\":false,\"useMargins\":true}","version":1,"timeRestore":false,"kibanaSavedObjectMeta":{"searchSourceJSON":"{\"query\":{\"language\":\"lucene\",\"query\":\"\"},\"filter\":[],\"highlightAll\":true,\"version\":true}"}}}'
+	      if [[ ${projectname} != *\/* ]]; then
+  	        #{node['kibana']['base_dir']}/config/hops_upgrade_060.sh ${projectname}
   	      fi   
             done
         EOH
