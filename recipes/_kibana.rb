@@ -134,7 +134,7 @@ bash 'add_kibana_indices_for_old_projects' do
         user "root"
         code <<-EOH
             set -e
-	    #{exec} -ss -e \"select projectname from hopsworks.project order by projectname\" | while read projectname;
+	    #{exec} -ss -e \"select lower(projectname) as projectname from hopsworks.project order by projectname\" | while read projectname;
 	    do
 	      #skip first line if it contains slash character. Used to skip "Using socket: /tmp/mysql.sock
 	      if [[ ${projectname} != *\/* ]]; then
@@ -142,4 +142,5 @@ bash 'add_kibana_indices_for_old_projects' do
   	      fi   
             done
         EOH
+        only_if { node['install']['version'].start_with?("0.6") }
 end
