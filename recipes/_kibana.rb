@@ -16,6 +16,7 @@ http_request 'delete old hopsworks .kibana index directly from elasticsearch' do
   retries numRetries
   retry_delay retryDelay
   not_if "test \"$(curl -s -o /dev/null -w '%{http_code}\n' http://#{elastic}/.kibana)\" = \"404\""
+  only_if { node['install']['version'].start_with?("0.6") }
 end
 
 file "#{node['kibana']['base_dir']}/config/kibana.xml" do
@@ -95,7 +96,7 @@ end
 
 http_request 'create index pattern in kibana' do
   action :post
-  url "http://#{kibana}/api/saved_objects/index-pattern/#{default_pattern}"
+  url "http://#{kibana}/api/saved_objects/index-pattern/#{default_pattern}?overwrite=true"
   message "{\"attributes\":{\"title\":\"#{default_pattern}\"}}"
   headers({'kbn-xsrf' => 'required',
     'Content-Type' => 'application/json'
