@@ -1,0 +1,28 @@
+input {
+  beats {
+    port => <%= node['logstash']['beats']['kagent_port'] %>
+  }
+}
+
+
+filter {
+  grok {
+    match => {"message" => "%{TIMESTAMP_ISO8601:evt_time} %{LOGLEVEL:severity} %{DATA:project_name} %{DATA:operation} %{DATA:artifact} %{DATA:artifact_version} %{NUMBER:return_code} %{GREEDYDATA:return_message}"}
+  }
+  mutate {
+    lowercase => ["project_name"]
+  }
+  date {
+    match => ["evt_time", "yyyy-MM-dd HH:mm:ss,SSS"]
+  }
+  mutate {
+    remove_field => ["evt_time", "severity"]
+  }
+}
+
+output {
+  elasticsearch {
+    hosts => ["<%= @elastic_addr %>"]
+    index => "%{project_name}_kagent-%{+YYYY.MM.dd}"
+  }
+}

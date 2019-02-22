@@ -14,6 +14,7 @@ default['logstash']['version']                  = "6.2.3"
 default['logstash']['url']                      = "#{node['download_url']}/logstash-#{node['logstash']['version']}.tar.gz"
 default['logstash']['beats']['spark_port']      = "5044"
 default['logstash']['beats']['serving_port']    = "5045"
+default['logstash']['beats']['kagent_port']     = "5046"
 
 default['logstash']['systemd']                  = "true"
 default['logstash']['home']                     = node['hopslog']['dir'] + "/logstash-" + "#{node['logstash']['version']}"

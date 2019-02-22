@@ -36,6 +36,18 @@ attribute "logstash/version",
           :description => "Version of logstash to use",
           :type => "string"
 
+attribute "logstash/beats/spark_port",
+          :description => "Filebeat port for spark streaming logs",
+          :type => "string"
+
+attribute "logstash/beats/serving_port",
+          :description => "Filebeat port for Tfserving logs",
+          :type => "string"
+
+attribute "logstash/beats/kagent_port",
+          :description => "Filebeat port for kagent logs",
+          :type => "string"
+
 attribute "kibana/url",
           :description => "Url to hopslog binaries",
           :type => "string"
