@@ -50,5 +50,13 @@ default['filebeat']['spark_read_logs']          = node['hops']['base_dir'] + "/l
 
 default['filebeat']['skip']                     = "true"
 
-default['hopslog']['private_ips']         = ['10.0.2.15']
-default['hopslog']['public_ips']          = ['10.0.2.15']
+default['hopslog']['default']['private_ips']    = node["install"]["private_ips"].empty? ? ['10.0.2.15'] : node["install"]["private_ips"]
+default['hopslog']['default']['public_ips']     = node["install"]["public_ips"].empty? ? ['10.0.2.15'] : node["install"]["public_ips"]
+
+default['hopslog']['filebeat']['private_ips']   = node["install"]["private_ips"].empty? ? node['hopslog']['default']['private_ips'] : node["install"]["private_ips"]
+default['hopslog']['filebeat']['public_ips']    = node["install"]["public_ips"].empty? ? node['hopslog']['default']['public_ips'] : node["install"]["public_ips"]
+default['hopslog']['kibana']['private_ips']     = node["install"]["private_ips"].empty? ? node['hopslog']['default']['private_ips'] : node["install"]["private_ips"]
+default['hopslog']['kibana']['public_ips']      = node["install"]["public_ips"].empty? ? node['hopslog']['default']['public_ips'] : node["install"]["public_ips"]
+default['hopslog']['logstash']['private_ips']   = node["install"]["private_ips"].empty? ? node['hopslog']['default']['private_ips'] : node["install"]["private_ips"]
+default['hopslog']['logstash']['public_ips']    = node["install"]["public_ips"].empty? ? node['hopslog']['default']['public_ips'] : node["install"]["public_ips"]
+

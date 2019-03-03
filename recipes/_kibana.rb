@@ -1,8 +1,8 @@
-my_private_ip = my_private_ip()
+1my_private_ip = my_private_ip()
 
 
 elastic = private_recipe_ip("elastic", "default") + ":#{node['elastic']['port']}"
-kibana = private_recipe_ip("hopslog", "default") + ":#{node['kibana']['port']}"
+kibana = private_recipe_ip("hopslog", "kibana") + ":#{node['kibana']['port']}"
 
 numRetries=10
 retryDelay=20
@@ -48,6 +48,15 @@ template"#{node['kibana']['base_dir']}/bin/stop-kibana.sh" do
   owner node['hopslog']['user']
   group node['hopslog']['group']
   mode 0750
+end
+
+bash 'skin_kibana' do
+        user "root"
+        code <<-EOH
+
+          perl -pi -e 's/title Kibana/title Hops/' #{node['kibana']['base_dir']}/src/ui/ui_render/views/chrome.jade
+          perl -pi -e 's/Kibana/Hopsworks Experiments' #{node['kibana']['base_dir']}/core_plugins/kibana/translations/en.json
+        EOH
 end
 
 service_name="kibana"

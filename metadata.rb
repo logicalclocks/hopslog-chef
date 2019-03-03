@@ -84,10 +84,34 @@ attribute "install/user",
           :description => "User to install the services as",
           :type => "string"
 
-attribute "hopslog/private_ips",
-          :description => "Set ip addresses",
+attribute "hopslog/kibana/private_ips",
+          :description => "Private ip addresses",
           :type => "array"
 
-attribute "hopslog/public_ips",
-          :description => "Set ip addresses",
+attribute "hopslog/kibana/public_ips",
+          :description => "Public ip addresses",
+          :type => "array"
+
+attribute "hopslog/logstash/private_ips",
+          :description => "Private ip addresses",
+          :type => "array"
+
+attribute "hopslog/logstash/public_ips",
+          :description => "Public ip addresses",
+          :type => "array"
+
+attribute "hopslog/filebeat/private_ips",
+          :description => "Private ip addresses",
+          :type => "array"
+
+attribute "hopslog/filebeat/public_ips",
+          :description => "Public ip addresses",
+          :type => "array"
+
+attribute "hopslog/default/private_ips",
+          :description => "Private ip addresses",
+          :type => "array"
+
+attribute "hopslog/default/public_ips",
+          :description => "Public ip addresses",
           :type => "array"
