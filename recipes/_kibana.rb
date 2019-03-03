@@ -1,4 +1,4 @@
-1my_private_ip = my_private_ip()
+my_private_ip = my_private_ip()
 
 
 elastic = private_recipe_ip("elastic", "default") + ":#{node['elastic']['port']}"
