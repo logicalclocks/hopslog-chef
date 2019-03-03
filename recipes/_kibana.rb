@@ -55,7 +55,7 @@ bash 'skin_kibana' do
         code <<-EOH
 
           perl -pi -e 's/title Kibana/title Hops/' #{node['kibana']['base_dir']}/src/ui/ui_render/views/chrome.jade
-          perl -pi -e 's/Kibana/Hopsworks Experiments' #{node['kibana']['base_dir']}/core_plugins/kibana/translations/en.json
+      #    perl -pi -e 's/Kibana/Hopsworks Experiments' #{node['kibana']['base_dir']}/core_plugins/kibana/translations/en.json
         EOH
 end
 
