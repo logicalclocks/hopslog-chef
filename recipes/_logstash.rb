@@ -14,14 +14,24 @@ template"#{node['logstash']['base_dir']}/config/spark-streaming.conf" do
   })
 end
 
-template"#{node['logstash']['base_dir']}/config/serving.conf" do
-  source "serving.conf.erb"
+template"#{node['logstash']['base_dir']}/config/tf_serving.conf" do
+  source "tf_serving.conf.erb"
   owner node['hopslog']['user']
   group node['hopslog']['group']
   mode 0655
   variables({ 
      :elastic_addr => elastic
   })
+end
+
+template"#{node['logstash']['base_dir']}/config/sklearn_serving.conf" do
+  source "sklearn_serving.conf.erb"
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
+  mode 0655
+  variables({
+                :elastic_addr => elastic
+            })
 end
 
 template"#{node['logstash']['base_dir']}/config/kagent.conf" do

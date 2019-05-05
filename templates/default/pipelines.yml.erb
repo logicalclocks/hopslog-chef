@@ -1,6 +1,8 @@
 - pipeline.id: spark  
   path.config: "<%= node['logstash']['base_dir'] %>/config/spark-streaming.conf"
-- pipeline.id: serving 
-  path.config: "<%= node['logstash']['base_dir'] %>/config/serving.conf"
+- pipeline.id: tf_serving
+  path.config: "<%= node['logstash']['base_dir'] %>/config/tf_serving.conf"
+- pipeline.id: sklearn_serving
+  path.config: "<%= node['logstash']['base_dir'] %>/config/sklearn_serving.conf"
 - pipeline.id: kagent
   path.config: "<%= node['logstash']['base_dir'] %>/config/kagent.conf"
