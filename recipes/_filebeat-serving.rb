@@ -1,6 +1,8 @@
-my_private_ip = my_private_ip()
+#
+# Common configuration between all serving types
+#
 
-logstash_endpoint = private_recipe_ip("hopslog", "default") + ":#{node['logstash']['beats']['serving_port']}"
+my_private_ip = my_private_ip()
 
 file "#{node['filebeat']['base_dir']}/filebeat.xml" do
   action :delete
@@ -14,62 +16,71 @@ if node.attribute?("hopsworks")
 end
 
 
-tfserving_user = node['install']['user'].empty? ? "tfserving" : node['install']['user'] 
-tfserving_group = node['install']['user'].empty? ? "tfserving" : node['install']['user'] 
-if node.attribute?("tfserving") 
-  if node['tfserving'].attribute?("user")
-    tfserving_user = node['tfserving']['user']
+serving_user = node['install']['user'].empty? ? "serving" : node['install']['user']
+serving_group = node['install']['user'].empty? ? "serving" : node['install']['user']
+
+
+if node.attribute?("serving")
+  if node['serving'].attribute?("user")
+    serving_user = node['serving']['user']
   end
-  if node['tfserving'].attribute?("group")
-    tfserving_group = node['tfserving']['group']
+  if node['serving'].attribute?("group")
+    serving_group = node['serving']['group']
   end
 end
 
 group node['hopslog']['group'] do
   action :modify
-  members [tfserving_user]
+  members [serving_user]
   append true
 end
 
-template"#{node['filebeat']['base_dir']}/filebeat-serving.yml" do
+#
+# TF Serving Configuration
+#
+
+logstash_tf_endpoint = private_recipe_ip("hopslog", "default") + ":#{node['logstash']['beats']['serving_tf_port']}"
+
+template"#{node['filebeat']['base_dir']}/filebeat-tf-serving.yml" do
   source "filebeat.yml.erb"
-  user tfserving_user
-  group tfserving_group 
+  user serving_user
+  group serving_group
   mode 0655
   variables({ 
     :paths => log_glob, 
     :multiline => false,
     :my_private_ip => my_private_ip,
-    :logstash_endpoint => logstash_endpoint,
-    :log_name => "serving"
+    :logstash_endpoint => logstash_tf_endpoint,
+    :log_name => "tf_serving"
   })
 end
 
-template "#{node['filebeat']['base_dir']}/bin/start-filebeat-serving.sh" do
+template "#{node['filebeat']['base_dir']}/bin/start-filebeat-tf-serving.sh" do
   source "start-filebeat.sh.erb"
-  owner tfserving_user
-  group tfserving_group 
+  owner serving_user
+  group serving_group
   mode 0750
   variables({ 
-    :pid => "#{node['filebeat']['pid_dir']}/filebeat-serving.pid",
-    :config_file => "filebeat-serving.yml"
+    :pid => "#{node['filebeat']['pid_dir']}/filebeat-tf-serving.pid",
+    :config_file => "filebeat-tf-serving.yml"
   })
 end
 
-template"#{node['filebeat']['base_dir']}/bin/stop-filebeat-serving.sh" do
+
+template"#{node['filebeat']['base_dir']}/bin/stop-filebeat-tf-serving.sh" do
   source "stop-filebeat.sh.erb"
-  owner tfserving_user
-  group tfserving_group 
+  owner serving_user
+  group serving_group
   mode 0750
   variables({ 
-    :pid => "#{node['filebeat']['pid_dir']}/filebeat-serving.pid",
-    :user => tfserving_user
+    :pid => "#{node['filebeat']['pid_dir']}/filebeat-tf-serving.pid",
+    :user => serving_user
   })
 end
 
-service_name="filebeat-serving"
+tf_serving_service_name="filebeat-tf-serving"
 
-service service_name do
+service tf_serving_service_name do
   provider Chef::Provider::Service::Systemd
   supports :restart => true, :stop => true, :start => true, :status => true
   action :nothing
@@ -77,35 +88,35 @@ end
 
 case node['platform_family']
 when "rhel"
-  systemd_script = "/usr/lib/systemd/system/#{service_name}.service" 
+  systemd_tf_script = "/usr/lib/systemd/system/#{tf_serving_service_name}.service"
 when "debian"
-  systemd_script = "/lib/systemd/system/#{service_name}.service"
+  systemd_tf_script = "/lib/systemd/system/#{tf_serving_service_name}.service"
 end
 
-template systemd_script do
+template systemd_tf_script do
   source "filebeat.service.erb"
   owner "root"
   group "root"
   mode 0754
   variables({ 
-     :user => tfserving_user, 
-     :pid => "#{node['filebeat']['pid_dir']}/filebeat-serving.pid",
-     :exec_start => "#{node['filebeat']['base_dir']}/bin/start-filebeat-serving.sh",
-     :exec_stop => "#{node['filebeat']['base_dir']}/bin/stop-filebeat-serving.sh",
+     :user => serving_user,
+     :pid => "#{node['filebeat']['pid_dir']}/filebeat-tf-serving.pid",
+     :exec_start => "#{node['filebeat']['base_dir']}/bin/start-filebeat-tf-serving.sh",
+     :exec_stop => "#{node['filebeat']['base_dir']}/bin/stop-filebeat-tf-serving.sh",
   })
   if node['services']['enabled'] == "true"
-    notifies :enable, resources(:service => service_name)
+    notifies :enable, resources(:service => tf_serving_service_name)
   end
-  notifies :restart, resources(:service => service_name)
+  notifies :restart, resources(:service => tf_serving_service_name)
 end
 
-kagent_config service_name do
+kagent_config tf_serving_service_name do
   action :systemd_reload
 end  
 
 
 if node['kagent']['enabled'] == "true" 
-   kagent_config service_name do
+   kagent_config tf_serving_service_name do
      service "ELK"
      log_file "#{node['filebeat']['base_dir']}/log/filebeat.log"
    end
@@ -113,7 +124,100 @@ end
 
 
 if node['install']['upgrade'] == "true"
-  kagent_config "#{service_name}" do
+  kagent_config "#{tf_serving_service_name}" do
     action :systemd_reload
   end
-end  
+end
+
+#
+# SkLearn Serving Configuration
+#
+
+logstash_sklearn_endpoint = private_recipe_ip("hopslog", "default") + ":#{node['logstash']['beats']['serving_sklearn_port']}"
+
+template"#{node['filebeat']['base_dir']}/filebeat-sklearn-serving.yml" do
+  source "filebeat.yml.erb"
+  user serving_user
+  group serving_group
+  mode 0655
+  variables({
+                :paths => log_glob,
+                :multiline => false,
+                :my_private_ip => my_private_ip,
+                :logstash_endpoint => logstash_sklearn_endpoint,
+                :log_name => "sklearn_serving"
+            })
+end
+
+template "#{node['filebeat']['base_dir']}/bin/start-filebeat-sklearn-serving.sh" do
+  source "start-filebeat.sh.erb"
+  owner serving_user
+  group serving_group
+  mode 0750
+  variables({
+                :pid => "#{node['filebeat']['pid_dir']}/filebeat-sklearn-serving.pid",
+                :config_file => "filebeat-sklearn-serving.yml"
+            })
+end
+
+template"#{node['filebeat']['base_dir']}/bin/stop-filebeat-sklearn-serving.sh" do
+  source "stop-filebeat.sh.erb"
+  owner serving_user
+  group serving_group
+  mode 0750
+  variables({
+                :pid => "#{node['filebeat']['pid_dir']}/filebeat-sklearn-serving.pid",
+                :user => serving_user
+            })
+end
+
+sklearn_serving_service_name="filebeat-sklearn-serving"
+
+service sklearn_serving_service_name do
+  provider Chef::Provider::Service::Systemd
+  supports :restart => true, :stop => true, :start => true, :status => true
+  action :nothing
+end
+
+case node['platform_family']
+when "rhel"
+  systemd_sklearn_script = "/usr/lib/systemd/system/#{sklearn_serving_service_name}.service"
+when "debian"
+  systemd_sklearn_script = "/lib/systemd/system/#{sklearn_serving_service_name}.service"
+end
+
+template systemd_sklearn_script do
+  source "filebeat.service.erb"
+  owner "root"
+  group "root"
+  mode 0754
+  variables({
+                :user => serving_user,
+                :pid => "#{node['filebeat']['pid_dir']}/filebeat-sklearn-serving.pid",
+                :exec_start => "#{node['filebeat']['base_dir']}/bin/start-filebeat-sklearn-serving.sh",
+                :exec_stop => "#{node['filebeat']['base_dir']}/bin/stop-filebeat-sklearn-serving.sh",
+            })
+  if node['services']['enabled'] == "true"
+    notifies :enable, resources(:service => sklearn_serving_service_name)
+  end
+  notifies :restart, resources(:service => sklearn_serving_service_name)
+end
+
+kagent_config sklearn_serving_service_name do
+  action :systemd_reload
+end
+
+
+if node['kagent']['enabled'] == "true"
+  kagent_config sklearn_serving_service_name do
+    service "ELK"
+    log_file "#{node['filebeat']['base_dir']}/log/filebeat.log"
+  end
+end
+
+
+if node['install']['upgrade'] == "true"
+  kagent_config "#{sklearn_serving_service_name}" do
+    action :systemd_reload
+  end
+end
