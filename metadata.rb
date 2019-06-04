@@ -88,10 +88,10 @@ attribute "install/user",
           :description => "User to install the services as",
           :type => "string"
 
-attribute "hopslog/private_ips",
+attribute "hopslog/default/private_ips",
           :description => "Set ip addresses",
           :type => "array"
 
-attribute "hopslog/public_ips",
+attribute "hopslog/default/public_ips",
           :description => "Set ip addresses",
           :type => "array"

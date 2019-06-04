@@ -7,12 +7,16 @@ dependencies:
     global:  
       - elastic::default
       - hops::dn
+      - kagent::default      
   - recipe: hopslog::_filebeat-spark
     global:
       - hopslog::default
+      - kagent::default            
   - recipe: hopslog::_filebeat-serving
     global:
       - hopslog::default
+      - kagent::default            
   - recipe: hopslog::_filebeat-kagent
     global:
       - hopslog::default
+      - kagent::default            

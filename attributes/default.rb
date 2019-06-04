@@ -51,5 +51,5 @@ default['filebeat']['spark_read_logs']          = node['hops']['base_dir'] + "/l
 
 default['filebeat']['skip']                     = "true"
 
-default['hopslog']['private_ips']         = ['10.0.2.15']
-default['hopslog']['public_ips']          = ['10.0.2.15']
+default['hopslog']['default']['private_ips']         = ['10.0.2.15']
+default['hopslog']['default']['public_ips']          = ['10.0.2.15']
