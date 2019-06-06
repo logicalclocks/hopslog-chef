@@ -65,6 +65,11 @@ template"#{node['logstash']['base_dir']}/bin/stop-logstash.sh" do
   mode 0750
 end
 
+
+deps = ""
+if exists_local("elastic", "default") 
+  deps = "elasticsearch.service"
+end  
 service_name="logstash"
 
 service service_name do
@@ -85,6 +90,9 @@ template systemd_script do
   owner "root"
   group "root"
   mode 0754
+  variables({
+            :deps => deps
+           })
 if node['services']['enabled'] == "true"
   notifies :enable, resources(:service => service_name)
 end
