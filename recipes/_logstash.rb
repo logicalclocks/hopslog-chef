@@ -14,6 +14,28 @@ template"#{node['logstash']['base_dir']}/config/spark-streaming.conf" do
   })
 end
 
+template"#{node['logstash']['base_dir']}/config/beamjobserver.conf" do
+  source "beamjobserver.conf.erb"
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
+  mode 0655
+  variables({
+     :my_private_ip => my_private_ip,
+     :elastic_addr => elastic
+  })
+end
+
+template"#{node['logstash']['base_dir']}/config/beamsdkworker.conf" do
+  source "beamsdkworker.conf.erb"
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
+  mode 0655
+  variables({
+     :my_private_ip => my_private_ip,
+     :elastic_addr => elastic
+  })
+end
+
 template"#{node['logstash']['base_dir']}/config/tf_serving.conf" do
   source "tf_serving.conf.erb"
   owner node['hopslog']['user']

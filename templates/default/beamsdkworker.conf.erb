@@ -1,0 +1,40 @@
+input {
+  beats {
+    port => <%= node['logstash']['beats']['beamsdkworker_port'] %>
+  }
+}
+
+filter {
+
+  grok {
+    match => {"message" => "%{GREEDYDATA:log_message}"}
+  }
+
+  #Ignore failed parse enties. Grok filter has been tested with http://grokconstructor.appspot.com
+  if "_grokparsefailure" in [tags] {
+    drop { }
+  }
+
+  mutate {
+     copy => { "source" => "file" }
+  }
+
+  grok {
+     match => { "source" => ".+beamsdkworker-(?<project>[^-]*)-(?<container>[^_]*)_(?<cid>[^_]*)_(?<appid>[^-]*)_(?<appidid>[^-]*)_(?<appattempt>[^-]*).log" }
+  }
+
+  mutate {
+     copy => { "[beat][hostname]" => "host" }
+  }
+
+  mutate {
+    remove_field => [ "message" , "offset", "prospector", "beat", "source", "tags", "appidid", "appattempt", "cid", "container"]
+  }
+}
+
+output {
+  elasticsearch {
+    hosts => ["<%= @elastic_addr %>"]
+    index => "%{project}_beamsdkworker-%{+YYYY.MM.dd}"
+  }
+}

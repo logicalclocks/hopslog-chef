@@ -1,0 +1,46 @@
+input {
+  beats {
+    port => <%= node['logstash']['beats']['beamjobserverlocal_port'] %>
+  }
+}
+
+input {
+  beats {
+    port => <%= node['logstash']['beats']['beamjobservercluster_port'] %>
+  }
+}
+
+filter {
+
+  grok {
+    match => {"message" => "\[%{DATA:thread}\] %{LOGLEVEL:priority} %{DATA:logger_name} - %{GREEDYDATA:log_message}"}
+  }
+
+  #Ignore failed parse enties. Grok filter has been tested with http://grokconstructor.appspot.com
+  if "_grokparsefailure" in [tags] {
+    drop { }
+  }
+
+  mutate {
+     copy => { "source" => "file" }
+  }
+
+  grok {
+     match => { "source" => ".+beamjobserver-(?<project>[^-]*)-(?<jobname>[^-]*)-(?<jobport>[^-]*).log" }
+  }
+
+  mutate {
+     copy => { "[beat][hostname]" => "host" }
+  }
+
+  mutate {
+    remove_field => [ "message" , "offset", "prospector", "beat", "source", "tags"]
+  }
+}
+
+output {
+  elasticsearch {
+    hosts => ["<%= @elastic_addr %>"]
+    index => "%{project}_beamjobserver-%{+YYYY.MM.dd}"
+  }
+}
