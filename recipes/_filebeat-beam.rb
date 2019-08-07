@@ -9,13 +9,14 @@ file "#{node['filebeat']['base_dir']}/filebeat.xml" do
 end
 
 node["filebeat"]["beam_logs"].each do |beam_log|
+  next if beam_log.include? "beamjobserverlocal" and !node['hopsworks']['default']['private_ips'].include?(private_ip)
   logstash_endpoint = logstash_beamjobservercluster
   beamlogs_owner = node['hops']['yarn']['user']
   beamlogs_group = node['hops']['yarn']['group']
   log_glob = node['filebeat']["#{beam_log}_logs"]
   if beam_log.include? "sdkworker"
     logstash_endpoint = logstash_beamsdkworker
-  elsif beam_log.include? "beamjobserverlocal" and node['hopsworks']['private_ips'].include? private_ip
+  elsif beam_log.include? "beamjobserverlocal"
     log_glob = node['filebeat']['beamjobserverlocal_logs']
     if node.attribute?("hopsworks") && node['hopsworks'].attribute?("staging_dir")
       log_glob = "#{node['hopsworks']['staging_dir']}/private_dirs/*/beamjobserver-*.log"
@@ -38,8 +39,6 @@ node["filebeat"]["beam_logs"].each do |beam_log|
       log_glob = "#{node['hopsworks']['staging_dir']}/private_dirs/*/#{beam_log}-*.log"
     end
   end
-
-  if beam_log.exclude? 'beamjobserverlocal' or node['hopsworks']['private_ips'].include? private_ip
 
     template "#{node['filebeat']['base_dir']}/filebeat-#{beam_log}.yml" do
       source "filebeat.yml.erb"
@@ -137,6 +136,5 @@ node["filebeat"]["beam_logs"].each do |beam_log|
         action :systemd_reload
       end
     end
-  end
 
 end #for loop
