@@ -1,6 +1,7 @@
 group node['hopslog']['group'] do
   action :create
   not_if "getent group #{node['hopslog']['group']}"
+  not_if { node['install']['external_users'].casecmp("true") == 0 }
 end
 
 
@@ -10,17 +11,20 @@ user node['hopslog']['user'] do
   system true
   shell "/bin/bash"
   not_if "getent passwd #{node['hopslog']['user']}"
+  not_if { node['install']['external_users'].casecmp("true") == 0 }
 end
 
 group node['hopslog']['group'] do
   action :modify
   members ["#{node['hopslog']['user']}"]
   append true
+  not_if { node['install']['external_users'].casecmp("true") == 0 }
 end
 
 group node['hops']['group'] do
   action :create
   not_if "getent group #{node['hops']['group']}"
+  not_if { node['install']['external_users'].casecmp("true") == 0 }
 end
 
 
@@ -32,12 +36,14 @@ user node['hops']['yarn']['user'] do
   manage_home true
   action :create
   not_if "getent passwd #{node['hops']['yarn']['user']}"
+  not_if { node['install']['external_users'].casecmp("true") == 0 }
 end
 
 group node['hopslog']['group'] do
   action :modify
   members ["#{node['hops']['yarn']['user']}"]
   append true
+  not_if { node['install']['external_users'].casecmp("true") == 0 }
 end
 
 

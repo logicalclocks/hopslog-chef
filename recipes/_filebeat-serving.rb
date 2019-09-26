@@ -33,6 +33,7 @@ group node['hopslog']['group'] do
   action :modify
   members [serving_user]
   append true
+  not_if { node['install']['external_users'].casecmp("true") == 0 }
 end
 
 #
