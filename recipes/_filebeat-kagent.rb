@@ -6,6 +6,7 @@ group node['hopslog']['group'] do
   action :modify
   members [node['kagent']['user']]
   append true
+  not_if { node['install']['external_users'].casecmp("true") == 0 }
 end
 
 commands_log = "#{node['kagent']['dir']}/logs/**/conda_commands.log"
