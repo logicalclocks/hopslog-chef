@@ -119,7 +119,7 @@ end
 if node['kagent']['enabled'] == "true" 
    kagent_config tf_serving_service_name do
      service "ELK"
-     log_file "#{node['filebeat']['base_dir']}/log/filebeat.log"
+     log_file "#{node['filebeat']['base_dir']}/log/tf_serving.log"
    end
 end
 
@@ -212,7 +212,7 @@ end
 if node['kagent']['enabled'] == "true"
   kagent_config sklearn_serving_service_name do
     service "ELK"
-    log_file "#{node['filebeat']['base_dir']}/log/filebeat.log"
+    log_file "#{node['filebeat']['base_dir']}/log/sklearn_serving.log"
   end
 end
 

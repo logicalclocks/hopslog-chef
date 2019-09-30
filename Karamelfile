@@ -10,6 +10,9 @@ dependencies:
   - recipe: hopslog::_filebeat-spark
     global:
       - hopslog::default
+  - recipe: hopslog::_filebeat-beam
+    global:
+      - hopslog::default
   - recipe: hopslog::_filebeat-serving
     global:
       - hopslog::default
