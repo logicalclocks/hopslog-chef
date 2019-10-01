@@ -34,6 +34,7 @@ node["filebeat"]["beam_logs"].each do |beam_log|
       action :modify
       members [beamlogs_owner]
       append true
+      not_if { node['install']['external_users'].casecmp("true") == 0 }
     end
     if node.attribute?("hopsworks") && node['hopsworks'].attribute?("staging_dir")
       log_glob = "#{node['hopsworks']['staging_dir']}/private_dirs/*/#{beam_log}-*.log"
