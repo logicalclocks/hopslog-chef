@@ -1,22 +1,25 @@
 my_private_ip = my_private_ip()
 
-
-elastic = private_recipe_ip("elastic", "default") + ":#{node['elastic']['port']}"
-kibana = private_recipe_ip("hopslog", "default") + ":#{node['kibana']['port']}"
-
-numRetries=10
-retryDelay=20
-
+elastic_url = any_elastic_url()
+elastic_addrs = all_elastic_urls_str()
+kibana_url = get_kibana_url()
 default_pattern = node['elastic']['default_kibana_index']
 
+group node['kagent']['certs_group'] do
+  action :modify
+  members ["#{node["elastic"]["user"]}"]
+  append true
+  not_if { node['install']['external_users'].casecmp("true") == 0 }
+end
+
 # delete .kibana index created from previous hopsworks versions if it exists
-http_request 'delete old hopsworks .kibana index directly from elasticsearch' do
+elastic_http 'delete old hopsworks .kibana index directly from elasticsearch' do
   action :delete
-  url "http://#{elastic}/.kibana"
-  retries numRetries
-  retry_delay retryDelay
-  not_if "test \"$(curl -s -o /dev/null -w '%{http_code}\n' http://#{elastic}/.kibana)\" = \"404\""
-  only_if { node['install']['version'].start_with?("0.6") }
+  url "#{elastic_url}/.kibana"
+  user node['elastic']['opendistro_security']['admin']['username']
+  password node['elastic']['opendistro_security']['admin']['password']
+  only_if_cond node['install']['version'].start_with?("0.6")
+  only_if_exists true
 end
 
 file "#{node['kibana']['base_dir']}/config/kibana.xml" do
@@ -31,7 +34,7 @@ template"#{node['kibana']['base_dir']}/config/kibana.yml" do
   mode 0655
   variables({ 
      :my_private_ip => my_private_ip,
-     :elastic_addr => elastic
+     :elastic_addr => elastic_addrs
            })
 end
 
@@ -102,26 +105,22 @@ if conda_helpers.is_upgrade
   end
 end  
 
-http_request 'create index pattern in kibana' do
-  action :post
-  url "http://#{kibana}/api/saved_objects/index-pattern/#{default_pattern}?overwrite=true"
+elastic_http 'create index pattern in kibana' do
+  action :post 
+  url "#{kibana_url}/api/saved_objects/index-pattern/#{default_pattern}?overwrite=true"
+  user node['elastic']['opendistro_security']['kibana']['username']
+  password node['elastic']['opendistro_security']['kibana']['password']
   message "{\"attributes\":{\"title\":\"#{default_pattern}\"}}"
-  headers({'kbn-xsrf' => 'required',
-    'Content-Type' => 'application/json'
-  })
-  retries numRetries
-  retry_delay retryDelay
+  headers({'kbn-xsrf' => 'required'})
 end
 
-http_request 'set default index in kibana' do
-  action :post
-  url "http://#{kibana}/api/kibana/settings/defaultIndex"
+elastic_http 'set default index in kibana' do
+  action :post_curl
+  url "#{kibana_url}/api/kibana/settings/defaultIndex"
+  user node['elastic']['opendistro_security']['kibana']['username']
+  password node['elastic']['opendistro_security']['kibana']['password']
   message "{\"value\":\"#{default_pattern}\"}"
-  headers({'kbn-xsrf' => 'required',
-    'Content-Type' => 'application/json'
-  })
-  retries numRetries
-  retry_delay retryDelay
+  headers({'kbn-xsrf' => 'required'})
 end
 
 template"#{node['kibana']['base_dir']}/config/hops_upgrade_060.sh" do
@@ -130,8 +129,8 @@ template"#{node['kibana']['base_dir']}/config/hops_upgrade_060.sh" do
   group node['hopslog']['group']
   mode 0655
   variables({
-     :kibana_addr => kibana,
-     :elastic_addr => elastic
+     :kibana_addr => kibana_url,
+     :elastic_addr => elastic_url
            })
 end
 
