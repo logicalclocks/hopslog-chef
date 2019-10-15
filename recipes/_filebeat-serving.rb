@@ -124,7 +124,7 @@ if node['kagent']['enabled'] == "true"
 end
 
 
-if node['install']['upgrade'] == "true"
+if conda_helpers.is_upgrade
   kagent_config "#{tf_serving_service_name}" do
     action :systemd_reload
   end
@@ -217,7 +217,7 @@ if node['kagent']['enabled'] == "true"
 end
 
 
-if node['install']['upgrade'] == "true"
+if conda_helpers.is_upgrade
   kagent_config "#{sklearn_serving_service_name}" do
     action :systemd_reload
   end
