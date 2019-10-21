@@ -1,7 +1,6 @@
 my_private_ip = my_private_ip()
 
-
-elastic = private_recipe_ip("elastic", "default") + ":#{node['elastic']['port']}"
+elastic = node['elastic']['default']['private_ips'].map{|e| "\"#{e}:#{node['elastic']['port']}\""}.join(",")
 
 template"#{node['logstash']['base_dir']}/config/spark-streaming.conf" do
   source "spark-streaming.conf.erb"

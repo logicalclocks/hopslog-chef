@@ -22,7 +22,7 @@ filter {
 
 output {
   elasticsearch {
-    hosts => ["<%= @elastic_addr %>"]
+    hosts => [<%= @elastic_addr %>]
     index => "%{project_name}_kagent-%{+YYYY.MM.dd}"
   }
 }

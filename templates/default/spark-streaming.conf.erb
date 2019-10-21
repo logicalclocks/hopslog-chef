@@ -61,7 +61,7 @@ filter {
 
 output {
   elasticsearch {
-    hosts => ["<%= @elastic_addr %>"]
+    hosts => [<%= @elastic_addr %>]
     index => "%{project}_logs-%{+YYYY.MM.dd}"
   }
 }
