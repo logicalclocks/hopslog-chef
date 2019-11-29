@@ -1,6 +1,6 @@
 [Unit]
 Description = filebeat server
-After = syslog.target network.target remote-fs.target
+After = syslog.target network.target remote-fs.target <%= @deps %>
 
 [Service]
 User = <%= @user %>
