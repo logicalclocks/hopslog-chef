@@ -92,6 +92,11 @@ node["filebeat"]["beam_logs"].each do |beam_log|
       systemd_script = "/lib/systemd/system/#{service_name}.service"
     end
 
+    deps = ""
+    if exists_local("hopslog", "default") 
+      deps = "logstash.service"
+    end  
+
     template systemd_script do
       source "filebeat.service.erb"
       owner "root"
@@ -102,6 +107,7 @@ node["filebeat"]["beam_logs"].each do |beam_log|
                     :pid => "#{node['filebeat']['pid_dir']}/filebeat-#{beam_log}.pid",
                     :exec_start => "#{node['filebeat']['base_dir']}/bin/start-filebeat-#{beam_log}.sh",
                     :exec_stop => "#{node['filebeat']['base_dir']}/bin/stop-filebeat-#{beam_log}.sh",
+                    :deps => deps,
                 })
       if node['services']['enabled'] == "true"
         notifies :enable, resources(:service => service_name)

@@ -57,6 +57,11 @@ when "debian"
   systemd_script = "/lib/systemd/system/#{service_name}.service"
 end
 
+deps = ""
+if exists_local("hopslog", "default") 
+  deps = "logstash.service"
+end  
+
 template systemd_script do
   source "filebeat.service.erb"
   owner "root"
@@ -67,6 +72,7 @@ template systemd_script do
      :pid => "#{node['filebeat']['pid_dir']}/filebeat-spark.pid",
      :exec_start => "#{node['filebeat']['base_dir']}/bin/start-filebeat-spark.sh",
      :exec_stop => "#{node['filebeat']['base_dir']}/bin/stop-filebeat-spark.sh",
+     :deps => deps,
   })
   if node['services']['enabled'] == "true"
     notifies :enable, resources(:service => service_name)

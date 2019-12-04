@@ -94,6 +94,11 @@ when "debian"
   systemd_tf_script = "/lib/systemd/system/#{tf_serving_service_name}.service"
 end
 
+deps = ""
+if exists_local("hopslog", "default") 
+  deps = "logstash.service"
+end
+
 template systemd_tf_script do
   source "filebeat.service.erb"
   owner "root"
@@ -104,6 +109,7 @@ template systemd_tf_script do
      :pid => "#{node['filebeat']['pid_dir']}/filebeat-tf-serving.pid",
      :exec_start => "#{node['filebeat']['base_dir']}/bin/start-filebeat-tf-serving.sh",
      :exec_stop => "#{node['filebeat']['base_dir']}/bin/stop-filebeat-tf-serving.sh",
+     :deps => deps,
   })
   if node['services']['enabled'] == "true"
     notifies :enable, resources(:service => tf_serving_service_name)
