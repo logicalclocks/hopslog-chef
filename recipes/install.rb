@@ -147,6 +147,12 @@ link node['kibana']['base_dir'] do
   to node['kibana']['home']
 end
 
+bash "install_opendistro_security_plugin" do
+  user node['hopslog']['user']
+  code <<-EOF
+  #{node['kibana']['base_dir']}/bin/kibana-plugin install #{node['kibana']['opendistro_security']['url']}
+  EOF
+end
 
 directory "#{node['kibana']['base_dir']}/log" do
   owner node['hopslog']['user']

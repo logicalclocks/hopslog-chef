@@ -10,8 +10,8 @@ default['hopslog']['dir']                       = node['install']['dir'].empty? 
 #
 # Logstash
 #
-default['logstash']['version']                               = "6.2.3"
-default['logstash']['url']                                   = "#{node['download_url']}/logstash-#{node['logstash']['version']}.tar.gz"
+default['logstash']['version']                               = "7.2.0"
+default['logstash']['url']                                   = "#{node['download_url']}/logstash-oss-#{node['logstash']['version']}.tar.gz"
 default['logstash']['beats']['spark_port']                   = "5044"
 default['logstash']['beats']['serving_tf_port']              = "5045"
 default['logstash']['beats']['kagent_port']                  = "5046"
@@ -29,8 +29,8 @@ default['logstash']['pid_file']                 = "/tmp/logstash.pid"
 #
 # Kibana
 #
-default['kibana']['version']                    = "6.2.3"
-default['kibana']['url']                        = "#{node['download_url']}/kibana-#{node['kibana']['version']}-linux-x86_64.tar.gz"
+default['kibana']['version']                    = "7.2.0"
+default['kibana']['url']                        = "#{node['download_url']}/kibana-oss-#{node['kibana']['version']}-linux-x86_64.tar.gz"
 default['kibana']['port']                       = "5601"
 
 default['kibana']['systemd']                    = "true"
@@ -42,8 +42,8 @@ default['kibana']['pid_file']                   = "/tmp/kibana.pid"
 #
 # Filebeat
 
-default['filebeat']['version']                  = "6.2.3"
-default['filebeat']['url']                      = "#{node['download_url']}/filebeat-#{node['filebeat']['version']}-linux-x86_64.tar.gz"
+default['filebeat']['version']                  = "7.2.0"
+default['filebeat']['url']                      = "#{node['download_url']}/filebeat-oss-#{node['filebeat']['version']}-linux-x86_64.tar.gz"
 default['filebeat']['home']                     = node['hopslog']['dir'] + "/filebeat-" + "#{node['filebeat']['version']}-linux-x86_64"
 default['filebeat']['base_dir']                 = node['hopslog']['dir'] + "/filebeat"
 default['filebeat']['systemd']                  = "true"
@@ -59,3 +59,16 @@ default['filebeat']['skip']                      = "true"
 
 default['hopslog']['private_ips']         = ['10.0.2.15']
 default['hopslog']['public_ips']          = ['10.0.2.15']
+
+# Kibana Opendistro Security plugin
+default['kibana']['opendistro_security']['url']                                   = "#{node['download_url']}/opendistro_security_kibana_plugin-#{node['elastic']['opendistro']['version']}.zip"
+default['kibana']['opendistro_security']['https']['enabled']                      = "true"
+default['kibana']['opendistro_security']['ssl']['certificate']                    = node["kagent"]["certs"]["elastic_host_certificate"]
+default['kibana']['opendistro_security']['ssl']['key']                            = node["kagent"]["certs"]["host_key"]
+default['kibana']['opendistro_security']['multitenancy']['global']['enabled']     = "false"
+default['kibana']['opendistro_security']['multitenancy']['private']['enabled']    = "true"
+default['kibana']['opendistro_security']['cookie']['ttl']                         = node['elastic']['opendistro_security']['jwt']['exp_ms'].to_i
+# the session ttl time is set to be twice the time the cookie ttl time, in order to solve the session expiry issue in kibana_addr
+# https://github.com/opendistro-for-elasticsearch/security-kibana-plugin/issues/31
+default['kibana']['opendistro_security']['session']['ttl']                        = 2 * node['elastic']['opendistro_security']['jwt']['exp_ms'].to_i
+default['kibana']['opendistro_security']['session']['keepalive']                  = "true"

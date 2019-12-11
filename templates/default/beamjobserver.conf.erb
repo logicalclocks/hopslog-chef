@@ -30,11 +30,17 @@ filter {
   }
 
   mutate {
-     copy => { "[beat][hostname]" => "host" }
+    remove_field => [ "[host]" ]
   }
 
   mutate {
-    remove_field => [ "message" , "offset", "prospector", "beat", "source", "tags"]
+    add_field => {
+     "host" => "%{[agent][hostname]}"
+    }
+  }
+
+  mutate {
+    remove_field => [ "message" , "offset", "prospector", "agent", "source", "tags", "log", "input", "ecs"]
   }
 }
 
@@ -42,5 +48,14 @@ output {
   elasticsearch {
     hosts => [<%= @elastic_addr %>]
     index => "%{project}_beamjobserver-%{+YYYY.MM.dd}"
+    <% if node['elastic']['opendistro_security']['enabled'] %>
+    user => "<%=node['elastic']['opendistro_security']['logstash']['username']%>"
+    password => "<%=node['elastic']['opendistro_security']['logstash']['password']%>"
+    <% if node['elastic']['opendistro_security']['https']['enabled'] %>
+    cacert => "<%=node['elastic']['opendistro_security']['ca']%>"
+    ssl => true
+    ilm_enabled => false
+    <% end %>
+    <% end %>
   }
 }
