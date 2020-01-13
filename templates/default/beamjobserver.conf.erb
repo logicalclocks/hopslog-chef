@@ -22,11 +22,11 @@ filter {
   }
 
   mutate {
-     copy => { "source" => "file" }
+     copy => { "[log][file][path]" => "file" }
   }
 
   grok {
-     match => { "source" => ".+beamjobserver-(?<project>[^-]*)-(?<jobname>[^-]*)-(?<jobport>[^-]*).log" }
+     match => { "[log][file][path]" => ".+beamjobserver-(?<project>[^-]*)-(?<jobname>[^-]*)-(?<jobport>[^-]*).log" }
   }
 
   mutate {

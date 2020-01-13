@@ -46,9 +46,14 @@ node["filebeat"]["beam_logs"].each do |beam_log|
       owner beamlogs_owner
       group beamlogs_group
       mode 0655
+      multiline_pattern = '\'^\[\''
+      if beam_log.include? "beamsdkworker"
+        multiline_pattern = '\'[0-9]{4}\/[0-9]{2}\/[0-9]{2}\''
+      end
       variables({
                     :paths => log_glob,
-                    :multiline => false,
+                    :multiline => true,
+                    :multiline_pattern => multiline_pattern,
                     :my_private_ip => private_ip,
                     :logstash_endpoint => logstash_endpoint,
                     :log_name => "#{beam_log}"

@@ -16,11 +16,11 @@ filter {
   }
 
   mutate {
-     copy => { "source" => "file" }
+     copy => { "[log][file][path]" => "file" }
   }
 
   grok {
-     match => { "source" => ".+beamsdkworker-(?<project>[^-]*)-(?<container>[^_]*)_(?<cid>[^_]*)_(?<appid>[^-]*)_(?<appidid>[^-]*)_(?<appattempt>[^-]*).log" }
+     match => { "[log][file][path]" => ".+beamsdkworker-(?<project>[^-]*)-(?<container>[^_]*)_(?<cid>[^_]*)_(?<appid>[^-]*)_(?<appidid>[^-]*)_(?<appattempt>[^-]*).log" }
   }
 
   mutate {

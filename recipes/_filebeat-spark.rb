@@ -14,6 +14,7 @@ template"#{node['filebeat']['base_dir']}/filebeat-spark.yml" do
   variables({ 
     :paths => node['filebeat']['spark_read_logs'],
     :multiline => true,
+    :multiline_pattern => '\'[0-9]{4}-[0-9]{2}-[0-9]{2}\'',
     :my_private_ip => my_private_ip,
     :logstash_endpoint => logstash_endpoint,
     :log_name => "spark"
