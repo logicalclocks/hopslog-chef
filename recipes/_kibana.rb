@@ -3,7 +3,6 @@ my_private_ip = my_private_ip()
 elastic_url = any_elastic_url()
 elastic_addrs = all_elastic_urls_str()
 kibana_url = get_kibana_url()
-default_pattern = node['elastic']['default_kibana_index']
 
 group node['kagent']['certs_group'] do
   action :modify
@@ -104,24 +103,6 @@ if conda_helpers.is_upgrade
     action :systemd_reload
   end
 end  
-
-elastic_http 'create index pattern in kibana' do
-  action :post 
-  url "#{kibana_url}/api/saved_objects/index-pattern/#{default_pattern}?overwrite=true"
-  user node['elastic']['opendistro_security']['kibana']['username']
-  password node['elastic']['opendistro_security']['kibana']['password']
-  message "{\"attributes\":{\"title\":\"#{default_pattern}\"}}"
-  headers({'kbn-xsrf' => 'required'})
-end
-
-elastic_http 'set default index in kibana' do
-  action :post_curl
-  url "#{kibana_url}/api/kibana/settings/defaultIndex"
-  user node['elastic']['opendistro_security']['kibana']['username']
-  password node['elastic']['opendistro_security']['kibana']['password']
-  message "{\"value\":\"#{default_pattern}\"}"
-  headers({'kbn-xsrf' => 'required'})
-end
 
 template"#{node['kibana']['base_dir']}/config/hops_upgrade_060.sh" do
   source "hops_upgrade_060.sh.erb"
