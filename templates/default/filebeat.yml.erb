@@ -6,7 +6,7 @@ filebeat.inputs:
    - <%= @paths %>
   <% if @multiline %>
   multiline:
-    pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
+    pattern: <%= @multiline_pattern %>
     negate: true
     match: after
   <% end -%>
