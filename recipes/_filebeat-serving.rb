@@ -8,10 +8,12 @@ file "#{node['filebeat']['base_dir']}/filebeat.xml" do
   action :delete
 end
 
-log_glob = "#{node['hopslog']['dir']}/staging/serving/**/*.log"
+tf_log_glob = "#{node['hopslog']['dir']}/staging/serving/**/*.log"
+sk_log_glob = "#{node['hopslog']['dir']}/staging/serving/**/*-application.log"
 if node.attribute?("hopsworks")
   if node['hopsworks'].attribute?("staging_dir")
-    log_glob = "#{node['hopsworks']['staging_dir']}/serving/**/*.log"
+    tf_log_glob = "#{node['hopsworks']['staging_dir']}/serving/**/*.log"
+    sk_log_glob = "#{node['hopsworks']['staging_dir']}/serving/**/*-application.log"
   end
 end
 
@@ -48,7 +50,7 @@ template"#{node['filebeat']['base_dir']}/filebeat-tf-serving.yml" do
   group serving_group
   mode 0655
   variables({ 
-    :paths => log_glob, 
+    :paths => tf_log_glob, 
     :multiline => false,
     :my_private_ip => my_private_ip,
     :logstash_endpoint => logstash_tf_endpoint,
@@ -148,7 +150,7 @@ template"#{node['filebeat']['base_dir']}/filebeat-sklearn-serving.yml" do
   group serving_group
   mode 0655
   variables({
-                :paths => log_glob,
+                :paths => sk_log_glob,
                 :multiline => false,
                 :my_private_ip => my_private_ip,
                 :logstash_endpoint => logstash_sklearn_endpoint,
