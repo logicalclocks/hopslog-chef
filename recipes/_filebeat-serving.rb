@@ -10,11 +10,9 @@ end
 
 tf_log_glob = "#{node['hopslog']['dir']}/staging/serving/**/*.log"
 sk_log_glob = "#{node['hopslog']['dir']}/staging/serving/**/*-application.log"
-if node.attribute?("hopsworks")
-  if node['hopsworks'].attribute?("staging_dir")
+if node.attribute?("hopsworks") && node['hopsworks'].attribute?("staging_dir")
     tf_log_glob = "#{node['hopsworks']['staging_dir']}/serving/**/*.log"
     sk_log_glob = "#{node['hopsworks']['staging_dir']}/serving/**/*-application.log"
-  end
 end
 
 
