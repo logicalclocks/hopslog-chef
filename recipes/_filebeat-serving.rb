@@ -16,18 +16,9 @@ if node.attribute?("hopsworks") && node['hopsworks'].attribute?("staging_dir")
 end
 
 
-serving_user = node['install']['user'].empty? ? "serving" : node['install']['user']
-serving_group = node['install']['user'].empty? ? "serving" : node['install']['user']
+serving_user = node['hops']['yarnapp']['user']
+serving_group = node['hops']['group']
 
-
-if node.attribute?("serving")
-  if node['serving'].attribute?("user")
-    serving_user = node['serving']['user']
-  end
-  if node['serving'].attribute?("group")
-    serving_group = node['serving']['group']
-  end
-end
 
 group node['hopslog']['group'] do
   action :modify
