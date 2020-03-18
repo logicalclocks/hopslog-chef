@@ -20,6 +20,7 @@ template "#{node['filebeat']['base_dir']}/filebeat-kagent.yml" do
   variables({
               :paths => commands_log,
               :multiline => true,
+              :multiline_pattern => '\'[0-9]{4}-[0-9]{2}-[0-9]{2}\'',
               :logstash_endpoint => logstash_endpoint,
               :log_name => "kagent"
   })
