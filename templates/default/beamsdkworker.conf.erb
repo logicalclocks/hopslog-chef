@@ -46,7 +46,7 @@ output {
     user => "<%=node['elastic']['opendistro_security']['logstash']['username']%>"
     password => "<%=node['elastic']['opendistro_security']['logstash']['password']%>"
     <% if node['elastic']['opendistro_security']['https']['enabled'] %>
-    cacert => "<%=node['elastic']['opendistro_security']['ca']%>"
+    cacert => "<%= @hops_ca %>"
     ssl => true
     ilm_enabled => false
     <% end %>

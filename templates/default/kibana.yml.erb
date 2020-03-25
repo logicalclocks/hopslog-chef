@@ -58,8 +58,8 @@ elasticsearch.password: "<%= node['elastic']['opendistro_security']['kibana']['p
 # Enables SSL and paths to the PEM-format SSL certificate and SSL key files, respectively.
 # These settings enable SSL for outgoing requests from the Kibana server to the browser.
 server.ssl.enabled: <%= node['kibana']['opendistro_security']['https']['enabled'] %>
-server.ssl.certificate: <%= node['kibana']['opendistro_security']['ssl']['certificate'] %>
-server.ssl.key: <%= node['kibana']['opendistro_security']['ssl']['key'] %>
+server.ssl.certificate: <%= @certificate %>
+server.ssl.key: <%= @private_key %>
 
 # Optional settings that provide the paths to the PEM-format SSL certificate and key files.
 # These files validate that your Elasticsearch backend uses the same key files.
@@ -69,7 +69,7 @@ server.ssl.key: <%= node['kibana']['opendistro_security']['ssl']['key'] %>
 # Optional setting that enables you to specify a path to the PEM file for the certificate
 # authority for your Elasticsearch instance.
 <% if node['elastic']['opendistro_security']['enabled'] && node['elastic']['opendistro_security']['https']['enabled'] %>
-elasticsearch.ssl.certificateAuthorities: [ "<%=node['elastic']['opendistro_security']['ca']%>"]
+elasticsearch.ssl.certificateAuthorities: [ "<%= @hops_ca %>"]
 
 # To disregard the validity of SSL certificates, change this setting's value to 'none'.
 elasticsearch.ssl.verificationMode: full

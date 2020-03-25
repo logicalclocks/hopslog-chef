@@ -1,15 +1,24 @@
 my_private_ip = my_private_ip()
 
-elastic_url = any_elastic_url()
-elastic_addrs = all_elastic_urls_str()
-kibana_url = get_kibana_url()
-
-group node['kagent']['certs_group'] do
+# User certs must belong to hopslog group to be able to rotate x509 material
+group node['hopslog']['group'] do
   action :modify
-  members ["#{node["elastic"]["user"]}"]
+  members node['kagent']['certs_user']
   append true
   not_if { node['install']['external_users'].casecmp("true") == 0 }
 end
+
+crypto_dir = x509_helper.get_crypto_dir(node['hopslog']['user'])
+kagent_hopsify "Generate x.509" do
+  user node['hopslog']['user']
+  crypto_directory crypto_dir
+  action :generate_x509
+  not_if { conda_helpers.is_upgrade || node["kagent"]["test"] == true }
+end
+
+elastic_url = any_elastic_url()
+elastic_addrs = all_elastic_urls_str()
+kibana_url = get_kibana_url()
 
 # delete .kibana index created from previous hopsworks versions if it exists
 elastic_http 'delete old hopsworks .kibana index directly from elasticsearch' do
@@ -25,7 +34,9 @@ file "#{node['kibana']['base_dir']}/config/kibana.xml" do
   action :delete
 end
 
-
+private_key = "#{crypto_dir}/#{x509_helper.get_private_key_pkcs8_name(node['hopslog']['user'])}"
+certificate = "#{crypto_dir}/#{x509_helper.get_certificate_bundle_name(node['hopslog']['user'])}"
+hops_ca = "#{crypto_dir}/#{x509_helper.get_hops_ca_bundle_name()}"
 template"#{node['kibana']['base_dir']}/config/kibana.yml" do
   source "kibana.yml.erb"
   owner node['hopslog']['user']
@@ -33,8 +44,11 @@ template"#{node['kibana']['base_dir']}/config/kibana.yml" do
   mode 0655
   variables({ 
      :my_private_ip => my_private_ip,
-     :elastic_addr => elastic_addrs
-           })
+     :elastic_addr => elastic_addrs,
+     :private_key => private_key,
+     :certificate => certificate,
+     :hops_ca => hops_ca
+  })
 end
 
 

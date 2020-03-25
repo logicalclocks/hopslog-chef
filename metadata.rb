@@ -32,6 +32,10 @@ attribute "hopslog/group",
           :description => "Group to run Kibana server as",
           :type => "string"
 
+attribute "hopslog/user-home",
+          :description => "Home directory of hopslog user",
+          :type => "string"
+
 attribute "logstash/url",
           :description => "Url to hopslog binaries",
           :type => "string"
