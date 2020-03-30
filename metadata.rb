@@ -11,10 +11,8 @@ source_url       "https://github.com/hopshadoop/hopslog-chef"
   supports os
 end
 
-depends 'java'
-depends 'kagent'
-depends 'elastic'
-depends 'hops'
+depends 'java', '~> 7.0.0'
+depends 'elasticsearch', '~> 4.0.0'
 
 recipe "hopslog::install", "Installs Logstash and Kibana Server"
 recipe "hopslog::default", "configures Logstash and Kibana Server"
