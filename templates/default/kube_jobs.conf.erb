@@ -1,0 +1,43 @@
+input {
+  beats {
+    port => <%= node['logstash']['beats']['python_jobs_port'] %>
+  }
+}
+
+filter {
+  mutate {
+    add_field => [ "project", "%{[fields][project]}" ]
+  }
+  mutate {
+    add_field => [ "jobname", "%{[fields][job]}" ]
+  }
+  mutate {
+    add_field => [ "application", "%{[fields][execution]}" ]
+  }
+  mutate {
+    add_field => [ "file", "%{[source]}" ]
+  }
+  mutate {
+    add_field => [ "log_message", "%{[message]}" ]
+  }
+  mutate {
+    remove_field => ["fields", "source", "message", "prospector", "beat", "tags"]
+  }
+}
+
+output {
+  elasticsearch {
+    hosts => [<%= @elastic_addr %>]
+    index => "%{project}_logs-%{+YYYY.MM.dd}"
+  <% if node['elastic']['opendistro_security']['enabled'] %>
+    user => "<%=node['elastic']['opendistro_security']['logstash']['username']%>"
+    password => "<%=node['elastic']['opendistro_security']['logstash']['password']%>"
+  <% if node['elastic']['opendistro_security']['https']['enabled'] %>
+    cacert => "<%=node['elastic']['opendistro_security']['ca']%>"
+    ssl => true
+    ilm_enabled => false
+  <% end %>
+  <% end %>
+  }
+}
+

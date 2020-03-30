@@ -10,3 +10,5 @@
   path.config: "<%= node['logstash']['base_dir'] %>/config/beamjobserver.conf"
 - pipeline.id: beamsdkworker
   path.config: "<%= node['logstash']['base_dir'] %>/config/beamsdkworker.conf"
+- pipeline.id: kube_jobs
+  path.config: "<%= node['logstash']['base_dir'] %>/config/kube_jobs.conf"
