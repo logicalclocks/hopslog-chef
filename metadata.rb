@@ -13,6 +13,11 @@ end
 
 depends 'java', '~> 7.0.0'
 depends 'elasticsearch', '~> 4.0.0'
+depends 'kagent'
+depends 'elastic'
+depends 'kkafka'
+depends 'conda'
+depends 'hops'
 
 recipe "hopslog::install", "Installs Logstash and Kibana Server"
 recipe "hopslog::default", "configures Logstash and Kibana Server"
