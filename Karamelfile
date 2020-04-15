@@ -7,6 +7,8 @@ dependencies:
     global:  
       - elastic::default
       - hops::dn
+      - consul::master
+      - consul::slave
   - recipe: hopslog::_filebeat-spark
     global:
       - hopslog::default
