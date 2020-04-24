@@ -19,6 +19,7 @@ default['logstash']['beats']['serving_sklearn_port']         = "5047"
 default['logstash']['beats']['beamjobserverlocal_port']      = "5048"
 default['logstash']['beats']['beamjobservercluster_port']    = "5049"
 default['logstash']['beats']['beamsdkworker_port']           = "5050"
+default['logstash']['beats']['python_jobs_port']             = "5051"
 
 default['logstash']['systemd']                  = "true"
 default['logstash']['home']                     = node['hopslog']['dir'] + "/logstash-" + "#{node['logstash']['version']}"

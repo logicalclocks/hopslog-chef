@@ -55,6 +55,16 @@ template"#{node['logstash']['base_dir']}/config/sklearn_serving.conf" do
             })
 end
 
+template"#{node['logstash']['base_dir']}/config/kube_jobs.conf" do
+  source "kube_jobs.conf.erb"
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
+  mode 0655
+  variables({
+                :elastic_addr => elastic_addrs
+            })
+end
+
 template"#{node['logstash']['base_dir']}/config/kagent.conf" do
   source "kagent.conf.erb"
   owner node['hopslog']['user']
