@@ -10,5 +10,5 @@ if [ -f $PID_FILE ] ; then
  fi
 fi
 
-nohup <%= node['logstash']['base_dir'] %>/bin/logstash -l <%= node['logstash']['base_dir'] %>/log/logstash.log 2>&1 > /dev/null &
+nohup <%= node['logstash']['base_dir'] %>/bin/logstash -l <%= node['logstash']['base_dir'] %>/log --http.host <%= @my_private_ip %> --http.port <%= node['logstash']['http']['port'] %> 2>&1 > /dev/null &
 echo $! > $PID_FILE

@@ -20,13 +20,14 @@ default['logstash']['beats']['beamjobserverlocal_port']      = "5048"
 default['logstash']['beats']['beamjobservercluster_port']    = "5049"
 default['logstash']['beats']['beamsdkworker_port']           = "5050"
 default['logstash']['beats']['python_jobs_port']             = "5051"
+default['logstash']['http']['port']                          = "9600"
 
 default['logstash']['systemd']                  = "true"
 default['logstash']['home']                     = node['hopslog']['dir'] + "/logstash-" + "#{node['logstash']['version']}"
 default['logstash']['base_dir']                 = node['hopslog']['dir'] + "/logstash"
 default['logstash']['pid_file']                 = "/tmp/logstash.pid"
-
-
+default['logstash']['bin_dir']                  = node['logstash']['base_dir'] + "/bin"
+default['logstash']['consul_dir']               = node['logstash']['bin_dir'] + "/consul"
 #
 # Kibana
 #

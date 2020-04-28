@@ -87,6 +87,9 @@ template"#{node['logstash']['base_dir']}/bin/start-logstash.sh" do
   owner node['hopslog']['user']
   group node['hopslog']['group']
   mode 0750
+  variables({ 
+     :my_private_ip => my_private_ip
+  })
 end
 
 template"#{node['logstash']['base_dir']}/bin/stop-logstash.sh" do
@@ -146,4 +149,34 @@ if conda_helpers.is_upgrade
   kagent_config "#{service_name}" do
     action :systemd_reload
   end
-end  
+end
+
+group node['hopslog']['group'] do
+    action :modify
+    members ["#{node['consul']['user']}"]
+    append true
+    not_if { node['install']['external_users'].casecmp("true") == 0 }
+end
+
+directory node['logstash']['consul_dir'] do
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
+  mode "0755"
+  action :create
+end
+
+template "#{node['logstash']['consul_dir']}/logstash-health.sh" do
+  source "consul/logstash-health.sh.erb"
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
+  mode 0755
+  variables({
+    :my_private_ip => my_private_ip
+  })
+end
+
+consul_service "Registering Logstash with Consul" do
+  service_definition "consul/logstash-consul.hcl.erb"
+  action :register
+  restart_consul true
+end

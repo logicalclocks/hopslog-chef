@@ -1,6 +1,7 @@
 my_private_ip = my_private_ip()
 
-logstash_endpoint = private_recipe_ip("hopslog", "default") + ":#{node['logstash']['beats']['spark_port']}"
+logstash_fqdn = consul_helper.get_service_fqdn("logstash")
+logstash_endpoint = logstash_fqdn + ":#{node['logstash']['beats']['spark_port']}"
 
 file "#{node['filebeat']['base_dir']}/filebeat.xml" do
   action :delete

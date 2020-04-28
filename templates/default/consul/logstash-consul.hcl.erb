@@ -1,0 +1,114 @@
+services = [
+    {
+        id = "logstash/http"
+        name = "logstash"
+        tags = [
+            "http"
+        ]
+        port = <%= node['logstash']['http']['port'] %>
+        check = {
+            id = "logstash-health-check"
+            name = "Health check for Logstash"
+            args = ["<%= node['logstash']['consul_dir'] %>/logstash-health.sh"]
+            interval = "20s"
+            timeout = "20s"
+            status = "passing"
+        }
+    },
+    {
+        id = "logstash/spark"
+        name = "logstash"
+        tags = [
+            "spark"
+        ]
+        port = <%= node['logstash']['beats']['spark_port']  %>
+        check = {
+            id = "logstash-beats-spark-check"
+            alias_service = "logstash/http"
+        }
+    },
+    {
+        id = "logstash/beamjobserverlocal"
+        name = "logstash"
+        tags = [
+            "beamjobserverlocal"
+        ]
+        port = <%= node['logstash']['beats']['beamjobserverlocal_port'] %>
+        check = {
+            id = "logstash-beats-beamlocal-check"
+            alias_service = "logstash/http"
+        }
+    },
+    {
+        id = "logstash/beamjobservercluster"
+        name = "logstash"
+        tags = [
+            "beamjobservercluster"
+        ]
+        port = <%= node['logstash']['beats']['beamjobservercluster_port'] %>
+        check = {
+            id = "logstash-beats-beamcluster-check"
+            alias_service = "logstash/http"
+        }
+    },
+    {
+        id = "logstash/beamsdkworker"
+        name = "logstash"
+        tags = [
+            "beamsdkworker"
+        ]
+        port = <%= node['logstash']['beats']['beamsdkworker_port']  %>
+        check = {
+            id = "logstash-beats-beamsdkworker-check"
+            alias_service = "logstash/http"
+        }
+    },
+    {
+        id = "logstash/tfserving"
+        name = "logstash"
+        tags = [
+            "tfserving"
+        ]
+        port = <%= node['logstash']['beats']['serving_tf_port']  %>
+        check = {
+            id = "logstash-beats-tfserving-check"
+            alias_service = "logstash/http"
+        }
+    },
+    {
+        id = "logstash/sklearnserving"
+        name = "logstash"
+        tags = [
+            "sklearnserving"
+        ]
+        port = <%= node['logstash']['beats']['serving_sklearn_port']  %>
+        check = {
+            id = "logstash-beats-sklearnserving-check"
+            alias_service = "logstash/http"
+        }
+    },
+    {
+        id = "logstash/kagent"
+        name = "logstash"
+        tags = [
+            "kagent"
+        ]
+        port = <%= node['logstash']['beats']['kagent_port']  %>
+        check = {
+            id = "logstash-beats-kagent-check"
+            alias_service = "logstash/http"
+        }
+    },
+    {
+        id = "logstash/pythonjobs"
+        name = "logstash"
+        tags = [
+            "pythonjobs"
+        ]
+        port = <%= node['logstash']['beats']['python_jobs_port']  %>
+        check = {
+            id = "logstash-beats-pythonjobs-check"
+            alias_service = "logstash/http"
+        }
+    }
+]

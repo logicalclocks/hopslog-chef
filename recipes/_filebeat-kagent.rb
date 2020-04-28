@@ -10,7 +10,8 @@ group node['hopslog']['group'] do
 end
 
 commands_log = "#{node['kagent']['dir']}/logs/**/conda_commands.log"
-logstash_endpoint = private_recipe_ip("hopslog", "default") + ":#{node['logstash']['beats']['kagent_port']}"
+logstash_fqdn = consul_helper.get_service_fqdn("logstash")
+logstash_endpoint = logstash_fqdn + ":#{node['logstash']['beats']['kagent_port']}"
 
 template "#{node['filebeat']['base_dir']}/filebeat-kagent.yml" do
   source "filebeat.yml.erb"
