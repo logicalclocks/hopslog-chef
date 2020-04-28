@@ -98,5 +98,17 @@ services = [
             id = "logstash-beats-pythonjobs-check"
             alias_service = "logstash/http"
         }
+    },
+    {
+        id = "logstash/jupyter"
+        name = "logstash"
+        tags = [
+            "jupyter"
+        ]
+        port = <%= node['logstash']['beats']['jupyter_port'] %>
+        check = {
+            id = "logstash-beats-jupyter-check"
+            alias_service = "logstash/http"
+        }
     }
 ]
