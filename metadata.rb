@@ -59,10 +59,6 @@ attribute "logstash/beats/serving_tf_port",
           :description => "Filebeat port for serving tf logs",
           :type => "string"
 
-attribute "logstash/beats/kagent_port",
-          :description => "Filebeat port for kagent logs",
-          :type => "string"
-
 attribute "logstash/beats/serving_sklearn_port",
           :description => "Filebeat port for serving sklearn logs",
           :type => "string"

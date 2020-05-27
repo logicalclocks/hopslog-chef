@@ -18,6 +18,3 @@ dependencies:
   - recipe: hopslog::_filebeat-serving
     global:
       - hopslog::default
-  - recipe: hopslog::_filebeat-kagent
-    global:
-      - hopslog::default

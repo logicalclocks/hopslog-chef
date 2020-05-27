@@ -88,18 +88,6 @@ services = [
         }
     },
     {
-        id = "logstash/kagent"
-        name = "logstash"
-        tags = [
-            "kagent"
-        ]
-        port = <%= node['logstash']['beats']['kagent_port']  %>
-        check = {
-            id = "logstash-beats-kagent-check"
-            alias_service = "logstash/http"
-        }
-    },
-    {
         id = "logstash/pythonjobs"
         name = "logstash"
         tags = [
