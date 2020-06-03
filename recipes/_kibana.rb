@@ -133,3 +133,9 @@ bash 'add_kibana_indices_for_old_projects' do
         EOH
         only_if { node['install']['version'].start_with?("0.6") }
 end
+
+# Register Kibana with Consul
+consul_service "Registering Kibana with Consul" do
+  service_definition "mysql-exporter-consul.hcl.erb"
+  action :register
+end

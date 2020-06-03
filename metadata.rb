@@ -18,6 +18,7 @@ depends 'elastic'
 depends 'kkafka'
 depends 'conda'
 depends 'hops'
+depends 'consul'
 
 recipe "hopslog::install", "Installs Logstash and Kibana Server"
 recipe "hopslog::default", "configures Logstash and Kibana Server"
