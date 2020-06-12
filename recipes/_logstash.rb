@@ -1,5 +1,3 @@
-my_private_ip = my_private_ip()
-
 elastic_addrs = all_elastic_urls_str()
 
 template"#{node['logstash']['base_dir']}/config/spark-streaming.conf" do
@@ -8,7 +6,6 @@ template"#{node['logstash']['base_dir']}/config/spark-streaming.conf" do
   group node['hopslog']['group']
   mode 0655
   variables({
-     :my_private_ip => my_private_ip,
      :elastic_addr => elastic_addrs
   })
 end
@@ -19,7 +16,6 @@ template"#{node['logstash']['base_dir']}/config/beamjobserver.conf" do
   group node['hopslog']['group']
   mode 0655
   variables({
-     :my_private_ip => my_private_ip,
      :elastic_addr => elastic_addrs
   })
 end
@@ -30,7 +26,6 @@ template"#{node['logstash']['base_dir']}/config/beamsdkworker.conf" do
   group node['hopslog']['group']
   mode 0655
   variables({
-     :my_private_ip => my_private_ip,
      :elastic_addr => elastic_addrs
   })
 end
@@ -157,9 +152,6 @@ template "#{node['logstash']['consul_dir']}/logstash-health.sh" do
   owner node['hopslog']['user']
   group node['hopslog']['group']
   mode 0755
-  variables({
-    :my_private_ip => my_private_ip
-  })
 end
 
 consul_service "Registering Logstash with Consul" do
