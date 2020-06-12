@@ -136,6 +136,6 @@ end
 
 # Register Kibana with Consul
 consul_service "Registering Kibana with Consul" do
-  service_definition "mysql-exporter-consul.hcl.erb"
+  service_definition "kibana-consul.hcl.erb"
   action :register
 end
