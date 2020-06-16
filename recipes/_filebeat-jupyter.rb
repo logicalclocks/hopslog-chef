@@ -20,9 +20,9 @@ group node['elastic']['user'] do
   not_if { node['install']['external_users'].casecmp("true") == 0 }
 end
 
-log_glob = "#{node['install']['dir']}/jupyter/*/*/*/*/logs/jupyter__*.log"
+log_glob = "#{node['install']['dir']}/jupyter/*/*/*/*/logs/*.log"
 if node.attribute?("jupyter") && node['jupyter'].attribute?("base_dir")
-  log_glob = "#{node['jupyter']['base_dir']}/*/*/*/*/logs/jupyter__*.log"
+  log_glob = "#{node['jupyter']['base_dir']}/*/*/*/*/logs/*.log"
 end
 logstash_endpoint = private_recipe_ip("hopslog", "default") + ":#{node['logstash']['beats']['jupyter_port']}"
 
