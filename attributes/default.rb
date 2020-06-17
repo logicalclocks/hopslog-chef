@@ -19,6 +19,7 @@ default['logstash']['beats']['beamjobserverlocal_port']      = "5048"
 default['logstash']['beats']['beamjobservercluster_port']    = "5049"
 default['logstash']['beats']['beamsdkworker_port']           = "5050"
 default['logstash']['beats']['python_jobs_port']             = "5051"
+default['logstash']['beats']['jupyter_port']                 = "5052"
 default['logstash']['http']['port']                          = "9600"
 
 default['logstash']['systemd']                  = "true"
