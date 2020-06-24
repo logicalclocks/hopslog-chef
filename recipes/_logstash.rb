@@ -74,7 +74,8 @@ template"#{node['logstash']['base_dir']}/config/jupyter.conf" do
   group node['hopslog']['group']
   mode 0655
   variables({
-                :elastic_addr => elastic_addrs
+                :elastic_addr => elastic_addrs,
+                :hops_ca => hops_ca
             })
 end
 
