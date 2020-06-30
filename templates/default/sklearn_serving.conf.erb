@@ -6,11 +6,32 @@ input {
 
 filter {
   mutate {
-  add_field => [ "project", "" ]
+    add_field => [ "project", "" ]
   }
   mutate {
-  add_field => [ "modelname", "" ]
+    add_field => [ "modelname", "" ]
   }
+
+
+  # For EE
+  if [fields][model] {
+  #mutate {
+  #  add_field => [ "log_message", "message" ]
+  #}
+
+  grok {
+    match => {"message" => "%{GREEDYDATA:log_message}"}
+  }
+
+
+  mutate {
+    replace => [ "project", "%{[fields][project]}"]
+  }
+  mutate {
+    replace => [ "modelname", "%{[fields][model]}"]
+  }
+
+} else {
 
   grok {
     match => {"message" => "%{DATA:servingInfo} %{GREEDYDATA:log_message}"}
@@ -19,11 +40,19 @@ filter {
   #Ignore failed parse enties. Grok filter has been tested with http://grokconstructor.appspot.com
   if "_grokparsefailure" in [tags] {
     drop { }
+    }
+    mutate {
+      split => ["servingInfo", ","]
+    }
+
+    mutate {
+      replace => [ "project", "%{[servingInfo][0]}"]
+    }
+    mutate {
+      replace => [ "modelname", "%{[servingInfo][1]}"]
+    }
   }
 
-  mutate {
-    split => ["servingInfo", ","]
-  }
 
   date {
     match  => [ "templogdate", ISO8601 ]
@@ -41,14 +70,7 @@ filter {
   }
 
   mutate {
-    replace => [ "project", "%{[servingInfo][0]}"]
-  }
-  mutate {
-    replace => [ "modelname", "%{[servingInfo][1]}"]
-  }
-
-  mutate {
-    remove_field => [ "message", "source" , "templogdate", "prospector", "agent", "jobinfo", "log", "input", "ecs"]
+    remove_field => [ "message", "templogdate", "prospector", "agent", "jobinfo", "log", "input", "ecs"]
   }
 }
 
