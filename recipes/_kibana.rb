@@ -13,7 +13,7 @@ kagent_hopsify "Generate x.509" do
   user node['hopslog']['user']
   crypto_directory crypto_dir
   action :generate_x509
-  not_if { conda_helpers.is_upgrade || node["kagent"]["test"] == true }
+  not_if { conda_helpers.is_upgrade || node["kagent"]["enabled"] == "false" }
 end
 
 elastic_url = any_elastic_url()
