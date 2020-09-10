@@ -13,7 +13,7 @@ kagent_hopsify "Generate x.509" do
   user node['hopslog']['user']
   crypto_directory crypto_dir
   action :generate_x509
-  not_if { conda_helpers.is_upgrade || node["kagent"]["enabled"] == "false" }
+  not_if { node["kagent"]["enabled"] == "false" }
 end
 
 elastic_url = any_elastic_url()
@@ -42,7 +42,7 @@ template"#{node['kibana']['base_dir']}/config/kibana.yml" do
   owner node['hopslog']['user']
   group node['hopslog']['group']
   mode 0655
-  variables({ 
+  variables({
      :my_private_ip => my_private_ip,
      :elastic_addr => elastic_addrs,
      :private_key => private_key,
@@ -68,9 +68,9 @@ end
 
 
 deps = ""
-if exists_local("elastic", "default") 
+if exists_local("elastic", "default")
   deps = "elasticsearch.service"
-end  
+end
 service_name="kibana"
 
 service service_name do
@@ -81,7 +81,7 @@ end
 
 case node['platform_family']
 when "rhel"
-  systemd_script = "/usr/lib/systemd/system/#{service_name}.service" 
+  systemd_script = "/usr/lib/systemd/system/#{service_name}.service"
 when "debian"
   systemd_script = "/lib/systemd/system/#{service_name}.service"
 end
@@ -102,10 +102,10 @@ end
 
 kagent_config service_name do
   action :systemd_reload
-end  
+end
 
 
-if node['kagent']['enabled'] == "true" 
+if node['kagent']['enabled'] == "true"
    kagent_config service_name do
      service "ELK"
      log_file "#{node['kibana']['base_dir']}/log/kibana.log"
@@ -116,7 +116,7 @@ if conda_helpers.is_upgrade
   kagent_config "#{service_name}" do
     action :systemd_reload
   end
-end  
+end
 
 template"#{node['kibana']['base_dir']}/config/hops_upgrade_060.sh" do
   source "hops_upgrade_060.sh.erb"
@@ -130,7 +130,7 @@ template"#{node['kibana']['base_dir']}/config/hops_upgrade_060.sh" do
 end
 
 
-# Update old projects with new kibana saved objects etc. 
+# Update old projects with new kibana saved objects etc.
 # It makes the same kibana requests as the project controller in Hopsworks.
 exec = "#{node['ndb']['scripts_dir']}/mysql-client.sh"
 bash 'add_kibana_indices_for_old_projects' do
@@ -142,7 +142,7 @@ bash 'add_kibana_indices_for_old_projects' do
 	      #skip first line if it contains slash character. Used to skip "Using socket: /tmp/mysql.sock
 	      if [[ ${projectname} != *\/* ]]; then
   	        #{node['kibana']['base_dir']}/config/hops_upgrade_060.sh ${projectname}
-  	      fi   
+  	      fi
             done
         EOH
         only_if { node['install']['version'].start_with?("0.6") }
