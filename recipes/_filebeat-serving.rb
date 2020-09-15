@@ -16,8 +16,13 @@ if node.attribute?("hopsworks") && node['hopsworks'].attribute?("staging_dir")
 end
 
 
-serving_user = node['hops']['yarnapp']['user']
-serving_group = node['hops']['group']
+if node.attribute?("hopsworks") && node['hopsworks'].attribute?("user")
+  serving_user = node['hopsworks']['user']
+  serving_group = node['hopsworks']['user']
+else
+  serving_user = "glassfish"
+  serving_group = "glassfish"
+end
 
 
 group node['hopslog']['group'] do
@@ -133,13 +138,6 @@ end
 
 logstash_sklearn_endpoint = logstash_fqdn + ":#{node['logstash']['beats']['serving_sklearn_port']}"
 
-if node.attribute?("hopsworks") && node['hopsworks'].attribute?("user")
-  serving_user = node['hopsworks']['user']
-  serving_group = node['hopsworks']['user']
-else
-  serving_user = "glassfish"
-  serving_group = "glassfish"
-end
 
 template"#{node['filebeat']['base_dir']}/filebeat-sklearn-serving.yml" do
   source "filebeat.yml.erb"
