@@ -3,6 +3,8 @@
 #
 
 my_private_ip = my_private_ip()
+tf_serving_log_name = "tf_serving"
+sklearn_serving_log_name = "sklearn_serving"
 
 file "#{node['filebeat']['base_dir']}/filebeat.xml" do
   action :delete
@@ -12,7 +14,7 @@ tf_log_glob = "#{node['hopslog']['dir']}/staging/serving/**/*.log"
 sk_log_glob = "#{node['hopslog']['dir']}/staging/serving/**/*-application.log"
 if node.attribute?("hopsworks") && node['hopsworks'].attribute?("staging_dir")
     tf_log_glob = "#{node['hopsworks']['staging_dir']}/serving/**/*.log"
-    sk_log_glob = "#{node['hopsworks']['staging_dir']}/serving/**/*-application.log"
+    sk_log_glob = "#{node['hopsworks']['staging_dir']}/serving/**/*.log"
 end
 
 
@@ -48,7 +50,7 @@ template"#{node['filebeat']['base_dir']}/filebeat-tf-serving.yml" do
     :multiline => false,
     :my_private_ip => my_private_ip,
     :logstash_endpoint => logstash_tf_endpoint,
-    :log_name => "tf_serving"
+    :log_name => tf_serving_log_name
   })
 end
 
@@ -127,6 +129,8 @@ end
 
 
 if conda_helpers.is_upgrade
+  # Change ownership of logs and data
+  fix_serving_beat_ownership(tf_serving_log_name, serving_user, serving_group)
   kagent_config "#{tf_serving_service_name}" do
     action :systemd_reload
   end
@@ -149,7 +153,7 @@ template"#{node['filebeat']['base_dir']}/filebeat-sklearn-serving.yml" do
                 :multiline => false,
                 :my_private_ip => my_private_ip,
                 :logstash_endpoint => logstash_sklearn_endpoint,
-                :log_name => "sklearn_serving"
+                :log_name => sklearn_serving_log_name
             })
 end
 
@@ -221,6 +225,7 @@ end
 
 
 if conda_helpers.is_upgrade
+  fix_serving_beat_ownership(sklearn_serving_log_name, serving_user, serving_group)
   kagent_config "#{sklearn_serving_service_name}" do
     action :systemd_reload
   end
