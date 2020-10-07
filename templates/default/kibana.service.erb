@@ -2,7 +2,7 @@
 Description = kibana Server
 After = syslog.target network.target remote-fs.target <%= @deps %>
 StartLimitIntervalSec=30
-StartLimitBurst=20
+StartLimitBurst=15
 
 [Service]
 User = <%= node['hopslog']['user'] %>
