@@ -1,6 +1,8 @@
 [Unit]
 Description = filebeat server
 After = syslog.target network.target remote-fs.target <%= @deps %>
+StartLimitIntervalSec=60
+StartLimitBurst=15
 
 [Service]
 User = <%= @user %>
@@ -8,6 +10,8 @@ PIDFile = <%= @pid %>
 ExecStart = <%= @exec_start %>
 ExecStop = <%= @exec_stop %>
 LimitNOFILE = 20000
+Restart=on-failure
+RestartSec=2
 
 Type = forking
 
