@@ -73,6 +73,16 @@ remote_file cached_package_filename do
   action :create_if_missing
 end
 
+plugin_url = "#{node['kibana']['opendistro_security']['url']}"
+plugin_filename = File.basename(plugin_url)
+cached_plugin_filename = "#{Chef::Config['file_cache_path']}/#{plugin_filename}"
+remote_file cached_plugin_filename do
+  source plugin_url
+  owner "root"
+  mode "0644"
+  action :create_if_missing
+end
+
 directory node['hopslog']['dir'] do
   owner node['hopslog']['user']
   group node['hopslog']['group']
@@ -167,7 +177,7 @@ end
 bash "install_opendistro_security_plugin" do
   user node['hopslog']['user']
   code <<-EOF
-    #{node['kibana']['base_dir']}/bin/kibana-plugin install #{node['kibana']['opendistro_security']['url']}
+    #{node['kibana']['base_dir']}/bin/kibana-plugin install #{cached_plugin_filename}
   EOF
 end
 
