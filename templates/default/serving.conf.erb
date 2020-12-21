@@ -6,9 +6,9 @@ input {
 }
 
 # Ingest serving logs from source [fields][source]:
-# - "local" includes [fields][framework]
-# - "kube" from tool [kubernetes][labels][serving_hops_works/tool]:
-#          - "deployment" includes [kubernetes][labels]
+# - "local", includes [fields][model_server]
+# - "kube", from mode [kubernetes][labels][serving_hops_works/tool]:          
+#          - "default"    includes [kubernetes][labels]
 #          - "kfserving"  includes [kubernetes][labels]
 
 filter {
@@ -34,16 +34,16 @@ filter {
       gsub => [ "project_name", "[-]", "_" ]
     }
     mutate {
-      add_field => [ "serving_id", "%{[kubernetes][labels][serving_hops_works/serving-id]}" ]
+      add_field => [ "serving_id", "%{[kubernetes][labels][serving_hops_works/id]}" ]
     }
     mutate {
-      add_field => [ "serving_name", "%{[kubernetes][labels][serving_hops_works/serving-name]}" ]
+      add_field => [ "serving_name", "%{[kubernetes][labels][serving_hops_works/name]}" ]
     }
     mutate {
       add_field => [ "serving_tool", "%{[kubernetes][labels][serving_hops_works/tool]}" ]
     } 
     mutate {
-      add_field => [ "framework", "%{[kubernetes][labels][serving_hops_works/framework]}" ]
+      add_field => [ "model-server", "%{[kubernetes][labels][serving_hops_works/model-server]}" ]
     }
 
     # KFServing
@@ -52,11 +52,11 @@ filter {
         match => { "message" => "%{GREEDYDATA:log_message}" }
       }
 
-    # Kubernetes deployment (docker-images)
-    } else if [kubernetes][labels][serving_hops_works/tool] == "deployment" {
+    # Kubernetes elastic (docker-images)
+    } else if [kubernetes][labels][serving_hops_works/tool] == "default" {
 
       # Tensorflow serving
-      if [kubernetes][labels][serving_hops_works/framework] == "tensorflow" {
+      if [kubernetes][labels][serving_hops_works/model-server] == "tensorflow_serving" {
         grok {
           match => { "message" => "(?<templogdate>%{YEAR}-%{MONTHNUM2}-%{MONTHDAY} %{HOUR}:%{MINUTE}:%{SECOND}.%{NONNEGINT}): %{WORD:priority} %{DATA:logger_name}] %{GREEDYDATA:log_message}" }
         }
@@ -69,18 +69,18 @@ filter {
           target => "logdate"
         }
       
-      # Sklearn (flask server)
-      } else if [kubernetes][labels][serving_hops_works/framework] == "sklearn" {
+      # Flask (sklearn)
+      } else if [kubernetes][labels][serving_hops_works/model-server] == "flask" {
         grok {
           match => { "message" => "%{GREEDYDATA:log_message}" }
         }
 
-      # Drop unknown framework
+      # Drop unknown model server
       } else {
         drop {}
       } 
 
-    # Drop unknown serving tool
+    # Drop unknown serving mode
     } else {
       drop {}
     }
@@ -89,18 +89,18 @@ filter {
   } else if [fields][source] == "local" {
 
     # Message pattern: Tensorflow
-    if [fields][framework] == "tensorflow" {
+    if [fields][model_server] == "tensorflow_serving" {
       grok {
         match => { "message" => "%{DATA:serving_info} (?<templogdate>%{YEAR}-%{MONTHNUM2}-%{MONTHDAY} %{HOUR}:%{MINUTE}:%{SECOND}.%{NONNEGINT}): %{WORD:priority} %{DATA:logger_name}] %{GREEDYDATA:log_message}" }
       }
 
     # Message pattern: Scikit-learn
-    } else if [fields][framework] == "sklearn" {
+    } else if [fields][model_server] == "flask" {
       grok {
         match => { "message" => "%{DATA:serving_info} %{GREEDYDATA:log_message}" }
       }
 
-    # Drop unknown framework
+    # Drop unknown model server
     } else {
       drop { }
     }
