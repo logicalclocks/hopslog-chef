@@ -64,26 +64,14 @@ services = [
         }
     },
     {
-        id = "logstash/tfserving"
+        id = "logstash/serving"
         name = "logstash"
         tags = [
-            "tfserving"
+            "serving"
         ]
-        port = <%= node['logstash']['beats']['serving_tf_port']  %>
+        port = <%= node['logstash']['beats']['serving_port']  %>
         check = {
-            id = "logstash-beats-tfserving-check"
-            alias_service = "logstash/http"
-        }
-    },
-    {
-        id = "logstash/sklearnserving"
-        name = "logstash"
-        tags = [
-            "sklearnserving"
-        ]
-        port = <%= node['logstash']['beats']['serving_sklearn_port']  %>
-        check = {
-            id = "logstash-beats-sklearnserving-check"
+            id = "logstash-beats-serving-check"
             alias_service = "logstash/http"
         }
     },

@@ -55,6 +55,7 @@ node["filebeat"]["beam_logs"].each do |beam_log|
                     :paths => log_glob,
                     :multiline => true,
                     :multiline_pattern => multiline_pattern,
+                    :fields => false,
                     :my_private_ip => private_ip,
                     :logstash_endpoint => logstash_endpoint,
                     :log_name => "#{beam_log}"
