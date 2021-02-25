@@ -1,0 +1,163 @@
+
+input {
+  beats {
+    port => <%= node['logstash']['beats']['serving_port'] %>
+  }
+}
+
+# Ingest serving logs from source [fields][source]:
+# - "local" includes [fields][framework]
+# - "kube" from tool [kubernetes][labels][serving_hops_works/tool]:
+#          - "deployment" includes [kubernetes][labels]
+#          - "kfserving"  includes [kubernetes][labels]
+
+filter {
+  if [message] =~ /^\s*$/ {
+    drop { }
+  }
+
+  # (EE) Kubernetes serving logs
+  if [fields][source] == "kube" {
+    mutate {
+      add_field => [ "model_name", "%{[kubernetes][labels][serving_hops_works/model-name]}"]
+    }
+    mutate {
+      add_field => [ "model_version", "%{[kubernetes][labels][serving_hops_works/model-version]}" ]
+    }
+    mutate {
+      add_field => [ "project_id", "%{[kubernetes][labels][serving_hops_works/project-id]}" ]
+    }
+    mutate {
+      add_field => [ "project_name", "%{[kubernetes][namespace]}"]
+    }
+    mutate {
+      gsub => [ "project_name", "[-]", "_" ]
+    }
+    mutate {
+      add_field => [ "serving_id", "%{[kubernetes][labels][serving_hops_works/serving-id]}" ]
+    }
+    mutate {
+      add_field => [ "serving_name", "%{[kubernetes][labels][serving_hops_works/serving-name]}" ]
+    }
+    mutate {
+      add_field => [ "serving_tool", "%{[kubernetes][labels][serving_hops_works/tool]}" ]
+    } 
+    mutate {
+      add_field => [ "framework", "%{[kubernetes][labels][serving_hops_works/framework]}" ]
+    }
+
+    # KFServing
+    if [kubernetes][labels][serving_hops_works/tool] == "kfserving" {
+      grok {
+        match => { "message" => "%{GREEDYDATA:log_message}" }
+      }
+
+    # Kubernetes deployment (docker-images)
+    } else if [kubernetes][labels][serving_hops_works/tool] == "deployment" {
+
+      # Tensorflow serving
+      if [kubernetes][labels][serving_hops_works/framework] == "tensorflow" {
+        grok {
+          match => { "message" => "(?<templogdate>%{YEAR}-%{MONTHNUM2}-%{MONTHDAY} %{HOUR}:%{MINUTE}:%{SECOND}.%{NONNEGINT}): %{WORD:priority} %{DATA:logger_name}] %{GREEDYDATA:log_message}" }
+        }
+        # Ignore failed parse enties. Grok filter has been tested with http://grokconstructor.appspot.com
+        if "_grokparsefailure" in [tags] {
+          drop { }
+        }
+        date {
+          match  => [ "templogdate", ISO8601 ]
+          target => "logdate"
+        }
+      
+      # Sklearn (flask server)
+      } else if [kubernetes][labels][serving_hops_works/framework] == "sklearn" {
+        grok {
+          match => { "message" => "%{GREEDYDATA:log_message}" }
+        }
+
+      # Drop unknown framework
+      } else {
+        drop {}
+      } 
+
+    # Drop unknown serving tool
+    } else {
+      drop {}
+    }
+
+  # Local serving logs
+  } else if [fields][source] == "local" {
+
+    # Message pattern: Tensorflow
+    if [fields][framework] == "tensorflow" {
+      grok {
+        match => { "message" => "%{DATA:serving_info} (?<templogdate>%{YEAR}-%{MONTHNUM2}-%{MONTHDAY} %{HOUR}:%{MINUTE}:%{SECOND}.%{NONNEGINT}): %{WORD:priority} %{DATA:logger_name}] %{GREEDYDATA:log_message}" }
+      }
+
+    # Message pattern: Scikit-learn
+    } else if [fields][framework] == "sklearn" {
+      grok {
+        match => { "message" => "%{DATA:serving_info} %{GREEDYDATA:log_message}" }
+      }
+
+    # Drop unknown framework
+    } else {
+      drop { }
+    }
+
+    # Ignore failed parse enties. Grok filter has been tested with http://grokconstructor.appspot.com
+    if "_grokparsefailure" in [tags] {
+      drop { }
+    }
+    date {
+      match  => [ "templogdate", ISO8601 ]
+      target => "logdate"
+    }
+    mutate {
+      split => ["serving_info", ","]
+    }
+    mutate {
+      replace => [ "project_name", "%{[serving_info][0]}"]
+    }
+    mutate {
+      replace => [ "serving_name", "%{[serving_info][1]}"]
+    }
+    mutate {
+      replace => [ "model_name", "%{[serving_info][1]}"]
+    }
+
+  # Drop unknown source
+  } else {
+    drop {}
+  }
+
+  # Common actions
+  mutate {
+    remove_field => [ "[host]" ]
+  }
+  mutate {
+    add_field => [ "host", "%{[agent][hostname]}" ]
+  }
+  if ![log_message] or [log_message] =~ /^\s*$/ {
+    drop { }
+  }
+  mutate {
+    remove_field => [ "message", "service_info", "source", "fields", "kubernetes", "container", "input", "tags", "stream", "templogdate", "prospector", "agent", "jobinfo", "log", "input", "ecs"]
+  }
+}
+
+output {
+  elasticsearch {
+    hosts => [<%= @elastic_addr %>]
+    index => "%{project_name}_serving-%{+YYYY.MM.dd}"
+    <% if node['elastic']['opendistro_security']['enabled'] %>
+    user => "<%=node['elastic']['opendistro_security']['logstash']['username']%>"
+    password => "<%=node['elastic']['opendistro_security']['logstash']['password']%>"
+    <% if node['elastic']['opendistro_security']['https']['enabled'] %>
+    cacert => "<%= @hops_ca %>"
+    ssl => true
+    ilm_enabled => false
+    <% end %>
+    <% end %>
+  }
+}

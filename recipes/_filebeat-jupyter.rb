@@ -34,6 +34,7 @@ template "#{node['filebeat']['base_dir']}/filebeat-jupyter.yml" do
   variables({
               :paths => log_glob,
               :multiline => false,
+              :fields => false,
               :logstash_endpoint => logstash_endpoint,
               :log_name => "jupyter"
   })

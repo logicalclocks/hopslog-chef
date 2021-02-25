@@ -10,7 +10,11 @@ filebeat.inputs:
     negate: true
     match: after
   <% end -%>
-
+  <% if @fields %>
+  fields:
+    source: "local"
+    framework: <%= @framework %>
+  <% end -%>
 
 output:
   logstash:
