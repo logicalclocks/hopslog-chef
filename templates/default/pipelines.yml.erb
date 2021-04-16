@@ -2,10 +2,6 @@
   path.config: "<%= node['logstash']['base_dir'] %>/config/spark-streaming.conf"
 - pipeline.id: serving
   path.config: "<%= node['logstash']['base_dir'] %>/config/serving.conf"
-- pipeline.id: beamjobserver
-  path.config: "<%= node['logstash']['base_dir'] %>/config/beamjobserver.conf"
-- pipeline.id: beamsdkworker
-  path.config: "<%= node['logstash']['base_dir'] %>/config/beamsdkworker.conf"
 - pipeline.id: kube_jobs
   path.config: "<%= node['logstash']['base_dir'] %>/config/kube_jobs.conf"
 - pipeline.id: jupyter

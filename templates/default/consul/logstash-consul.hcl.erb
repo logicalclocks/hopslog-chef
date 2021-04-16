@@ -28,42 +28,6 @@ services = [
         }
     },
     {
-        id = "logstash/beamjobserverlocal"
-        name = "logstash"
-        tags = [
-            "beamjobserverlocal"
-        ]
-        port = <%= node['logstash']['beats']['beamjobserverlocal_port'] %>
-        check = {
-            id = "logstash-beats-beamlocal-check"
-            alias_service = "logstash/http"
-        }
-    },
-    {
-        id = "logstash/beamjobservercluster"
-        name = "logstash"
-        tags = [
-            "beamjobservercluster"
-        ]
-        port = <%= node['logstash']['beats']['beamjobservercluster_port'] %>
-        check = {
-            id = "logstash-beats-beamcluster-check"
-            alias_service = "logstash/http"
-        }
-    },
-    {
-        id = "logstash/beamsdkworker"
-        name = "logstash"
-        tags = [
-            "beamsdkworker"
-        ]
-        port = <%= node['logstash']['beats']['beamsdkworker_port']  %>
-        check = {
-            id = "logstash-beats-beamsdkworker-check"
-            alias_service = "logstash/http"
-        }
-    },
-    {
         id = "logstash/serving"
         name = "logstash"
         tags = [

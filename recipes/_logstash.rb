@@ -13,28 +13,6 @@ template"#{node['logstash']['base_dir']}/config/spark-streaming.conf" do
   })
 end
 
-template"#{node['logstash']['base_dir']}/config/beamjobserver.conf" do
-  source "beamjobserver.conf.erb"
-  owner node['hopslog']['user']
-  group node['hopslog']['group']
-  mode 0655
-  variables({
-     :elastic_addr => elastic_addrs,
-     :hops_ca => hops_ca
-  })
-end
-
-template"#{node['logstash']['base_dir']}/config/beamsdkworker.conf" do
-  source "beamsdkworker.conf.erb"
-  owner node['hopslog']['user']
-  group node['hopslog']['group']
-  mode 0655
-  variables({
-     :elastic_addr => elastic_addrs,
-     :hops_ca => hops_ca
-  })
-end
-
 template"#{node['logstash']['base_dir']}/config/serving.conf" do
   source "serving.conf.erb"
   owner node['hopslog']['user']
