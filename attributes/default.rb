@@ -15,9 +15,6 @@ default['logstash']['version']                               = "7.2.0"
 default['logstash']['url']                                   = "#{node['download_url']}/logstash-oss-#{node['logstash']['version']}.tar.gz"
 default['logstash']['beats']['spark_port']                   = "5044"
 default['logstash']['beats']['serving_port']                 = "5046"
-default['logstash']['beats']['beamjobserverlocal_port']      = "5048"
-default['logstash']['beats']['beamjobservercluster_port']    = "5049"
-default['logstash']['beats']['beamsdkworker_port']           = "5050"
 default['logstash']['beats']['python_jobs_port']             = "5051"
 default['logstash']['beats']['jupyter_port']                 = "5052"
 default['logstash']['http']['port']                          = "9600"
@@ -53,10 +50,6 @@ default['filebeat']['pid_dir']                  = "/tmp"
 default['filebeat']['port']                     = "5000"
 
 default['filebeat']['spark_read_logs']           = node['hops']['base_dir'] + "/logs/userlogs/**/"
-default['filebeat']['beamjobservercluster_logs'] = node['hops']['base_dir'] + "/logs/userlogs/**/beamjobserver-*.log"
-default['filebeat']['beamjobserverlocal_logs']   = node['hopslog']['dir'] + "/staging/private_dirs/*/beamjobserver-*.log"
-default['filebeat']['beamsdkworker_logs']        = node['hops']['base_dir'] + "/logs/userlogs/**/beamsdkworker-*.log"
-default['filebeat']['beam_logs']                 = %w[beamjobservercluster beamjobserverlocal beamsdkworker]
 default['filebeat']['skip']                      = "true"
 
 default['hopslog']['private_ips']         = ['10.0.2.15']
