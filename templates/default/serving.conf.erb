@@ -51,8 +51,14 @@ filter {
       grok {
         match => { "message" => "%{GREEDYDATA:log_message}" }
       }
+      mutate {
+        add_field => [ "serving_component", "%{[kubernetes][labels][component]}" ]
+      }
+      mutate {
+        add_field => [ "container_name", "%{[kubernetes][container][name]}" ]
+      }
 
-    # Kubernetes elastic (docker-images)
+    # Kubernetes default (docker-images)
     } else if [kubernetes][labels][serving_hops_works/tool] == "default" {
 
       # Tensorflow serving
