@@ -58,6 +58,14 @@ end
 
 include_recipe "java"
 
+directory node['data']['dir'] do
+  owner 'root'
+  group 'root'
+  mode '0775'
+  action :create
+  not_if { ::File.directory?(node['data']['dir']) }
+end
+
 #
 # Logstash
 #
@@ -102,14 +110,64 @@ link node['logstash']['base_dir'] do
   to node['logstash']['home']
 end
 
-
-directory "#{node['logstash']['base_dir']}/log" do
-  owner node['hopslog']['user']
-  group node['hopslog']['group']
-  mode "750"
-  action :create
+# Small hack to create the symlink below
+directory node['logstash']['data_dir'] do
+  recursive true
+  action :delete
+  not_if { conda_helpers.is_upgrade }
 end
 
+directory node['logstash']['data_volume']['data_dir'] do
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
+  mode '0750'
+  recursive true
+end
+
+bash 'Move logstash data to data volume' do
+  user 'root'
+  code <<-EOH
+    set -e
+    mv -f #{node['logstash']['data_dir']}/* #{node['logstash']['data_volume']['data_dir']}
+    rm -rf #{node['logstash']['data_dir']}
+  EOH
+  only_if { conda_helpers.is_upgrade }
+  only_if { File.directory?(node['logstash']['data_dir'])}
+  not_if { File.symlink?(node['logstash']['data_dir'])}
+end
+
+link node['logstash']['data_dir'] do
+  owner node['logstash']['user']
+  group node['logstash']['group']
+  mode '0750'
+  to node['logstash']['data_volume']['data_dir']
+end
+
+directory node['logstash']['data_volume']['logs_dir'] do
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
+  mode '0750'
+  recursive true
+end
+
+bash 'Move logstash logs to data volume' do
+  user 'root'
+  code <<-EOH
+    set -e
+    mv -f #{node['logstash']['logs_dir']}/* #{node['logstash']['data_volume']['logs_dir']}
+    rm -rf #{node['logstash']['logs_dir']}
+  EOH
+  only_if { conda_helpers.is_upgrade }
+  only_if { File.directory?(node['logstash']['logs_dir'])}
+  not_if { File.symlink?(node['logstash']['logs_dir'])}
+end
+
+link node['logstash']['logs_dir'] do
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
+  mode '0750'
+  to node['logstash']['data_volume']['logs_dir']
+end
 
 directory "#{node['logstash']['base_dir']}/config" do
   owner node['hopslog']['user']
@@ -156,6 +214,39 @@ link node['kibana']['base_dir'] do
   to node['kibana']['home']
 end
 
+# Small hack to create the symlink below
+directory node['kibana']['data_dir'] do
+  recursive true
+  action :delete
+  not_if { conda_helpers.is_upgrade }
+end
+
+directory node['kibana']['data_volume']['data_dir'] do
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
+  mode '0750'
+  recursive true
+end
+
+bash 'Move kibana data to data volume' do
+  user 'root'
+  code <<-EOH
+    set -e
+    mv -f #{node['kibana']['data_dir']}/* #{node['kibana']['data_volume']['data_dir']}
+    rm -rf #{node['kibana']['data_dir']}
+  EOH
+  only_if { conda_helpers.is_upgrade }
+  only_if { File.directory?(node['kibana']['data_dir'])}
+  not_if { File.symlink?(node['kibana']['data_dir'])}
+end
+
+link node['kibana']['data_dir'] do
+  owner node['kibana']['user']
+  group node['kibana']['group']
+  mode '0750'
+  to node['kibana']['data_volume']['data_dir']
+end
+
 bash "remove_existing_opendistro_security_plugin" do
   user node['hopslog']['user']
   code <<-EOF
@@ -171,13 +262,31 @@ bash "install_opendistro_security_plugin" do
   EOF
 end
 
-directory "#{node['kibana']['base_dir']}/log" do
+directory node['kibana']['data_volume']['log_dir'] do
   owner node['hopslog']['user']
   group node['hopslog']['group']
-  mode "750"
-  action :create
+  mode '0750'
+  recursive true
 end
 
+bash 'Move kibana logs to data volume' do
+  user 'root'
+  code <<-EOH
+    set -e
+    mv -f #{node['kibana']['log_dir']}/* #{node['kibana']['data_volume']['log_dir']}
+    rm -rf #{node['kibana']['log_dir']}
+  EOH
+  only_if { conda_helpers.is_upgrade }
+  only_if { File.directory?(node['kibana']['log_dir'])}
+  not_if { File.symlink?(node['kibana']['log_dir'])}
+end
+
+link node['kibana']['log_dir'] do
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
+  mode '0750'
+  to node['kibana']['data_volume']['log_dir']
+end
 
 directory "#{node['kibana']['base_dir']}/conf" do
   owner node['hopslog']['user']
@@ -230,16 +339,54 @@ directory "#{node['filebeat']['base_dir']}/bin" do
   action :create
 end
 
-directory "#{node['filebeat']['base_dir']}/log" do
+directory node['filebeat']['data_volume']['logs_dir'] do
   owner node['hopslog']['user']
   group node['hopslog']['group']
-  mode "770"
-  action :create
+  mode '0770'
+  recursive true
 end
 
-directory "#{node['filebeat']['base_dir']}/data" do
+bash 'Move filebeat logs to data volume' do
+  user 'root'
+  code <<-EOH
+    set -e
+    mv -f #{node['filebeat']['logs_dir']}/* #{node['filebeat']['data_volume']['logs_dir']}
+    rm -rf #{node['filebeat']['logs_dir']}
+  EOH
+  only_if { conda_helpers.is_upgrade }
+  only_if { File.directory?(node['filebeat']['logs_dir'])}
+  not_if { File.symlink?(node['filebeat']['logs_dir'])}
+end
+
+link node['filebeat']['logs_dir'] do
+  owner node['filebeat']['user']
+  group node['filebeat']['group']
+  mode '0770'
+  to node['filebeat']['data_volume']['logs_dir']
+end
+
+directory node['filebeat']['data_volume']['data_dir'] do
   owner node['hopslog']['user']
   group node['hopslog']['group']
-  mode "770"
-  action :create
+  mode '0770'
+  recursive true
+end
+
+bash 'Move filebeat data to data volume' do
+  user 'root'
+  code <<-EOH
+    set -e
+    mv -f #{node['filebeat']['data_dir']}/* #{node['filebeat']['data_volume']['data_dir']}
+    rm -rf #{node['filebeat']['data_dir']}
+  EOH
+  only_if { conda_helpers.is_upgrade }
+  only_if { File.directory?(node['filebeat']['data_dir'])}
+  not_if { File.symlink?(node['filebeat']['data_dir'])}
+end
+
+link node['filebeat']['data_dir'] do
+  owner node['filebeat']['user']
+  group node['filebeat']['group']
+  mode '0770'
+  to node['filebeat']['data_volume']['data_dir']
 end
