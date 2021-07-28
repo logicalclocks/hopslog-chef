@@ -52,8 +52,19 @@ template"#{node['logstash']['base_dir']}/config/services.conf" do
   group node['hopslog']['group']
   mode 0655
   variables({
-                :elastic_addr => elastic_addrs,
-                :hops_ca => hops_ca
+              :elastic_addr => elastic_addrs,
+              :hops_ca => hops_ca
+            })
+end
+
+template"#{node['logstash']['base_dir']}/config/rstudio.conf" do
+  source "rstudio.conf.erb"
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
+  mode 0655
+  variables({
+              :elastic_addr => elastic_addrs,
+              :hops_ca => hops_ca
             })
 end
 
