@@ -66,6 +66,12 @@ directory node['data']['dir'] do
   not_if { ::File.directory?(node['data']['dir']) }
 end
 
+directory node['logstash']['data_volume']['root_dir'] do
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
+  mode '0750'
+end
+
 #
 # Logstash
 #
@@ -121,7 +127,6 @@ directory node['logstash']['data_volume']['data_dir'] do
   owner node['hopslog']['user']
   group node['hopslog']['group']
   mode '0750'
-  recursive true
 end
 
 bash 'Move logstash data to data volume' do
@@ -147,7 +152,6 @@ directory node['logstash']['data_volume']['logs_dir'] do
   owner node['hopslog']['user']
   group node['hopslog']['group']
   mode '0750'
-  recursive true
 end
 
 bash 'Move logstash logs to data volume' do
