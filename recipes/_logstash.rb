@@ -46,6 +46,17 @@ template"#{node['logstash']['base_dir']}/config/jupyter.conf" do
             })
 end
 
+template"#{node['logstash']['base_dir']}/config/services.conf" do
+  source "services.conf.erb"
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
+  mode 0655
+  variables({
+                :elastic_addr => elastic_addrs,
+                :hops_ca => hops_ca
+            })
+end
+
 template"#{node['logstash']['base_dir']}/config/pipelines.yml" do
   source "pipelines.yml.erb"
   owner node['hopslog']['user']

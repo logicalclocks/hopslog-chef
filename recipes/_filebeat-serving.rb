@@ -47,7 +47,7 @@ template"#{node['filebeat']['base_dir']}/filebeat-tf-serving.yml" do
   group serving_group
   mode 0655
   variables({ 
-    :paths => tf_log_glob, 
+    :paths => [tf_log_glob],
     :multiline => false,
     :fields => true,
     :model_server => "tensorflow_serving",
@@ -149,7 +149,7 @@ template"#{node['filebeat']['base_dir']}/filebeat-sklearn-serving.yml" do
   group serving_group
   mode 0655
   variables({
-                :paths => sk_log_glob,
+                :paths => [sk_log_glob],
                 :multiline => false,
                 :fields => true,
                 :model_server => "flask",

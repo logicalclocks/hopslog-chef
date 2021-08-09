@@ -13,7 +13,7 @@ template"#{node['filebeat']['base_dir']}/filebeat-spark.yml" do
   group node['hops']['yarn']['group']
   mode 0655
   variables({ 
-    :paths => node['filebeat']['spark_read_logs'],
+    :paths => [node['filebeat']['spark_read_logs']],
     :multiline => true,
     :multiline_pattern => '\'[0-9]{4}-[0-9]{2}-[0-9]{2}\'',
     :fields => false,

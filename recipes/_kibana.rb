@@ -148,6 +148,19 @@ bash 'add_kibana_indices_for_old_projects' do
         only_if { node['install']['version'].start_with?("0.6") }
 end
 
+bash 'create_index_pattern' do
+  user 'root'
+  code <<-EOH
+    curl -u #{node['elastic']['opendistro_security']['kibana']['username']}:#{node['elastic']['opendistro_security']['kibana']['password']} \
+      "#{kibana_url}/api/saved_objects/index-pattern/#{node['kibana']['service_index_pattern']}" \
+      -H "kbn-xsrf:required" \
+      -H "Content-Type:application/json" \
+      -cacerts #{hops_ca} \
+      -d "{\"attributes\": {\"title\": \"#{node['kibana']['service_index_pattern']}\"}}"
+  EOH
+end
+
+
 # Register Kibana with Consul
 consul_service "Registering Kibana with Consul" do
   service_definition "kibana-consul.hcl.erb"
