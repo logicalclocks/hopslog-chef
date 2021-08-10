@@ -18,3 +18,6 @@ dependencies:
   - recipe: hopslog::_filebeat-jupyter
     global:
       - hopslog::default
+  - recipe: hopslog::_filebeat-services
+    global:
+      - hopslog::default
