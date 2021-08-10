@@ -151,15 +151,15 @@ end
 bash 'create_index_pattern' do
   user 'root'
   code <<-EOH
-    curl -u #{node['elastic']['opendistro_security']['kibana']['username']}:#{node['elastic']['opendistro_security']['kibana']['password']} \
+    curl -u #{}:#{} \
       "#{kibana_url}/api/saved_objects/index-pattern/#{node['kibana']['service_index_pattern']}" \
+      -H "Authorization: Basic #{Base64.encode64("#{node['elastic']['opendistro_security']['kibana']['username']}:#{node['elastic']['opendistro_security']['kibana']['password']}")}" \
       -H "kbn-xsrf:required" \
       -H "Content-Type:application/json" \
-      -cacerts #{hops_ca} \
-      -d "{\"attributes\": {\"title\": \"#{node['kibana']['service_index_pattern']}\"}}"
+      --cacert #{hops_ca} \
+      -d '{"attributes": {"title": "#{node['kibana']['service_index_pattern']}"}}'
   EOH
 end
-
 
 # Register Kibana with Consul
 consul_service "Registering Kibana with Consul" do
