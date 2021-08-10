@@ -2,8 +2,8 @@ file "#{node['filebeat']['base_dir']}/filebeat.xml" do
   action :delete
 end
 
-service_user = "root"
 service_owner = "root"
+service_group = "root"
 
 logstash_endpoint = private_recipe_ip("hopslog", "default") + ":#{node['logstash']['beats']['service_port']}"
 
