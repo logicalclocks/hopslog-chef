@@ -16,6 +16,7 @@ log_paths = [
   "#{node['install']['dir']}/onlinefs/logs/*.log",
   "#{node['install']['dir']}/domains/domain1/logs/*.log",
   "#{node['install']['dir']}/mysql-cluster/log/*.log",
+  "#{node['install']['dir']}/kafka/logs/*.log",
 ]
 
 template "#{node['filebeat']['base_dir']}/filebeat-service.yml" do
@@ -26,6 +27,7 @@ template "#{node['filebeat']['base_dir']}/filebeat-service.yml" do
   variables({
       :paths => log_paths,
       :multiline => true,
+      :multiline_pattern => "([0-9]{4}-[0-9]{2}-[0-9]{2})|\[|([0-9]{2}:[0-9]{2}:[0-9]{2})",
       :fields => false,
       :logstash_endpoint => logstash_endpoint,
       :log_name => "service"
