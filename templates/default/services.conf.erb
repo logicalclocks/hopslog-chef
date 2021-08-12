@@ -7,26 +7,27 @@ input {
 filter {
 
   grok { 
-    pattern_definitions => {"SERVICE_NAME" => "(namenode|resourcemanager|nodemanager|datanode|hive|domain1|mysql)"} 
-    match => {"[log][file][path]" => "%{GREEDYDATA}%{SERVICE_NAME:service}%{GREEDYDATA}.log"} 
+    pattern_definitions => {"SERVICE_NAME" => "(namenode|resourcemanager|nodemanager|datanode|hive|domain1|mysql|onlinefs)"}
+    match => {"[log][file][path]" => "%{GREEDYDATA}%{SERVICE_NAME:service}%{GREEDYDATA}.log"}
   }
+
 
   if [service] == "domain1" {
     grok {
       # [#|DATETIME|LOG_LEVEL|PRODUCT_ID|LOGGER NAME|OPTIONAL KEY VALUE PAIRS| MESSAGE|#]
       # Date format: 2021-08-09T15:56:26.257+0000
-      match => {"message" => "[#|%{NOTSPACE:templogdate}|%{LOGLEVEL:priority}|%{DATA:product_id}|%{DATA:logger_name}|%{GREEDYDATA:key_value_pairs}|%{GREEDYDATA:log_message}|#]"}
+      match => {"message" => "\[#\|%{NOTSPACE:templogdate}\|%{LOGLEVEL:priority}\|%{DATA:product_id}\|%{DATA:logger_name}\|%{GREEDYDATA:key_value_pairs}\|%{GREEDYDATA:log_message}\|#\]"}
     }
   } else if [service] == "mysql" {
     grok {
       # datetime [string] severity -- message
-      # 09:19:30 2005-07-24
-      match => {"message" => "(?<templogdate>%{HOUR}:%{MINUTE}:%{SECOND} %{YEAR}-%{MONTHNUM2}-%{MONTHDAY}) [%{DATA:logger_name}] %{LOGLEVEL:priority} -- %{GREEDYDATA:log_message}"}
+      # 2021-08-12 09:16:52
+      match => {"message" => "%{DATA:templogdate} \[%{DATA:logger_name}\] %{LOGLEVEL:priority}((.|\r|\n)*)-- %{GREEDYDATA:log_message}"}
     }
   } else {
     # Rest of the log4j services
     grok {
-      match => {"message" => "(?<templogdate>%{YEAR}-%{MONTHNUM2}-%{MONTHDAY} %{HOUR}:%{MINUTE}:%{SECOND}.%{NONNEGINT}) %{LOGLEVEL:priority} %{DATA:logger_name}: %{GREEDYDATA:log_message}"}
+      match => {"message" => "(?<templogdate>%{YEAR}-%{MONTHNUM2}-%{MONTHDAY} %{HOUR}:%{MINUTE}:%{SECOND},%{NONNEGINT}) %{LOGLEVEL:priority} %{DATA:logger_name}: %{GREEDYDATA:log_message}"}
     }
   }
 
@@ -42,9 +43,16 @@ filter {
     }
   }
 
-  date {
-    match  => [ "templogdate", ISO8601 ]
-    target => "logdate"
+  if [service] == "mysql" {
+    date {
+      match => [ "templogdate", "yyyy-MM-dd HH:mm:ss" ]
+      target => "logdate"
+    }
+  } else {
+    date {
+      match  => [ "templogdate", ISO8601 ]
+      target => "logdate"
+    }
   }
 
   mutate {

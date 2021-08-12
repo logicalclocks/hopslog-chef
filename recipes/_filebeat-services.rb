@@ -5,7 +5,7 @@ end
 service_owner = "root"
 service_group = "root"
 
-logstash_endpoint = private_recipe_ip("hopslog", "default") + ":#{node['logstash']['beats']['service_port']}"
+logstash_endpoint = private_recipe_ip("hopslog", "default") + ":#{node['logstash']['beats']['services_port']}"
 
 # This generates too many cyclic dependencies if we need to get the 
 # attributes right. In reality the log paths never change
