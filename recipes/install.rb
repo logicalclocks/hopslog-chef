@@ -1,4 +1,5 @@
 group node['hopslog']['group'] do
+  gid node['hopslog']['group_id']
   action :create
   not_if "getent group #{node['hopslog']['group']}"
   not_if { node['install']['external_users'].casecmp("true") == 0 }
@@ -7,6 +8,7 @@ end
 
 user node['hopslog']['user'] do
   action :create
+  uid node['hopslog']['user_id']
   gid node['hopslog']['group']
   system true
   shell "/bin/bash"
@@ -39,6 +41,7 @@ end
 
 user node['hops']['yarn']['user'] do
   home "/home/#{node['hops']['yarn']['user']}"
+  uid uid node['hops']['yarn']['user_id']
   gid node['hops']['group']
   system true
   shell "/bin/bash"
