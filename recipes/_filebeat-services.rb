@@ -27,7 +27,7 @@ template "#{node['filebeat']['base_dir']}/filebeat-service.yml" do
   variables({
       :paths => log_paths,
       :multiline => true,
-      :multiline_pattern => "([0-9]{4}-[0-9]{2}-[0-9]{2})|\[|([0-9]{2}:[0-9]{2}:[0-9]{2})",
+      :multiline_pattern => "([0-9]{4}-[0-9]{2}-[0-9]{2})|\\[|([0-9]{2}:[0-9]{2}:[0-9]{2})",
       :fields => false,
       :logstash_endpoint => logstash_endpoint,
       :log_name => "service"
