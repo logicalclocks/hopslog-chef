@@ -7,7 +7,7 @@ input {
 filter {
 
   grok { 
-    pattern_definitions => {"SERVICE_NAME" => "(namenode|resourcemanager|nodemanager|datanode|hive|domain1|mysql|onlinefs)"}
+    pattern_definitions => {"SERVICE_NAME" => "(namenode|resourcemanager|nodemanager|datanode|hive|domain1|mysql|onlinefs|kafka)"}
     match => {"[log][file][path]" => "%{GREEDYDATA}%{SERVICE_NAME:service}%{GREEDYDATA}.log"}
   }
 
