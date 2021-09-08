@@ -27,7 +27,7 @@ filter {
   } else {
     # Rest of the log4j services
     grok {
-      match => {"message" => "(?<templogdate>%{YEAR}-%{MONTHNUM2}-%{MONTHDAY} %{HOUR}:%{MINUTE}:%{SECOND},%{NONNEGINT}) %{LOGLEVEL:priority} %{DATA:logger_name}: %{GREEDYDATA:log_message}"}
+      match => {"message" => "%{DATA:templogdate} %{LOGLEVEL:priority} %{DATA:logger_name}: %{GREEDYDATA:log_message}"}
     }
   }
 

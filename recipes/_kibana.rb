@@ -140,7 +140,7 @@ bash 'create_index_pattern' do
       -H "kbn-xsrf:required" \
       -H "Content-Type:application/json" \
       --cacert #{hops_ca} \
-      -d '{"attributes": {"title": "#{node['kibana']['service_index_pattern']}"}}'
+      -d '{"attributes": {"title": "#{node['kibana']['service_index_pattern']}", "timeFieldName": "logdate"}}'
   EOH
 end
 
