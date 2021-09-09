@@ -2,8 +2,25 @@ file "#{node['filebeat']['base_dir']}/filebeat.xml" do
   action :delete
 end
 
-service_owner = "root"
-service_group = "root"
+group node['logger']['group'] do
+  gid node['logger']['group_id']
+  action :create
+  not_if "getent group #{node['logger']['group']}"
+  not_if { node['install']['external_users'].casecmp("true") == 0 }
+end
+
+user node['logger']['user'] do
+  uid node['logger']['user_id']
+  gid node['logger']['group_id']
+  shell "/bin/nologin"
+  action :create
+  system true
+  not_if "getent passwd #{node['logger']['user']}"
+  not_if { node['install']['external_users'].casecmp("true") == 0 }
+end
+
+service_owner = node['logger']['user']
+service_group = node['logger']['group']
 
 logstash_endpoint = private_recipe_ip("hopslog", "default") + ":#{node['logstash']['beats']['services_port']}"
 
