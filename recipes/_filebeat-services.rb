@@ -19,6 +19,14 @@ user node['logger']['user'] do
   not_if { node['install']['external_users'].casecmp("true") == 0 }
 end
 
+#Add glassfish user to elastic group
+group node['elastic']['group'] do
+  action :modify
+  members [node['logger']['user']]
+  append true
+  not_if { node['install']['external_users'].casecmp("true") == 0 }
+end
+
 service_owner = node['logger']['user']
 service_group = node['logger']['group']
 
