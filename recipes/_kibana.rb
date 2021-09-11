@@ -125,9 +125,8 @@ bash 'wait_for_kibana_green' do
   code <<-EOH
     set -eo pipefail
     curl "#{kibana_url}/api/status" \
-      -H "Authorization: Basic #{Base64.encode64("#{node['elastic']['opendistro_security']['kibana']['username']}:#{node['elastic']['opendistro_security']['kibana']['password']}")}" \
+      -H "Authorization: Basic #{Base64.strict_encode64("#{node['elastic']['opendistro_security']['kibana']['username']}:#{node['elastic']['opendistro_security']['kibana']['password']}")}" \
       -H "kbn-xsrf:required" \
-      -H "Content-Type:application/json" \
       --cacert #{hops_ca} | jq -e '.status.overall.state=="green"'
   EOH
 end
@@ -136,7 +135,7 @@ bash 'create_index_pattern' do
   user 'root'
   code <<-EOH
     curl "#{kibana_url}/api/saved_objects/index-pattern/#{node['kibana']['service_index_pattern']}" \
-      -H "Authorization: Basic #{Base64.encode64("#{node['elastic']['opendistro_security']['service_log_viewer']['username']}:#{node['elastic']['opendistro_security']['service_log_viewer']['password']}")}" \
+      -H "Authorization: Basic #{Base64.strict_encode64("#{node['elastic']['opendistro_security']['service_log_viewer']['username']}:#{node['elastic']['opendistro_security']['service_log_viewer']['password']}")}" \
       -H "kbn-xsrf:required" \
       -H "Content-Type:application/json" \
       --cacert #{hops_ca} \
