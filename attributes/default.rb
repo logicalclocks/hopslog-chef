@@ -19,6 +19,7 @@ default['logstash']['beats']['spark_port']                   = "5044"
 default['logstash']['beats']['serving_port']                 = "5046"
 default['logstash']['beats']['python_jobs_port']             = "5051"
 default['logstash']['beats']['jupyter_port']                 = "5052"
+default['logstash']['beats']['services_port']                = "5053"
 default['logstash']['http']['port']                          = "9600"
 
 default['logstash']['systemd']                  = "true"
@@ -72,8 +73,10 @@ default['filebeat']['data_volume']['root_dir']  = "#{node['data']['dir']}/filebe
 default['filebeat']['data_volume']['logs_dir']  = "#{node['filebeat']['data_volume']['root_dir']}/log"
 default['filebeat']['data_volume']['data_dir']  = "#{node['filebeat']['data_volume']['data_dir']}/data"
 
-default['filebeat']['spark_read_logs']           = node['hops']['base_dir'] + "/logs/userlogs/**/"
-default['filebeat']['skip']                      = "true"
+default['filebeat']['spark_read_logs']          = node['hops']['base_dir'] + "/logs/userlogs/**/"
+
+default['logstash']['service_index']            = ".services-"
+default['kibana']['service_index_pattern']      = ".services-*"
 
 default['hopslog']['private_ips']         = ['10.0.2.15']
 default['hopslog']['public_ips']          = ['10.0.2.15']

@@ -1,0 +1,77 @@
+input {
+  beats {
+    port => <%= node['logstash']['beats']['services_port'] %>  
+  }
+}
+
+filter {
+
+  grok { 
+    pattern_definitions => {"SERVICE_NAME" => "(namenode|resourcemanager|nodemanager|datanode|hive|domain1|mysql|onlinefs|kafka)"}
+    match => {"[log][file][path]" => "%{GREEDYDATA}%{SERVICE_NAME:service}%{GREEDYDATA}.log"}
+  }
+
+
+  if [service] == "domain1" {
+    grok {
+      # [#|DATETIME|LOG_LEVEL|PRODUCT_ID|LOGGER NAME|OPTIONAL KEY VALUE PAIRS| MESSAGE|#]
+      # Date format: 2021-08-09T15:56:26.257+0000
+      match => {"message" => "\[#\|%{NOTSPACE:templogdate}\|%{LOGLEVEL:priority}\|%{DATA:product_id}\|%{DATA:logger_name}\|%{GREEDYDATA:key_value_pairs}\|%{GREEDYDATA:log_message}\|#\]"}
+    }
+  } else if [service] == "mysql" {
+    grok {
+      # datetime [string] severity -- message
+      # 2021-08-12 09:16:52
+      match => {"message" => "%{DATA:templogdate} \[%{DATA:logger_name}\] %{LOGLEVEL:priority}((.|\r|\n)*)-- %{GREEDYDATA:log_message}"}
+    }
+  } else {
+    # Rest of the log4j services
+    grok {
+      match => {"message" => "%{DATA:templogdate} %{LOGLEVEL:priority} %{DATA:logger_name}: %{GREEDYDATA:log_message}"}
+    }
+  }
+
+
+  #Ignore failed parse enties. Grok filter has been tested with http://grokconstructor.appspot.com
+  if "_grokparsefailure" in [tags] {
+    drop { }
+  }
+
+  mutate {
+    add_field => {
+     "host" => "%{[agent][hostname]}"
+    }
+  }
+
+  if [service] == "mysql" {
+    date {
+      match => [ "templogdate", "yyyy-MM-dd HH:mm:ss" ]
+      target => "logdate"
+    }
+  } else {
+    date {
+      match  => [ "templogdate", ISO8601 ]
+      target => "logdate"
+    }
+  }
+
+  mutate {
+    remove_field => ["message", "source" , "templogdate", "prospector", "agent", "jobinfo", "log", "input", "ecs", "key_value_pairs"]
+  }
+}
+
+output {
+  elasticsearch {
+    hosts => [<%= @elastic_addr %>]
+    index => "<%= node['logstash']['service_index'] %>%{+YYYY.MM.dd}"
+    <% if node['elastic']['opendistro_security']['enabled'] %>
+    user => "<%=node['elastic']['opendistro_security']['logstash']['username']%>"
+    password => "<%=node['elastic']['opendistro_security']['logstash']['password']%>"
+    <% if node['elastic']['opendistro_security']['https']['enabled'] %>
+    cacert => "<%= @hops_ca %>"
+    ssl => true
+    ilm_enabled => false
+    <% end %>
+    <% end %>
+  }
+}

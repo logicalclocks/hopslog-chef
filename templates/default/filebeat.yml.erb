@@ -3,7 +3,9 @@ filebeat.inputs:
 - type: log
   # Paths that should be crawled and fetched. Glob based paths.
   paths:
-   - <%= @paths %>
+   <% @paths.each do |path| -%>
+   - <%= path %>
+  <% end -%>
   <% if @multiline %>
   multiline:
     pattern: <%= @multiline_pattern %>

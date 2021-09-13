@@ -118,34 +118,29 @@ if conda_helpers.is_upgrade
   end
 end
 
-template"#{node['kibana']['base_dir']}/config/hops_upgrade_060.sh" do
-  source "hops_upgrade_060.sh.erb"
-  owner node['hopslog']['user']
-  group node['hopslog']['group']
-  mode 0655
-  variables({
-     :kibana_addr => kibana_url,
-     :elastic_addr => elastic_url
-           })
+bash 'wait_for_kibana_green' do
+  user 'root'
+  retries 5
+  retry_delay 30
+  code <<-EOH
+    set -eo pipefail
+    curl "#{kibana_url}/api/status" \
+      -H "Authorization: Basic #{Base64.strict_encode64("#{node['elastic']['opendistro_security']['kibana']['username']}:#{node['elastic']['opendistro_security']['kibana']['password']}")}" \
+      -H "kbn-xsrf:required" \
+      --cacert #{hops_ca} | jq -e '.status.overall.state=="green"'
+  EOH
 end
 
-
-# Update old projects with new kibana saved objects etc.
-# It makes the same kibana requests as the project controller in Hopsworks.
-exec = "#{node['ndb']['scripts_dir']}/mysql-client.sh"
-bash 'add_kibana_indices_for_old_projects' do
-        user "root"
-        code <<-EOH
-            set -e
-	    #{exec} -ss -e \"select lower(projectname) as projectname from hopsworks.project order by projectname\" | while read projectname;
-	    do
-	      #skip first line if it contains slash character. Used to skip "Using socket: /tmp/mysql.sock
-	      if [[ ${projectname} != *\/* ]]; then
-  	        #{node['kibana']['base_dir']}/config/hops_upgrade_060.sh ${projectname}
-  	      fi
-            done
-        EOH
-        only_if { node['install']['version'].start_with?("0.6") }
+bash 'create_index_pattern' do
+  user 'root'
+  code <<-EOH
+    curl "#{kibana_url}/api/saved_objects/index-pattern/#{node['kibana']['service_index_pattern']}" \
+      -H "Authorization: Basic #{Base64.strict_encode64("#{node['elastic']['opendistro_security']['service_log_viewer']['username']}:#{node['elastic']['opendistro_security']['service_log_viewer']['password']}")}" \
+      -H "kbn-xsrf:required" \
+      -H "Content-Type:application/json" \
+      --cacert #{hops_ca} \
+      -d '{"attributes": {"title": "#{node['kibana']['service_index_pattern']}", "timeFieldName": "logdate"}}'
+  EOH
 end
 
 # Register Kibana with Consul
