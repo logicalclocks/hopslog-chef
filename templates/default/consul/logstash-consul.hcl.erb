@@ -62,5 +62,17 @@ services = [
             id = "logstash-beats-jupyter-check"
             alias_service = "logstash/http"
         }
+    },
+    {
+      id = "logstash/rstudio"
+      name = "logstash"
+      tags = [
+          "rstudio"
+      ]
+      port = <%= node['logstash']['beats']['rstudio_port'] %>
+      check = {
+          id = "logstash-beats-rstudio-check"
+          alias_service = "logstash/http"
+      }
     }
 ]

@@ -21,3 +21,6 @@ dependencies:
   - recipe: hopslog::_filebeat-services
     global:
       - hopslog::default
+  - recipe: hopslog::_filebeat-rstudio
+    global:
+      - hopslog::default

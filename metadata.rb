@@ -60,6 +60,10 @@ attribute "logstash/beats/jupyter_port",
           :description => "Filebeat port for jupyter server logs",
           :type => "string"
 
+attribute "logstash/beats/rstudio_port",
+          :description => "Filebeat port for rstudio server logs",
+          :type => "string"
+
 attribute "kibana/url",
           :description => "Url to hopslog binaries",
           :type => "string"
