@@ -8,7 +8,7 @@ service {
     check = {
         id = "kibana-check"
         name = "Health check for Kibana"
-        http = "https://localhost:<%= node['kibana']['port'] %>/status"
+        http = "https://localhost:<%= node['kibana']['port'] %>/api/status"
         interval = "20s"
         timeout = "20s"
         status = "passing"
