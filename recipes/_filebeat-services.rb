@@ -30,7 +30,8 @@ end
 service_owner = node['logger']['user']
 service_group = node['logger']['group']
 
-logstash_endpoint = private_recipe_ip("hopslog", "default") + ":#{node['logstash']['beats']['services_port']}"
+logstash_fqdn = consul_helper.get_service_fqdn("logstash")
+logstash_endpoint = "#{logstash_fqdn}:#{node['logstash']['beats']['services_port']}"
 
 # This generates too many cyclic dependencies if we need to get the 
 # attributes right. In reality the log paths never change
