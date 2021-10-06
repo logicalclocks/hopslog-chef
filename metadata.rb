@@ -11,6 +11,8 @@ source_url       "https://github.com/hopshadoop/hopslog-chef"
   supports os
 end
 
+depends "elasticsearch", '~> 4.0.0'
+
 depends 'kagent'
 depends 'elastic'
 depends 'kkafka'

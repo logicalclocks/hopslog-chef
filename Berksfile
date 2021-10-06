@@ -10,5 +10,3 @@ cookbook 'conda', github: "logicalclocks/conda-chef", branch: "master"
 cookbook 'hops', github: "logicalclocks/hops-hadoop-chef", branch: "master"
 cookbook 'consul', github: "logicalclocks/consul-chef", branch: "master"
 cookbook 'java', github: "logicalclocks/java", branch: "v7.0.0-1"
-
-#cookbook 'elasticsearch', '~> 4.0.0'
