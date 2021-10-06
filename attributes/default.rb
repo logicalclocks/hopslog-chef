@@ -1,6 +1,6 @@
 include_attribute "hops"
 include_attribute "elastic"
-include_attribute "elasticsearch"
+#include_attribute "elasticsearch"
 include_attribute "kagent"
 
 default['hopslog']['user']                      = node['install']['user'].empty? ? node['elastic']['user'] : node['install']['user']
@@ -13,8 +13,8 @@ default['hopslog']['user-home']                 = "/home/#{node['hopslog']['user
 #
 # Logstash
 #
-default['logstash']['version']                               = "7.2.0"
-default['logstash']['url']                                   = "#{node['download_url']}/logstash-oss-#{node['logstash']['version']}.tar.gz"
+default['logstash']['version']                               = "7.9.1"
+default['logstash']['url']                                   = "#{node['download_url']}/opendistro/logstash-oss-#{node['logstash']['version']}.tar.gz"
 default['logstash']['beats']['spark_port']                   = "5044"
 default['logstash']['beats']['serving_port']                 = "5046"
 default['logstash']['beats']['python_jobs_port']             = "5051"
@@ -39,8 +39,8 @@ default['logstash']['data_volume']['data_dir']  = "#{node['logstash']['data_volu
 #
 # Kibana
 #
-default['kibana']['version']                    = "7.2.0"
-default['kibana']['url']                        = "#{node['download_url']}/kibana-oss-#{node['kibana']['version']}-linux-x86_64.tar.gz"
+default['kibana']['version']                    = "1.13.2"
+default['kibana']['url']                        = "#{node['download_url']}/opendistro/opendistroforelasticsearch-kibana-#{node['kibana']['version']}-linux-x64.tar.gz"
 default['kibana']['port']                       = "5601"
 
 default['kibana']['systemd']                    = "true"
