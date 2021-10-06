@@ -15,6 +15,7 @@ default['hopslog']['user-home']                 = "/home/#{node['hopslog']['user
 #
 default['logstash']['version']                               = "7.9.1"
 default['logstash']['url']                                   = "#{node['download_url']}/opendistro/logstash-oss-#{node['logstash']['version']}.tar.gz"
+default['logstash']['sha512']                   = "ddd6c0db8b59b9ad719a69f04eea81e0261061b5a26569819d4c9306c6f3a63acf575bf50e5f22b17e9b44ed8750d83762b41b866a25b2a2e283b5186c9cdf61"
 default['logstash']['beats']['spark_port']                   = "5044"
 default['logstash']['beats']['serving_port']                 = "5046"
 default['logstash']['beats']['python_jobs_port']             = "5051"
@@ -41,10 +42,11 @@ default['logstash']['data_volume']['data_dir']  = "#{node['logstash']['data_volu
 #
 default['kibana']['version']                    = "1.13.2"
 default['kibana']['url']                        = "#{node['download_url']}/opendistro/opendistroforelasticsearch-kibana-#{node['kibana']['version']}-linux-x64.tar.gz"
+default['kibana']['sha512']                     = "57c3b59b8f5970e781f2ea78db98af9d0b0ff183dcb15f2e87b8ff29098704ab08b093c0bd2dcb05ea01883a0c49572d54800d8789e5398c36b2aa1f56179ba2"
 default['kibana']['port']                       = "5601"
 
 default['kibana']['systemd']                    = "true"
-default['kibana']['home']                       = node['hopslog']['dir'] + "/kibana-" + "#{node['kibana']['version']}-linux-x86_64"
+default['kibana']['home']                       = node['hopslog']['dir'] + "/kibana-" + "opendistroforelasticsearch-kibana-#{node['kibana']['version']}-linux-x64"
 default['kibana']['base_dir']                   = node['hopslog']['dir'] + "/kibana"
 default['kibana']['log_dir']                    = node['kibana']['base_dir'] + "/log"
 default['kibana']['data_dir']                   = "#{node['kibana']['base_dir']}/data"
