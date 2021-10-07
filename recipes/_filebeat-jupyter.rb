@@ -24,7 +24,9 @@ log_glob = "#{node['install']['dir']}/jupyter/*/*/*/*/logs/*.log"
 if node.attribute?("jupyter") && node['jupyter'].attribute?("base_dir")
   log_glob = "#{node['jupyter']['base_dir']}/*/*/*/*/logs/*.log"
 end
-logstash_endpoint = private_recipe_ip("hopslog", "default") + ":#{node['logstash']['beats']['jupyter_port']}"
+
+logstash_fqdn = consul_helper.get_service_fqdn("logstash")
+logstash_endpoint = "#{logstash_fqdn}:#{node['logstash']['beats']['jupyter_port']}"
 
 template "#{node['filebeat']['base_dir']}/filebeat-jupyter.yml" do
   source "filebeat.yml.erb"
