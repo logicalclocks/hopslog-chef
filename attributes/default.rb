@@ -1,6 +1,5 @@
 include_attribute "hops"
 include_attribute "elastic"
-#include_attribute "elasticsearch"
 include_attribute "kagent"
 
 default['hopslog']['user']                      = node['install']['user'].empty? ? node['elastic']['user'] : node['install']['user']
