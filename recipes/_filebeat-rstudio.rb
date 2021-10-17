@@ -24,7 +24,9 @@ log_glob = "#{node['install']['dir']}/rstudio/*/*/*/*/logs/*.log"
 if node.attribute?("rstudio") && node['rstudio'].attribute?("base_dir")
   log_glob = "#{node['rstudio']['base_dir']}/*/*/*/*/logs/*.log"
 end
-logstash_endpoint = private_recipe_ip("hopslog", "default") + ":#{node['logstash']['beats']['rstudio_port']}"
+
+logstash_fqdn = consul_helper.get_service_fqdn("logstash")
+logstash_endpoint = "#{logstash_fqdn}:#{node['logstash']['beats']['jupyter_port']}"
 
 template "#{node['filebeat']['base_dir']}/filebeat-rstudio.yml" do
   source "filebeat.yml.erb"
