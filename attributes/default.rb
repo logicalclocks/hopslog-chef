@@ -13,8 +13,8 @@ default['hopslog']['user-home']                 = "/home/#{node['hopslog']['user
 # Logstash
 #
 default['logstash']['version']                               = "7.10.2"
-default['logstash']['url']                                   = "#{node['download_url']}/opendistro/logstash-#{node['logstash']['version']}-linux_x86_64.tar.gz"
-default['logstash']['sha512']                   = "ddd6c0db8b59b9ad719a69f04eea81e0261061b5a26569819d4c9306c6f3a63acf575bf50e5f22b17e9b44ed8750d83762b41b866a25b2a2e283b5186c9cdf61"
+default['logstash']['url']                                   = "#{node['download_url']}/opendistro/logstash-#{node['logstash']['version']}-linux-x86_64.tar.gz"
+#default['logstash']['sha512']                   = "ddd6c0db8b59b9ad719a69f04eea81e0261061b5a26569819d4c9306c6f3a63acf575bf50e5f22b17e9b44ed8750d83762b41b866a25b2a2e283b5186c9cdf61"
 default['logstash']['beats']['spark_port']                   = "5044"
 default['logstash']['beats']['serving_port']                 = "5046"
 default['logstash']['beats']['python_jobs_port']             = "5051"
