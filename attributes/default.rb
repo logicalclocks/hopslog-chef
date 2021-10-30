@@ -14,7 +14,7 @@ default['hopslog']['user-home']                 = "/home/#{node['hopslog']['user
 #
 default['logstash']['version']                               = "7.10.2"
 default['logstash']['url']                                   = "#{node['download_url']}/opendistro/logstash-oss-#{node['logstash']['version']}-linux-x86_64.tar.gz"
-#default['logstash']['sha512']                   = "ddd6c0db8b59b9ad719a69f04eea81e0261061b5a26569819d4c9306c6f3a63acf575bf50e5f22b17e9b44ed8750d83762b41b866a25b2a2e283b5186c9cdf61"
+default['logstash']['sha512']                                = "de5c7ee0d1296787032d91733bb18d6cb9669e8887e683930f9d9c285b28e582b4b4aaf2e8e2365283496e71d00baec8dd109f532170f0e0cc88d35497f79424"
 default['logstash']['beats']['spark_port']                   = "5044"
 default['logstash']['beats']['serving_port']                 = "5046"
 default['logstash']['beats']['python_jobs_port']             = "5051"
@@ -58,8 +58,9 @@ default['kibana']['data_volume']['data_dir']    = "#{node['kibana']['data_volume
 #
 # Filebeat
 
-default['filebeat']['version']                  = "7.2.0"
+default['filebeat']['version']                  = "7.10.2"
 default['filebeat']['url']                      = "#{node['download_url']}/filebeat-oss-#{node['filebeat']['version']}-linux-x86_64.tar.gz"
+default['filebeat']['sha512']                   = "de5c7ee0d1296787032d91733bb18d6cb9669e8887e683930f9d9c285b28e582b4b4aaf2e8e2365283496e71d00baec8dd109f532170f0e0cc88d35497f79424"
 default['filebeat']['home']                     = node['hopslog']['dir'] + "/filebeat-" + "#{node['filebeat']['version']}-linux-x86_64"
 default['filebeat']['base_dir']                 = node['hopslog']['dir'] + "/filebeat"
 default['filebeat']['logs_dir']                 = "#{node['filebeat']['base_dir']}/log"
