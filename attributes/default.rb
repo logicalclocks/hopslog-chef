@@ -59,7 +59,7 @@ default['kibana']['data_volume']['data_dir']    = "#{node['kibana']['data_volume
 # Filebeat
 
 default['filebeat']['version']                  = "7.10.2"
-default['filebeat']['url']                      = "#{node['download_url']}/filebeat-oss-#{node['filebeat']['version']}-linux-x86_64.tar.gz"
+default['filebeat']['url']                      = "#{node['download_url']}/opendistro/filebeat-oss-#{node['filebeat']['version']}-linux-x86_64.tar.gz"
 default['filebeat']['sha512']                   = "de5c7ee0d1296787032d91733bb18d6cb9669e8887e683930f9d9c285b28e582b4b4aaf2e8e2365283496e71d00baec8dd109f532170f0e0cc88d35497f79424"
 default['filebeat']['home']                     = node['hopslog']['dir'] + "/filebeat-" + "#{node['filebeat']['version']}-linux-x86_64"
 default['filebeat']['base_dir']                 = node['hopslog']['dir'] + "/filebeat"
