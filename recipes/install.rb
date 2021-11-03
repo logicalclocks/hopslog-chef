@@ -207,7 +207,6 @@ bash 'extract_kibana' do
         code <<-EOH
                 tar -xf #{cached_package_filename} -C #{node['hopslog']['dir']}
                 cd #{node['hopslog']['dir']}
-                mv opendistroforelasticsearch-kibana #{node['kibana']['home']}
                 chown -R #{node['hopslog']['user']}:#{node['hopslog']['group']} #{node['kibana']['home']}
                 chmod 750 #{node['kibana']['home']}
                 cd #{node['kibana']['home']}
