@@ -24,8 +24,8 @@ kibana_url = get_kibana_url()
 elastic_http 'delete old hopsworks .kibana index directly from elasticsearch' do
   action :delete
   url "#{elastic_url}/.kibana"
-  user node['elastic']['opendistro_security']['admin']['username']
-  password node['elastic']['opendistro_security']['admin']['password']
+  user node['elastic']['opensearch_security']['admin']['username']
+  password node['elastic']['opensearch_security']['admin']['password']
   only_if_cond node['install']['version'].start_with?("0.6")
   only_if_exists true
 end
@@ -125,7 +125,7 @@ bash 'wait_for_kibana_green' do
   code <<-EOH
     set -eo pipefail
     curl "#{kibana_url}/api/status" \
-      -H "Authorization: Basic #{Base64.strict_encode64("#{node['elastic']['opendistro_security']['kibana']['username']}:#{node['elastic']['opendistro_security']['kibana']['password']}")}" \
+      -H "Authorization: Basic #{Base64.strict_encode64("#{node['elastic']['opensearch_security']['kibana']['username']}:#{node['elastic']['opensearch_security']['kibana']['password']}")}" \
       -H "kbn-xsrf:required" \
       --cacert #{hops_ca} | jq -e '.status.overall.state=="green"'
   EOH
@@ -135,7 +135,7 @@ bash 'create_index_pattern' do
   user 'root'
   code <<-EOH
     curl "#{kibana_url}/api/saved_objects/index-pattern/#{node['kibana']['service_index_pattern']}" \
-      -H "Authorization: Basic #{Base64.strict_encode64("#{node['elastic']['opendistro_security']['service_log_viewer']['username']}:#{node['elastic']['opendistro_security']['service_log_viewer']['password']}")}" \
+      -H "Authorization: Basic #{Base64.strict_encode64("#{node['elastic']['opensearch_security']['service_log_viewer']['username']}:#{node['elastic']['opensearch_security']['service_log_viewer']['password']}")}" \
       -H "kbn-xsrf:required" \
       -H "Content-Type:application/json" \
       --cacert #{hops_ca} \
