@@ -61,7 +61,7 @@ filter {
 }
 
 output {
-  elasticsearch {
+  opensearch {
     hosts => [<%= @elastic_addr %>]
     index => "<%= node['logstash']['service_index'] %>%{+YYYY.MM.dd}"
     <% if node['elastic']['opensearch_security']['enabled'] %>
