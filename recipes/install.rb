@@ -281,13 +281,6 @@ link node['kibana']['log_dir'] do
   to node['kibana']['data_volume']['log_dir']
 end
 
-directory "#{node['kibana']['base_dir']}/conf" do
-  owner node['hopslog']['user']
-  group node['hopslog']['group']
-  mode "750"
-  action :create
-end
-
 #
 # Filebeat
 #
