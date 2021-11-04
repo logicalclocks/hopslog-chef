@@ -26,7 +26,7 @@ filter {
 }
 
 output {
-  elasticsearch {
+  opensearch {
     hosts => [<%= @elastic_addr %>]
     index => "%{project}_logs-%{+YYYY.MM.dd}"
   <% if node['elastic']['opensearch_security']['enabled'] %>
