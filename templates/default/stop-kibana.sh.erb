@@ -3,7 +3,7 @@
 PID_FILE=/tmp/kibana.pid
 
 function kill_named {
-    PID=`ps aux | grep -i kibana | grep -v bash | grep -v chef | grep -v grep | awk '{print $2}'`
+    PID=`ps aux | grep -i opensearch-dashboards | grep -v bash | grep -v chef | grep -v grep | awk '{print $2}'`
     if [ "$PID" != "" ] ; then
 	kill -9 $PID > /dev/null 2>&1
         res=$?
@@ -44,9 +44,9 @@ else
 fi
 
 if [ $res -eq 0 ] ; then
- echo "Killed kibana"
+ echo "Killed opensearch-dashboards"
 elif [[ $res -eq $NOT_FOUND ]] ; then
-    echo "Could not find kibana process to kill"
+    echo "Could not find opensearch-dashboards process to kill"
 fi
 
 
