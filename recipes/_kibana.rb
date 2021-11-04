@@ -37,8 +37,8 @@ end
 private_key = "#{crypto_dir}/#{x509_helper.get_private_key_pkcs8_name(node['hopslog']['user'])}"
 certificate = "#{crypto_dir}/#{x509_helper.get_certificate_bundle_name(node['hopslog']['user'])}"
 hops_ca = "#{crypto_dir}/#{x509_helper.get_hops_ca_bundle_name()}"
-template"#{node['kibana']['base_dir']}/config/kibana.yml" do
-  source "kibana.yml.erb"
+template"#{node['kibana']['base_dir']}/config/opensearch-dashboards.yml" do
+  source "opensearch-dashboards.yml.erb"
   owner node['hopslog']['user']
   group node['hopslog']['group']
   mode 0655
