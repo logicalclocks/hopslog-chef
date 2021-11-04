@@ -69,7 +69,7 @@ end
 
 deps = ""
 if exists_local("elastic", "default")
-  deps = "elasticsearch.service"
+  deps = "opensearch.service"
 end
 service_name="kibana"
 
