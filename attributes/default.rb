@@ -45,7 +45,7 @@ default['kibana']['url']                        = "#{node['download_url']}/opens
 default['kibana']['port']                       = "5601"
 default['kibana']['systemd']                    = "true"
 default['kibana']['home']                       = node['hopslog']['dir'] + "/opensearch-dashboards-#{node['kibana']['version']}"
-default['kibana']['base_dir']                   = node['hopslog']['dir'] + "/kibana"
+default['kibana']['base_dir']                   = node['hopslog']['dir'] + "/opensearch-dashboards"
 default['kibana']['log_dir']                    = node['kibana']['base_dir'] + "/log"
 default['kibana']['data_dir']                   = "#{node['kibana']['base_dir']}/data"
 default['kibana']['pid_file']                   = "/tmp/kibana.pid"
@@ -58,7 +58,7 @@ default['kibana']['data_volume']['data_dir']    = "#{node['kibana']['data_volume
 #
 # Filebeat
 
-default['filebeat']['version']                  = "7.12.1"
+default['filebeat']['version']                  = "7.13.2"
 default['filebeat']['url']                      = "#{node['download_url']}/opensearch/filebeat-oss-#{node['filebeat']['version']}-linux-x86_64.tar.gz"
 #default['filebeat']['sha512']                   = "de5c7ee0d1296787032d91733bb18d6cb9669e8887e683930f9d9c285b28e582b4b4aaf2e8e2365283496e71d00baec8dd109f532170f0e0cc88d35497f79424"
 default['filebeat']['home']                     = node['hopslog']['dir'] + "/filebeat-" + "#{node['filebeat']['version']}-linux-x86_64"
@@ -83,12 +83,11 @@ default['hopslog']['private_ips']         = ['10.0.2.15']
 default['hopslog']['public_ips']          = ['10.0.2.15']
 
 # Kibana Opensearch Security plugin
-default['kibana']['opensearch_security']['url']                                   = "#{node['download_url']}/opensearch_security_kibana_plugin-#{node['elastic']['opensearch']['version']}.zip"
 default['kibana']['opensearch_security']['https']['enabled']                      = "true"
 default['kibana']['opensearch_security']['multitenancy']['global']['enabled']     = "false"
 default['kibana']['opensearch_security']['multitenancy']['private']['enabled']    = "true"
 default['kibana']['opensearch_security']['cookie']['ttl']                         = node['elastic']['opensearch_security']['jwt']['exp_ms'].to_i
 # the session ttl time is set to be twice the time the cookie ttl time, in order to solve the session expiry issue in kibana_addr
-# https://github.com/opensearch-for-elasticsearch/security-kibana-plugin/issues/31
+# https://github.com/opendistro-for-elasticsearch/security-kibana-plugin/issues/31
 default['kibana']['opensearch_security']['session']['ttl']                        = 2 * node['elastic']['opensearch_security']['jwt']['exp_ms'].to_i
 default['kibana']['opensearch_security']['session']['keepalive']                  = "true"
