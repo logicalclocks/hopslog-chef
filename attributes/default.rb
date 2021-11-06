@@ -49,6 +49,8 @@ default['kibana']['base_dir']                   = node['hopslog']['dir'] + "/ope
 default['kibana']['log_dir']                    = node['kibana']['base_dir'] + "/log"
 default['kibana']['data_dir']                   = "#{node['kibana']['base_dir']}/data"
 default['kibana']['pid_file']                   = "/tmp/kibana.pid"
+default['kibana']['log_file']                   = node['kibana']['base_dir'] + "/log/opensearch-dashboards.log"
+
 
 # Data volume directories
 default['kibana']['data_volume']['root_dir']    = "#{node['data']['dir']}/kibana"

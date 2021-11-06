@@ -12,5 +12,5 @@ fi
 
 export JAVA_HOME=<%= node['elastic']['base_dir'] %>/jdk
 
-nohup <%= node['kibana']['base_dir'] %>/bin/opensearch-dashboards 2>&1 > <%= node['kibana']['base_dir'] %>/log/kibana.log &
+nohup <%= node['kibana']['base_dir'] %>/bin/opensearch-dashboards 2>&1 > <%= node['kibana']['log_file'] %> &
 echo $! > $PID_FILE

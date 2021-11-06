@@ -18,7 +18,7 @@ end
 
 elastic_url = any_elastic_url()
 elastic_addrs = all_elastic_urls_str()
-kibana_url = get_kibana_url()
+opensearch_dashboards_url = get_kibana_url()
 
 # delete .kibana index created from previous hopsworks versions if it exists
 elastic_http 'delete old hopsworks .kibana index directly from elasticsearch' do
@@ -52,15 +52,15 @@ template"#{node['kibana']['base_dir']}/config/opensearch_dashboards.yml" do
 end
 
 
-template"#{node['kibana']['base_dir']}/bin/start-kibana.sh" do
-  source "start-kibana.sh.erb"
+template"#{node['kibana']['base_dir']}/bin/start-opensearch-dashboards.sh" do
+  source "start-opensearch-dashboards.sh.erb"
   owner node['hopslog']['user']
   group node['hopslog']['group']
   mode 0750
 end
 
-template"#{node['kibana']['base_dir']}/bin/stop-kibana.sh" do
-  source "stop-kibana.sh.erb"
+template"#{node['kibana']['base_dir']}/bin/stop-opensearch-dashboards.sh" do
+  source "stop-opensearch-dashboards.sh.erb"
   owner node['hopslog']['user']
   group node['hopslog']['group']
   mode 0750
@@ -71,7 +71,7 @@ deps = ""
 if exists_local("elastic", "default")
   deps = "opensearch.service"
 end
-service_name="kibana"
+service_name="opensearch-dashboards"
 
 service service_name do
   provider Chef::Provider::Service::Systemd
@@ -108,7 +108,7 @@ end
 if node['kagent']['enabled'] == "true"
    kagent_config service_name do
      service "ELK"
-     log_file "#{node['kibana']['base_dir']}/log/kibana.log"
+     log_file node['kibana']['log_file']
    end
 end
 
@@ -124,7 +124,7 @@ bash 'wait_for_kibana_green' do
   retry_delay 30
   code <<-EOH
     set -eo pipefail
-    curl "#{kibana_url}/api/status" \
+    curl "#{opensearch_dashboards_url}/api/status" \
       -H "Authorization: Basic #{Base64.strict_encode64("#{node['elastic']['opensearch_security']['kibana']['username']}:#{node['elastic']['opensearch_security']['kibana']['password']}")}" \
       -H "kbn-xsrf:required" \
       --cacert #{hops_ca} | jq -e '.status.overall.state=="green"'
@@ -134,7 +134,7 @@ end
 bash 'create_index_pattern' do
   user 'root'
   code <<-EOH
-    curl "#{kibana_url}/api/saved_objects/index-pattern/#{node['kibana']['service_index_pattern']}" \
+    curl "#{opensearch_dashboards_url}/api/saved_objects/index-pattern/#{node['kibana']['service_index_pattern']}" \
       -H "Authorization: Basic #{Base64.strict_encode64("#{node['elastic']['opensearch_security']['service_log_viewer']['username']}:#{node['elastic']['opensearch_security']['service_log_viewer']['password']}")}" \
       -H "kbn-xsrf:required" \
       -H "Content-Type:application/json" \
