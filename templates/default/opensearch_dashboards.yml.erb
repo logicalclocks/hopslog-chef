@@ -126,14 +126,9 @@ opensearch.shardTimeout: 10000
 #opensearch.startupTimeout: 5000
 opensearch.startupTimeout: 5000
 
-
-# Specifies the path where OpenSearch Dashboards creates the process ID file.
-#pid.file: /var/run/kibana.pid
-pid.file: <%= node['kibana']['pid_file'] %>
-
 # Enables you to specify a file where OpenSearch Dashboards stores log output.
 #logging.dest: stdout
-logging.dest: <%= node['kibana']['log_dir'] %>/kibana.log
+logging.dest: <%= node['kibana']['log_file'] %>
 
 # Set the value of this setting to true to suppress all logging output.
 #logging.silent: false
