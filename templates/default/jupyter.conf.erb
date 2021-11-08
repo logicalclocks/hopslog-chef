@@ -84,7 +84,6 @@ output {
     <% if node['elastic']['opensearch_security']['https']['enabled'] %>
     cacert => "<%= @hops_ca %>"
     ssl => true
-    ilm_enabled => false
     <% end %>
     <% end %>
   }

@@ -126,7 +126,7 @@ bash 'wait_for_kibana_green' do
     set -eo pipefail
     curl "#{opensearch_dashboards_url}/api/status" \
       -H "Authorization: Basic #{Base64.strict_encode64("#{node['elastic']['opensearch_security']['kibana']['username']}:#{node['elastic']['opensearch_security']['kibana']['password']}")}" \
-      -H "kbn-xsrf:required" \
+      -H "osd-xsrf:required" \
       --cacert #{hops_ca} | jq -e '.status.overall.state=="green"'
   EOH
 end
@@ -136,7 +136,7 @@ bash 'create_index_pattern' do
   code <<-EOH
     curl "#{opensearch_dashboards_url}/api/saved_objects/index-pattern/#{node['kibana']['service_index_pattern']}" \
       -H "Authorization: Basic #{Base64.strict_encode64("#{node['elastic']['opensearch_security']['service_log_viewer']['username']}:#{node['elastic']['opensearch_security']['service_log_viewer']['password']}")}" \
-      -H "kbn-xsrf:required" \
+      -H "osd-xsrf:required" \
       -H "Content-Type:application/json" \
       --cacert #{hops_ca} \
       -d '{"attributes": {"title": "#{node['kibana']['service_index_pattern']}", "timeFieldName": "logdate"}}'
