@@ -61,6 +61,7 @@ filter {
 }
 
 output {
+  <% if @elastic_output -%>
   elasticsearch {
     hosts => [<%= @elastic_addr %>]
     index => "<%= node['logstash']['service_index'] %>%{+YYYY.MM.dd}"
@@ -74,4 +75,15 @@ output {
     <% end %>
     <% end %>
   }
+  <% end -%>
+
+  <% if @http_output -%>
+  http {
+    format => "json_batch"
+    headers => ["x-api-key", "API_KEY"]
+    http_compression => false
+    http_method => "post"
+    url => "URL"
+  }
+  <% end -%>
 }

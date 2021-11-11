@@ -8,3 +8,9 @@
   path.config: "<%= node['logstash']['base_dir'] %>/config/jupyter.conf"
 - pipeline.id: services
   path.config: "<%= node['logstash']['base_dir'] %>/config/services.conf"
+<% if node['install']['enterprise']['install'].casecmp? "true" and exists_local("cloud", "default") -%>
+- pipeline.id: services
+  path.config: "<%= node['logstash']['base_dir'] %>/config/services_managed_cloud.conf"
+  pipeline.batch.delay: <%=node['logstash']['managed_cloud']['batch_delay']%>
+  pipeline.batch.size: <%=node['logstash']['managed_cloud']['batch_size']%>
+<% end -%>

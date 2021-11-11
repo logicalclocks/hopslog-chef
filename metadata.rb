@@ -103,3 +103,11 @@ attribute "hopslog/private_ips",
 attribute "hopslog/public_ips",
           :description => "Set ip addresses",
           :type => "array"
+
+attribute "logstash/managed_cloud/batch_delay",
+          :description => "the batch delay to send logs to the managed cloud platform",
+          :type => "string"
+
+attribute "logstash/managed_cloud/batch_size",
+          :description => "the batch size to send logs to the managed cloud platform",
+          :type => "string"
