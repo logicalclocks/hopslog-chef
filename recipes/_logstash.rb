@@ -59,7 +59,8 @@ template"#{node['logstash']['base_dir']}/config/services.conf" do
             })
 end
 
-if node['install']['enterprise']['install'].casecmp? "true" and exists_local("cloud", "default")
+managed_cloud = node['install']['enterprise']['install'].casecmp? "true" and exists_local("cloud", "default")
+if managed_cloud
   template"#{node['logstash']['base_dir']}/config/services_managed_cloud.conf" do
     source "services.conf.erb"
     owner node['hopslog']['user']
@@ -79,6 +80,9 @@ template"#{node['logstash']['base_dir']}/config/pipelines.yml" do
   owner node['hopslog']['user']
   group node['hopslog']['group']
   mode 0655
+  variables({
+              :managed_cloud => managed_cloud
+            })
 end
 
 template"#{node['logstash']['base_dir']}/bin/start-logstash.sh" do
