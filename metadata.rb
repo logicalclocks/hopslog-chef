@@ -111,3 +111,7 @@ attribute "logstash/managed_cloud/batch_delay",
 attribute "logstash/managed_cloud/batch_size",
           :description => "the batch size to send logs to the managed cloud platform",
           :type => "string"
+
+attribute "logstash/managed_cloud/max_size",
+          :description => "the log message max size to send logs to the managed cloud platform",
+          :type => "string"

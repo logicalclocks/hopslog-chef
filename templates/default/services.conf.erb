@@ -58,6 +58,12 @@ filter {
   mutate {
     remove_field => ["message", "source" , "templogdate", "prospector", "agent", "jobinfo", "log", "input", "ecs", "key_value_pairs"]
   }
+  <% if @http_output -%>
+  truncate {
+    fields => "log_message"
+    length_bytes => "<%=node['logstash']['managed_cloud']['max_size']%>"
+  }
+  <% end -%>
 }
 
 output {

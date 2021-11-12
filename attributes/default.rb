@@ -95,3 +95,4 @@ default['kibana']['opendistro_security']['session']['keepalive']                
 #managed cloud
 default['logstash']['managed_cloud']['batch_delay']                               = "2000"
 default['logstash']['managed_cloud']['batch_size']                                = "50"
+default['logstash']['managed_cloud']['max_size']                                  = "4096"
