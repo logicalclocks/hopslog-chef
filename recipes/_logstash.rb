@@ -59,7 +59,7 @@ template"#{node['logstash']['base_dir']}/config/services.conf" do
             })
 end
 
-managed_cloud = node['install']['enterprise']['install'].casecmp? "true" and exists_local("cloud", "default")
+managed_cloud = (node['install']['enterprise']['install'].casecmp? "true" and exists_local("cloud", "default"))
 if managed_cloud
   template"#{node['logstash']['base_dir']}/config/services_managed_cloud.conf" do
     source "services.conf.erb"
