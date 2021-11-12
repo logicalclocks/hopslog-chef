@@ -8,6 +8,9 @@
   path.config: "<%= node['logstash']['base_dir'] %>/config/jupyter.conf"
 - pipeline.id: services
   path.config: "<%= node['logstash']['base_dir'] %>/config/services.conf"
+
+
+#Keep the following at the bottom of this file
 <% if @managed_cloud -%>
 - pipeline.id: services_managed_cloud
   path.config: "<%= node['logstash']['base_dir'] %>/config/services_managed_cloud.conf"
