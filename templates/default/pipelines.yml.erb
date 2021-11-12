@@ -9,7 +9,7 @@
 - pipeline.id: services
   path.config: "<%= node['logstash']['base_dir'] %>/config/services.conf"
 <% if @managed_cloud -%>
-- pipeline.id: services
+- pipeline.id: services_managed_cloud
   path.config: "<%= node['logstash']['base_dir'] %>/config/services_managed_cloud.conf"
   pipeline.batch.delay: <%=node['logstash']['managed_cloud']['batch_delay']%>
   pipeline.batch.size: <%=node['logstash']['managed_cloud']['batch_size']%>
