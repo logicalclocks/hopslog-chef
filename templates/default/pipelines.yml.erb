@@ -6,6 +6,10 @@
   path.config: "<%= node['logstash']['base_dir'] %>/config/kube_jobs.conf"
 - pipeline.id: jupyter
   path.config: "<%= node['logstash']['base_dir'] %>/config/jupyter.conf"
+- - pipeline.id: services-intake
+  config.string: |
+    input { beats { port => 5053 } }
+    output { pipeline { send_to => ["services", "services_managed_cloud"] } }
 - pipeline.id: services
   path.config: "<%= node['logstash']['base_dir'] %>/config/services.conf"
 

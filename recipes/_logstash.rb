@@ -55,7 +55,8 @@ template"#{node['logstash']['base_dir']}/config/services.conf" do
                 :elastic_addr => elastic_addrs,
                 :hops_ca => hops_ca,
                 :elastic_output => true,
-                :http_output => false
+                :http_output => false,
+                :address => "services"
             })
 end
 
@@ -70,7 +71,8 @@ if managed_cloud
                 :elastic_addr => elastic_addrs,
                 :hops_ca => hops_ca,
                 :elastic_output => false,
-                :http_output => true
+                :http_output => true,
+                :address => "services_managed_cloud"
               })
   end
 end  

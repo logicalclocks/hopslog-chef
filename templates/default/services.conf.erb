@@ -1,6 +1,6 @@
 input {
-  beats {
-    port => <%= node['logstash']['beats']['services_port'] %>  
+  pipeline {
+    address => <%= @address %>
   }
 }
 
