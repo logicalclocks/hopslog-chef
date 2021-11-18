@@ -6,7 +6,7 @@
   path.config: "<%= node['logstash']['base_dir'] %>/config/kube_jobs.conf"
 - pipeline.id: jupyter
   path.config: "<%= node['logstash']['base_dir'] %>/config/jupyter.conf"
-- - pipeline.id: services-intake
+- pipeline.id: services-intake
 # this is needed to be able to send the same event to both the services and 
 # the managed_cloud_services pipelines, we only set the services pipeline here,
 # the cloud one is added at runtime if needed
