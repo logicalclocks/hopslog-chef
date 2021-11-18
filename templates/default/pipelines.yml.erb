@@ -7,14 +7,14 @@
 - pipeline.id: jupyter
   path.config: "<%= node['logstash']['base_dir'] %>/config/jupyter.conf"
 - - pipeline.id: services-intake
+# this is needed to be able to send the same event to both the services and 
+# the managed_cloud_services pipelines, we only set the services pipeline here,
+# the cloud one is added at runtime if needed
   config.string: |
-    input { beats { port => 5053 } }
-    output { pipeline { send_to => ["services", "services_managed_cloud"] } }
+    input { beats { port => <%= node['logstash']['beats']['services_port'] %> } }
+    output { pipeline { send_to => ["services"] } }
 - pipeline.id: services
   path.config: "<%= node['logstash']['base_dir'] %>/config/services.conf"
-
-
-#Keep the following at the bottom of this file
 <% if @managed_cloud -%>
 - pipeline.id: services_managed_cloud
   path.config: "<%= node['logstash']['base_dir'] %>/config/services_managed_cloud.conf"
