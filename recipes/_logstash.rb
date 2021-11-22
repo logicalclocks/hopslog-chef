@@ -53,15 +53,38 @@ template"#{node['logstash']['base_dir']}/config/services.conf" do
   mode 0655
   variables({
                 :elastic_addr => elastic_addrs,
-                :hops_ca => hops_ca
+                :hops_ca => hops_ca,
+                :elastic_output => true,
+                :http_output => false,
+                :address => "services"
             })
 end
+
+managed_cloud = (node['install']['enterprise']['install'].casecmp? "true" and exists_local("cloud", "default"))
+if managed_cloud
+  template"#{node['logstash']['base_dir']}/config/services_managed_cloud.conf" do
+    source "services.conf.erb"
+    owner node['hopslog']['user']
+    group node['hopslog']['group']
+    mode 0655
+    variables({
+                :elastic_addr => elastic_addrs,
+                :hops_ca => hops_ca,
+                :elastic_output => false,
+                :http_output => true,
+                :address => "services_managed_cloud"
+              })
+  end
+end  
 
 template"#{node['logstash']['base_dir']}/config/pipelines.yml" do
   source "pipelines.yml.erb"
   owner node['hopslog']['user']
   group node['hopslog']['group']
   mode 0655
+  variables({
+              :managed_cloud => managed_cloud
+            })
 end
 
 template"#{node['logstash']['base_dir']}/bin/start-logstash.sh" do

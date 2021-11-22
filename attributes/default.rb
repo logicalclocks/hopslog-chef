@@ -91,3 +91,8 @@ default['kibana']['opendistro_security']['cookie']['ttl']                       
 # https://github.com/opendistro-for-elasticsearch/security-kibana-plugin/issues/31
 default['kibana']['opendistro_security']['session']['ttl']                        = 2 * node['elastic']['opendistro_security']['jwt']['exp_ms'].to_i
 default['kibana']['opendistro_security']['session']['keepalive']                  = "true"
+
+#managed cloud
+default['logstash']['managed_cloud']['batch_delay']                               = "2000"
+default['logstash']['managed_cloud']['batch_size']                                = "50"
+default['logstash']['managed_cloud']['max_size']                                  = "4096"
