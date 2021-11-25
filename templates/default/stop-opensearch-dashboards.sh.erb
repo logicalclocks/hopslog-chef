@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PID_FILE=/tmp/kibana.pid
+PID_FILE=<%= node['kibana']['pid_file'] %>
 
 function kill_named {
     PID=`ps aux | grep -i opensearch-dashboards | grep -v bash | grep -v chef | grep -v grep | awk '{print $2}'`
