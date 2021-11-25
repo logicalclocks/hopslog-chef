@@ -1,6 +1,6 @@
 input {
-  beats {
-    port => <%= node['logstash']['beats']['services_port'] %>  
+  pipeline {
+    address => <%= @address %>
   }
 }
 
@@ -58,9 +58,16 @@ filter {
   mutate {
     remove_field => ["message", "source" , "templogdate", "prospector", "agent", "jobinfo", "log", "input", "ecs", "key_value_pairs"]
   }
+  <% if @http_output -%>
+  truncate {
+    fields => "log_message"
+    length_bytes => "<%=node['logstash']['managed_cloud']['max_size']%>"
+  }
+  <% end -%>
 }
 
 output {
+  <% if @elastic_output -%>
   opensearch {
     hosts => [<%= @elastic_addr %>]
     index => "<%= node['logstash']['service_index'] %>%{+YYYY.MM.dd}"
@@ -73,4 +80,16 @@ output {
     <% end %>
     <% end %>
   }
+  <% end -%>
+
+  <% if @http_output -%>
+  http {
+    format => "json_batch"
+    headers => ["x-api-key", "API_KEY"]
+    http_compression => false
+    http_method => "post"
+    url => "URL"
+    follow_redirects => false
+  }
+  <% end -%>
 }
