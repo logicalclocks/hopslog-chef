@@ -152,7 +152,7 @@ template"#{node['filebeat']['base_dir']}/filebeat-sklearn-serving.yml" do
                 :paths => [sk_log_glob],
                 :multiline => false,
                 :fields => true,
-                :model_server => "flask",
+                :model_server => "python",
                 :my_private_ip => my_private_ip,
                 :logstash_endpoint => logstash_service_endpoint,
                 :log_name => sklearn_serving_log_name
