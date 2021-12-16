@@ -75,8 +75,8 @@ filter {
           target => "logdate"
         }
       
-      # Flask (sklearn)
-      } else if [kubernetes][labels][serving_hops_works/model-server] == "flask" {
+      # Python (sklearn)
+      } else if [kubernetes][labels][serving_hops_works/model-server] == "python" {
         grok {
           match => { "message" => "%{GREEDYDATA:log_message}" }
         }
@@ -101,7 +101,7 @@ filter {
       }
 
     # Message pattern: Scikit-learn
-    } else if [fields][model_server] == "flask" {
+    } else if [fields][model_server] == "python" {
       grok {
         match => { "message" => "%{DATA:serving_info} %{GREEDYDATA:log_message}" }
       }
