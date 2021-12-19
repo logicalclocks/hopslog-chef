@@ -13,6 +13,13 @@ template"#{node['logstash']['base_dir']}/config/spark-streaming.conf" do
   })
 end
 
+template"#{node['logstash']['base_dir']}/config/jvm.options" do
+  source "logstash_jvm.options.erb"
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
+  mode 0655
+end
+
 template"#{node['logstash']['base_dir']}/config/serving.conf" do
   source "serving.conf.erb"
   owner node['hopslog']['user']
