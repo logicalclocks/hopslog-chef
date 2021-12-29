@@ -20,6 +20,7 @@ default['logstash']['beats']['serving_port']                 = "5046"
 default['logstash']['beats']['python_jobs_port']             = "5051"
 default['logstash']['beats']['jupyter_port']                 = "5052"
 default['logstash']['beats']['services_port']                = "5053"
+default['logstash']['beats']['git_port']                     = "5054"
 default['logstash']['http']['port']                          = "9600"
 
 default['logstash']['systemd']                  = "true"
