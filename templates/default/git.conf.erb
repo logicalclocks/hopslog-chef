@@ -30,11 +30,11 @@ filter {
      }
   }
 
-  if "command_output" in [filepath] {
+  if "command_output.log" in [filepath] {
     mutate {
       replace => [ "logtype", "commandexecution" ]
     }
-  } else if "hopsfs_mount" in [filepath] {
+  } else if "hopsfs_mount.log" in [filepath] {
     mutate {
       replace => [ "logtype", "hopsfsmount" ]
     }
@@ -51,9 +51,15 @@ filter {
   mutate {
     add_field => [ "project", "" ]
   }
+
+  mutate {
+    add_field => [ "executionid", ""]
+  }
+
   mutate {
     add_field => [ "jobname", "gitcommandexecution" ]
   }
+
   mutate {
     add_field => [ "application", "" ]
   }
@@ -76,6 +82,10 @@ filter {
 
   mutate {
     replace => [ "application", "%{[userinfo][0]}"]
+  }
+
+  mutate {
+    replace => [ "executionid", "%{[userinfo][1]}"]
   }
 
   mutate {
