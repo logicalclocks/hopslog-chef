@@ -12,7 +12,7 @@ default['hopslog']['user-home']                 = "/home/#{node['hopslog']['user
 #
 # Logstash
 #
-default['logstash']['version']                               = "7.13.2"
+default['logstash']['version']                               = "7.16.2"
 default['logstash']['url']                                   = "#{node['download_url']}/opensearch/logstash-oss-with-opensearch-output-plugin-#{node['logstash']['version']}-linux-x64.tar.gz"
 #default['logstash']['sha512']                                = "de5c7ee0d1296787032d91733bb18d6cb9669e8887e683930f9d9c285b28e582b4b4aaf2e8e2365283496e71d00baec8dd109f532170f0e0cc88d35497f79424"
 default['logstash']['beats']['spark_port']                   = "5044"
