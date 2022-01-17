@@ -379,7 +379,7 @@ end
 
 # Disable kibana service to handle upgrades from 2.4 to 2.5
 service "kibana" do
-  case node['elastic']['systemd']
+  provider Chef::Provider::Service::Systemd
   supports :restart => true, :stop => true, :start => true, :status => true
   action [:disable, :stop]
 end
