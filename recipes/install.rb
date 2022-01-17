@@ -375,3 +375,11 @@ link node['filebeat']['data_dir'] do
   mode '0770'
   to node['filebeat']['data_volume']['data_dir']
 end
+
+
+# Disable kibana service to handle upgrades from 2.4 to 2.5
+service "kibana" do
+  case node['elastic']['systemd']
+  supports :restart => true, :stop => true, :start => true, :status => true
+  action [:disable, :stop]
+end
