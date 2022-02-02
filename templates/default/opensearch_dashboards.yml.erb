@@ -164,7 +164,7 @@ opensearch_security.session.keepalive: <%=node['kibana']['opensearch_security'][
 opensearch_security.multitenancy.enabled: <%= node['elastic']['opensearch_security']['kibana']['multitenancy']['enabled'].casecmp?("true") %>
 opensearch_security.multitenancy.tenants.enable_global: <%= node['kibana']['opensearch_security']['multitenancy']['global']['enabled'].casecmp?("true") %>
 opensearch_security.multitenancy.tenants.enable_private: <%= node['kibana']['opensearch_security']['multitenancy']['private']['enabled'].casecmp?("true") %>
-opensearch_security.multitenancy.tenants.preferred: ["Private","Global"]
+opensearch_security.multitenancy.tenants.preferred: ["Private"]
 <% end %>
 
 # Set the allowlist to check input graphite Url. Allowlist is the default check list.
