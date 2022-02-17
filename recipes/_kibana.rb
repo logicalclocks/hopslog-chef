@@ -16,14 +16,14 @@ kagent_hopsify "Generate x.509" do
   not_if { node["kagent"]["enabled"] == "false" }
 end
 
-elastic_url = any_elastic_url()
+opensearch_url = any_elastic_url()
 elastic_addrs = all_elastic_urls_str()
 opensearch_dashboards_url = get_kibana_url()
 
 # delete .kibana index created from previous hopsworks versions if it exists
 elastic_http 'delete old hopsworks .kibana index directly from elasticsearch' do
   action :delete
-  url "#{elastic_url}/.kibana"
+  url "#{opensearch_url}/.kibana"
   user node['elastic']['opensearch_security']['admin']['username']
   password node['elastic']['opensearch_security']['admin']['password']
   only_if_cond node['install']['version'].start_with?("0.6")
@@ -33,6 +33,14 @@ end
 file "#{node['kibana']['base_dir']}/config/kibana.xml" do
   action :delete
 end
+
+hopsworks_alt_url = "https://#{private_recipe_ip("hopsworks","default")}:8181"
+if node.attribute? "hopsworks"
+  if node["hopsworks"].attribute? "https" and node["hopsworks"]['https'].attribute? ('port')
+    hopsworks_alt_url = "https://#{private_recipe_ip("hopsworks","default")}:#{node['hopsworks']['https']['port']}"
+  end
+end
+
 
 private_key = "#{crypto_dir}/#{x509_helper.get_private_key_pkcs8_name(node['hopslog']['user'])}"
 certificate = "#{crypto_dir}/#{x509_helper.get_certificate_bundle_name(node['hopslog']['user'])}"
@@ -47,7 +55,8 @@ template"#{node['kibana']['base_dir']}/config/opensearch_dashboards.yml" do
      :elastic_addr => elastic_addrs,
      :private_key => private_key,
      :certificate => certificate,
-     :hops_ca => hops_ca
+     :hops_ca => hops_ca,
+     :hopsworks_addr => hopsworks_alt_url
   })
 end
 

@@ -98,3 +98,5 @@ default['logstash']['managed_cloud']['batch_delay']                             
 default['logstash']['managed_cloud']['batch_size']                                = "50"
 default['logstash']['managed_cloud']['max_size']                                  = "4096"
 
+#opensearch-dashboards logo
+default['opensearch-dashboards']['logo'] = "search-400x70.png"
