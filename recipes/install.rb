@@ -383,7 +383,9 @@ end
 if node['hopsworks']['current_version'] != "" and node['hopsworks']['current_version'].to_f <= 2.5
 
   # If the data-dir is not in a separate directory, refuse to upgrade
-  raise if node['hopsworks']['current_version'].to_f <= 2.3
+  if node['hopsworks']['current_version'].to_f <= 2.3
+    Chef::Log.fatal('You cannot upgrade from a version earlier than 2.4 to 2.6+')
+  end
   
   service "kibana" do
     provider Chef::Provider::Service::Systemd
