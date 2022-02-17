@@ -377,9 +377,40 @@ link node['filebeat']['data_dir'] do
 end
 
 
-# Disable kibana service to handle upgrades from 2.4 to 2.5
-service "kibana" do
-  provider Chef::Provider::Service::Systemd
-  supports :restart => true, :stop => true, :start => true, :status => true
-  action [:disable, :stop]
+#
+# Cleanup/Disable kibana service to handle upgrades to OpenSearch Dashboards
+#
+if node['hopsworks']['current_version'].to_f <= 2.5
+
+  # If the data-dir is not in a separate directory, refuse to upgrade
+  raise if node['hopsworks']['current_version'].to_f <= 2.3
+  
+  service "kibana" do
+    provider Chef::Provider::Service::Systemd
+    supports :restart => true, :stop => true, :start => true, :status => true
+    action [:disable, :stop]
+  end
+
+  old_kibana = "/lib/systemd/system/kibana.service"
+
+  case node['platform_family']
+  when "rhel"
+    old_kibana =  "/usr/lib/systemd/system/kibana.service"
+  end
+
+  file old_kibana do
+    action :delete
+  end
+
+  # We had kibana 7.2.0 in both hopsworks 2.4 and 2.5
+  directory "{node['install']['dir']}/kibana-7.2.0-linux-x86_64" do
+    recursive true
+    action :delete
+  end
+
+  link "{node['install']['dir']}/kibana" do
+    action :delete
+  end
+
+  
 end
