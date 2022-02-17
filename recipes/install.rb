@@ -380,7 +380,7 @@ end
 #
 # Cleanup/Disable kibana service to handle upgrades to OpenSearch Dashboards
 #
-if node['hopsworks']['current_version'].to_f <= 2.5
+if node['hopsworks']['current_version'] != "" and node['hopsworks']['current_version'].to_f <= 2.5
 
   # If the data-dir is not in a separate directory, refuse to upgrade
   raise if node['hopsworks']['current_version'].to_f <= 2.3
