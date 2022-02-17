@@ -100,3 +100,4 @@ default['logstash']['managed_cloud']['max_size']                                
 
 #opensearch-dashboards logo
 default['opensearch-dashboards']['logo'] = "search-400x70.png"
+
