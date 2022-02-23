@@ -36,6 +36,8 @@ default['logstash']['data_volume']['root_dir']  = "#{node['data']['dir']}/logsta
 default['logstash']['data_volume']['logs_dir']  = "#{node['logstash']['data_volume']['root_dir']}/log"
 default['logstash']['data_volume']['data_dir']  = "#{node['logstash']['data_volume']['root_dir']}/data"
 
+default['logstash']['pipeline']['workers']       = 1
+
 #
 # Kibana
 #

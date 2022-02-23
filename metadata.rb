@@ -114,3 +114,7 @@ attribute "logstash/managed_cloud/batch_size",
 attribute "logstash/managed_cloud/max_size",
           :description => "the log message max size to send logs to the managed cloud platform",
           :type => "string"
+
+attribute "logstash/pipeline/workers",
+          :description => "Number of threads for each logstash pipeline - default 1",
+          :type => "string"

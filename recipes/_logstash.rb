@@ -94,6 +94,13 @@ template"#{node['logstash']['base_dir']}/config/pipelines.yml" do
             })
 end
 
+template"#{node['logstash']['base_dir']}/config/logstash.yml" do
+  source "logstash.yml.erb"
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
+  mode 0655
+end
+
 template"#{node['logstash']['base_dir']}/bin/start-logstash.sh" do
   source "start-logstash.sh.erb"
   owner node['hopslog']['user']
