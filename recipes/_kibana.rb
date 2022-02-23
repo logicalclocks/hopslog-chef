@@ -157,12 +157,3 @@ consul_service "Registering Kibana with Consul" do
   service_definition "kibana-consul.hcl.erb"
   action :register
 end
-
-
-# HACK: Restart logstash as there seems to be a bug in it going to 100% CPU for OpenSearch
-service "logstash" do
-  provider Chef::Provider::Service::Systemd
-  supports :restart => true, :stop => true, :start => true, :status => true
-  action :restart
-end
-
