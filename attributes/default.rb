@@ -36,7 +36,13 @@ default['logstash']['data_volume']['root_dir']  = "#{node['data']['dir']}/logsta
 default['logstash']['data_volume']['logs_dir']  = "#{node['logstash']['data_volume']['root_dir']}/log"
 default['logstash']['data_volume']['data_dir']  = "#{node['logstash']['data_volume']['root_dir']}/data"
 
-default['logstash']['pipeline']['workers']       = 1
+# Logstash Resource Utilization
+default['logstash']['memory']                   = 4g
+# number of workers bounds cpu utilization
+default['logstash']['pipeline']['workers']      = 1   
+default['logstash']['pipeline']['ordered']      = "false"
+default['logstash']['pipeline']['batch_size']   = 1000
+default['logstash']['pipeline']['batch_delay']  = 200
 
 #
 # Kibana
