@@ -1,1 +1,6 @@
 pipeline.workers: <%= node['logstash']['pipeline']['workers'] %>
+pipeline.batch.size: <%= node['logstash']['pipeline']['batch_size'] %>
+pipeline.batch.delay: <%= node['logstash']['pipeline']['batch_delay'] %>
+pipeline.ordered: <%= node['logstash']['pipeline']['ordered'] %>
+# queue.type: persisted
+pipeline.separate_logs: true
