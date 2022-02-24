@@ -117,5 +117,22 @@ attribute "logstash/managed_cloud/max_size",
           :type => "string"
 
 attribute "logstash/pipeline/workers",
-          :description => "Number of threads for each logstash pipeline - default 1",
+          :description => "Number of threads for each logstash pipeline. Default: 1",
           :type => "string"
+
+attribute "logstash/memory",
+          :description => "Size of JVM memory (Xms and Xmx) for logstash pipeline. Default: 4g",
+          :type => "string"
+
+attribute "logstash/pipeline/ordered",
+          :description => "Respect order of incoming log msgs. Expensive for CPU if turned on. Default: false",
+          :type => "string"
+
+attribute "logstash/pipeline/batch_size",
+          :description => "Size of batch of msgs sent to OpenSearch by Logstash. Larger requires more memory, less CPU. Default: 1000",
+          :type => "string"
+
+attribute "logstash/pipeline/batch_delay",
+          :description => "Delay between sending of batches to OpenSearch by Logstash in ms. Higher means less CPU, slower msg delivery. Default: 200",
+          :type => "string"
+
