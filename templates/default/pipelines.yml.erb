@@ -6,7 +6,9 @@
   path.config: "<%= node['logstash']['base_dir'] %>/config/kube_jobs.conf"
 - pipeline.id: jupyter
   path.config: "<%= node['logstash']['base_dir'] %>/config/jupyter.conf"
-# this is needed to be able to send the same event to both the services and 
+- pipeline.id: flink
+  path.config: "<%= node['logstash']['base_dir'] %>/config/flink.conf"
+-# this is needed to be able to send the same event to both the services and
 # the managed_cloud_services pipelines, we only set the services pipeline here,
 # the cloud one is added at runtime if needed
 - pipeline.id: services-intake

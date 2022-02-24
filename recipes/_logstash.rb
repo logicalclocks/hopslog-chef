@@ -67,6 +67,17 @@ template"#{node['logstash']['base_dir']}/config/services.conf" do
             })
 end
 
+template"#{node['logstash']['base_dir']}/config/flink.conf" do
+  source "flink.conf.erb"
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
+  mode 0655
+  variables({
+     :elastic_addr => elastic_addrs,
+     :hops_ca => hops_ca
+  })
+end
+
 managed_cloud = (node['install']['enterprise']['install'].casecmp? "true" and exists_local("cloud", "default"))
 if managed_cloud
   template"#{node['logstash']['base_dir']}/config/services_managed_cloud.conf" do
@@ -114,7 +125,6 @@ template"#{node['logstash']['base_dir']}/bin/stop-logstash.sh" do
   group node['hopslog']['group']
   mode 0750
 end
-
 
 deps = ""
 if exists_local("elastic", "default")

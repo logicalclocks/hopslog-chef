@@ -60,6 +60,10 @@ attribute "logstash/beats/jupyter_port",
           :description => "Filebeat port for jupyter server logs",
           :type => "string"
 
+attribute "logstash/beats/flink_port",
+          :description => "Filebeat port for flink streaming logs",
+          :type => "string"
+
 attribute "kibana/url",
           :description => "Url to hopslog binaries",
           :type => "string"
@@ -86,6 +90,10 @@ attribute "filebeat/spark_read_logs",
 
 attribute "filebeat/skip",
           :description => "Dont start filebeat. Default: 'true'. Set to 'false' to start filebeat",
+          :type => "string"
+
+attribute "filebeat/flink_read_logs",
+          :description => "Path to log files read by filebeat for flink (e.g., /srv/hops/domain1/logs/*.log)",
           :type => "string"
 
 attribute "install/dir",

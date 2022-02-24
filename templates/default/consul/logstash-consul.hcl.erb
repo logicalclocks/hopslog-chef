@@ -62,5 +62,17 @@ services = [
             id = "logstash-beats-jupyter-check"
             alias_service = "logstash/http"
         }
+    },
+    {
+        id = "logstash/flink"
+        name = "logstash"
+        tags = [
+            "flink"
+        ]
+        port = <%= node['logstash']['beats']['flink_port']  %>
+        check = {
+            id = "logstash-beats-flink-check"
+            alias_service = "logstash/http"
+        }
     }
 ]

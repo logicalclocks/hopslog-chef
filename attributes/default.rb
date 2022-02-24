@@ -20,6 +20,7 @@ default['logstash']['beats']['serving_port']                 = "5046"
 default['logstash']['beats']['python_jobs_port']             = "5051"
 default['logstash']['beats']['jupyter_port']                 = "5052"
 default['logstash']['beats']['services_port']                = "5053"
+default['logstash']['beats']['flink_port']                   = "5054"
 default['logstash']['http']['port']                          = "9600"
 
 default['logstash']['systemd']                  = "true"
@@ -76,6 +77,7 @@ default['filebeat']['data_volume']['logs_dir']  = "#{node['filebeat']['data_volu
 default['filebeat']['data_volume']['data_dir']  = "#{node['filebeat']['data_volume']['data_dir']}/data"
 
 default['filebeat']['spark_read_logs']          = node['hops']['base_dir'] + "/logs/userlogs/**/"
+default['filebeat']['flink_read_logs']          = node['hops']['base_dir'] + "/logs/userlogs/**/"
 
 default['logstash']['service_index']            = ".services-"
 default['kibana']['service_index_pattern']      = ".services-*"

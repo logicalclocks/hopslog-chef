@@ -1,0 +1,82 @@
+input {
+  beats {
+    port => <%= node['logstash']['beats']['flink_port'] %>
+  }
+}
+
+filter {
+  mutate {
+  add_field => [ "project", "" ]
+  }
+  mutate {
+  add_field => [ "jobname", "" ]
+  }
+  mutate {
+  add_field => [ "jobid", ""]
+  }
+  mutate {
+  add_field => [ "application", ""]
+  }
+
+  grok {
+    match => {"message" => "(?<templogdate>%{YEAR}-%{MONTHNUM2}-%{MONTHDAY} %{HOUR}:%{MINUTE}:%{SECOND}.%{NONNEGINT}) %{LOGLEVEL:priority} %{DATA:jobinfo} %{DATA:logger_name}: %{GREEDYDATA:log_message}"}
+  }
+
+  #Ignore failed parse enties. Grok filter has been tested with http://grokconstructor.appspot.com
+  if "_grokparsefailure" in [tags] {
+    drop { }
+  }
+
+  mutate {
+    split => ["jobinfo", ","]
+  }
+
+  date {
+    match  => [ "templogdate", ISO8601 ]
+    target => "logdate"
+  }
+
+  mutate {
+    remove_field => [ "[host]" ]
+  }
+
+  mutate {
+    add_field => {
+     "host" => "%{[agent][hostname]}"
+    }
+  }
+
+  mutate {
+    replace => [ "project", "%{[jobinfo][0]}"]
+  }
+  mutate {
+    replace => [ "jobname", "%{[jobinfo][1]}"]
+  }
+  mutate {
+    replace => [ "jobid", "%{[jobinfo][2]}"]
+  }
+  mutate {
+    replace => [ "application", "%{[jobinfo][3]}"]
+  }
+
+  mutate {
+    remove_field => [ "message", "source" , "templogdate", "prospector", "agent", "jobinfo", "log", "input", "ecs"]
+  }
+
+}
+
+output {
+  elasticsearch {
+    hosts => [<%= @elastic_addr %>]
+    index => "%{project}_logs-%{+YYYY.MM.dd}"
+    <% if node['elastic']['opendistro_security']['enabled'] %>
+    user => "<%=node['elastic']['opendistro_security']['logstash']['username']%>"
+    password => "<%=node['elastic']['opendistro_security']['logstash']['password']%>"
+    <% if node['elastic']['opendistro_security']['https']['enabled'] %>
+    cacert => "<%= @hops_ca %>"
+    ssl => true
+    ilm_enabled => false
+    <% end %>
+    <% end %>
+  }
+}
