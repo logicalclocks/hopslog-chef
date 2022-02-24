@@ -17,7 +17,7 @@ template"#{node['logstash']['base_dir']}/config/jvm.options" do
   source "logstash_jvm.options.erb"
   owner node['hopslog']['user']
   group node['hopslog']['group']
-  mode 0655
+  mode 0600
 end
 
 template"#{node['logstash']['base_dir']}/config/serving.conf" do
