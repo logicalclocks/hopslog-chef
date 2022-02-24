@@ -37,7 +37,7 @@ default['logstash']['data_volume']['logs_dir']  = "#{node['logstash']['data_volu
 default['logstash']['data_volume']['data_dir']  = "#{node['logstash']['data_volume']['root_dir']}/data"
 
 # Logstash Resource Utilization
-default['logstash']['memory']                   = 4g
+default['logstash']['memory']                   = "4g"
 # number of workers bounds cpu utilization
 default['logstash']['pipeline']['workers']      = 1   
 default['logstash']['pipeline']['ordered']      = "false"
