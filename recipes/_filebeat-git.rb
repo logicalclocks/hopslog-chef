@@ -2,18 +2,15 @@ file "#{node['filebeat']['base_dir']}/filebeat.xml" do
   action :delete
 end
 
-git_owner = ""
-git_group = ""
+git_owner = "glassfish"
+git_group = "glassfish"
 if node.attribute?("hopsworks") && node['hopsworks'].attribute?("user")
   git_owner = node['hopsworks']['user']
   git_group = node['hopsworks']['user']
-else
-  git_owner = "glassfish"
-  git_group = "glassfish"
 end
 
 #Add glassfish user to elastic group
-group node['elastic']['user'] do
+group node['elastic']['group'] do
   action :modify
   members [git_owner]
   append true
