@@ -387,8 +387,20 @@ bash 'Move filebeat data to data volume' do
     rm -rf #{node['filebeat']['data_dir']}
   EOH
   only_if { conda_helpers.is_upgrade }
-  only_if { File.directory?(node['filebeat']['data_dir'])}
-  not_if { File.symlink?(node['filebeat']['data_dir'])}
+  only_if { File.directory?(node['filebeat']['data_dir']) }
+  not_if { File.symlink?(node['filebeat']['data_dir']) }
+  not_if { ::Dir.empty?(node['filebeat']['data_dir']) }
+end
+
+bash 'Move filebeat data to the correct data volume - bug fix' do
+  user 'root'
+  code <<-EOH
+    set -e
+    mv -f /data/* #{node['filebeat']['data_volume']['data_dir']}
+  EOH
+  only_if { conda_helpers.is_upgrade }
+  only_if { File.directory?('/data') }
+  not_if { ::Dir.empty?('/data') }
 end
 
 link node['filebeat']['data_dir'] do
