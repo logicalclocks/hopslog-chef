@@ -392,15 +392,22 @@ bash 'Move filebeat data to data volume' do
   not_if { ::Dir.empty?(node['filebeat']['data_dir']) }
 end
 
-bash 'Move filebeat data to the correct data volume - bug fix' do
-  user 'root'
-  code <<-EOH
-    set -e
-    mv -f /data/* #{node['filebeat']['data_volume']['data_dir']}
-  EOH
-  only_if { conda_helpers.is_upgrade }
-  only_if { File.directory?('/data') }
-  not_if { ::Dir.empty?('/data') }
+dirs_bug_fix = ['/data/jupyter', '/data/service', '/data/sklearn_serving', '/data/spark', '/data/tf_serving']
+for dir in dirs_bug_fix do
+  bash "Move filebeat data #{dir} to the correct data volume - bug fix" do
+    user 'root'
+    # The guards do not contain the non-normal exit code inside the resource
+    # if the dir does not exist AND IF you add the resource inside a for loop.
+    # I don't know why this is happening but ignore_failure hides the
+    # underlying error code
+    ignore_failure true
+    code <<-EOH
+      mv -f #{dir} #{node['filebeat']['data_volume']['data_dir']}
+    EOH
+    only_if { conda_helpers.is_upgrade }
+    only_if { ::File.directory?(dir) }
+    not_if { ::File.directory?("#{node['filebeat']['data_volume']['data_dir']}/#{File.basename(dir)}") }
+  end
 end
 
 link node['filebeat']['data_dir'] do
