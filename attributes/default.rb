@@ -40,7 +40,6 @@ default['logstash']['data_volume']['data_dir']  = "#{node['logstash']['data_volu
 default['logstash']['memory']                   = "4g"
 # number of workers bounds cpu utilization
 default['logstash']['pipeline']['workers']      = 1   
-default['logstash']['pipeline']['ordered']      = "false"
 default['logstash']['pipeline']['batch_size']   = 1000
 default['logstash']['pipeline']['batch_delay']  = 200
 
@@ -104,4 +103,3 @@ default['kibana']['opendistro_security']['session']['keepalive']                
 default['logstash']['managed_cloud']['batch_delay']                               = "2000"
 default['logstash']['managed_cloud']['batch_size']                                = "50"
 default['logstash']['managed_cloud']['max_size']                                  = "4096"
-default['logstash']['managed_cloud']['pipeline']['ordered']                       = "false"
