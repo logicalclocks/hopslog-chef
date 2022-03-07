@@ -124,10 +124,6 @@ attribute "logstash/memory",
           :description => "Size of JVM memory (Xms and Xmx) for logstash pipeline. Default: 4g",
           :type => "string"
 
-attribute "logstash/pipeline/ordered",
-          :description => "Respect order of incoming log msgs. Expensive for CPU if turned on. Default: false",
-          :type => "string"
-
 attribute "logstash/pipeline/batch_size",
           :description => "Size of batch of msgs sent to OpenSearch by Logstash. Larger requires more memory, less CPU. Default: 1000",
           :type => "string"
