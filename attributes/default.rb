@@ -40,7 +40,6 @@ default['logstash']['data_volume']['data_dir']  = "#{node['logstash']['data_volu
 default['logstash']['memory']                   = "4g"
 # number of workers bounds cpu utilization
 default['logstash']['pipeline']['workers']      = 1   
-default['logstash']['pipeline']['ordered']      = "false"
 default['logstash']['pipeline']['batch_size']   = 1000
 default['logstash']['pipeline']['batch_delay']  = 200
 
@@ -82,7 +81,7 @@ default['filebeat']['port']                     = "5000"
 # Data volume directories
 default['filebeat']['data_volume']['root_dir']  = "#{node['data']['dir']}/filebeat"
 default['filebeat']['data_volume']['logs_dir']  = "#{node['filebeat']['data_volume']['root_dir']}/log"
-default['filebeat']['data_volume']['data_dir']  = "#{node['filebeat']['data_volume']['data_dir']}/data"
+default['filebeat']['data_volume']['data_dir']  = "#{node['filebeat']['data_volume']['root_dir']}/data"
 
 default['filebeat']['spark_read_logs']          = node['hops']['base_dir'] + "/logs/userlogs/**/"
 
