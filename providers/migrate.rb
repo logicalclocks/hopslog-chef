@@ -7,8 +7,8 @@ action :run do
     rm -rf #{node['logstash']['data_dir']}
   EOH
     only_if { conda_helpers.is_upgrade }
-    only_if { File.directory?(node['logstash']['data_dir'])}
-    not_if { File.symlink?(node['logstash']['data_dir'])}
+    only_if { ::File.directory?(node['logstash']['data_dir'])}
+    not_if { ::File.symlink?(node['logstash']['data_dir'])}
   end
 
   bash 'Move logstash logs to data volume' do
@@ -18,8 +18,8 @@ action :run do
     rm -rf #{node['logstash']['logs_dir']}
   EOH
     only_if { conda_helpers.is_upgrade }
-    only_if { File.directory?(node['logstash']['logs_dir'])}
-    not_if { File.symlink?(node['logstash']['logs_dir'])}
+    only_if { ::File.directory?(node['logstash']['logs_dir'])}
+    not_if { ::File.symlink?(node['logstash']['logs_dir'])}
   end
 
   bash 'Move opensearch-dashboards data to data volume' do
@@ -29,8 +29,8 @@ action :run do
     rm -rf #{node['kibana']['data_dir']}
   EOH
     only_if { conda_helpers.is_upgrade }
-    only_if { File.directory?(node['kibana']['data_dir'])}
-    not_if { File.symlink?(node['kibana']['data_dir'])}
+    only_if { ::File.directory?(node['kibana']['data_dir'])}
+    not_if { ::File.symlink?(node['kibana']['data_dir'])}
   end
 
   bash 'Move opensearch-dashboards logs to data volume' do
@@ -40,8 +40,8 @@ action :run do
     rm -rf #{node['kibana']['log_dir']}
   EOH
     only_if { conda_helpers.is_upgrade }
-    only_if { File.directory?(node['kibana']['log_dir'])}
-    not_if { File.symlink?(node['kibana']['log_dir'])}
+    only_if { ::File.directory?(node['kibana']['log_dir'])}
+    not_if { ::File.symlink?(node['kibana']['log_dir'])}
   end
 
   bash 'Move filebeat logs to data volume' do
@@ -51,8 +51,8 @@ action :run do
     rm -rf #{node['filebeat']['logs_dir']}
   EOH
     only_if { conda_helpers.is_upgrade }
-    only_if { File.directory?(node['filebeat']['logs_dir'])}
-    not_if { File.symlink?(node['filebeat']['logs_dir'])}
+    only_if { ::File.directory?(node['filebeat']['logs_dir'])}
+    not_if { ::File.symlink?(node['filebeat']['logs_dir'])}
   end
 
 
@@ -63,8 +63,8 @@ action :run do
     rm -rf #{node['filebeat']['data_dir']}
   EOH
     only_if { conda_helpers.is_upgrade }
-    only_if { File.directory?(node['filebeat']['data_dir']) }
-    not_if { File.symlink?(node['filebeat']['data_dir']) }
+    only_if { ::File.directory?(node['filebeat']['data_dir']) }
+    not_if { ::File.symlink?(node['filebeat']['data_dir']) }
     not_if { ::Dir.empty?(node['filebeat']['data_dir']) }
   end
 
@@ -82,7 +82,7 @@ action :run do
     EOH
       only_if { conda_helpers.is_upgrade }
       only_if { ::File.directory?(dir) }
-      not_if { ::File.directory?("#{node['filebeat']['data_volume']['data_dir']}/#{File.basename(dir)}") }
+      not_if { ::File.directory?("#{node['filebeat']['data_volume']['data_dir']}/#{::File.basename(dir)}") }
     end
   end
 
