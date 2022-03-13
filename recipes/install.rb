@@ -132,24 +132,10 @@ directory node['logstash']['data_volume']['data_dir'] do
   mode '0750'
 end
 
-link node['logstash']['data_dir'] do
-  owner node['logstash']['user']
-  group node['logstash']['group']
-  mode '0750'
-  to node['logstash']['data_volume']['data_dir']
-end
-
 directory node['logstash']['data_volume']['logs_dir'] do
   owner node['hopslog']['user']
   group node['hopslog']['group']
   mode '0750'
-end
-
-link node['logstash']['logs_dir'] do
-  owner node['hopslog']['user']
-  group node['hopslog']['group']
-  mode '0750'
-  to node['logstash']['data_volume']['logs_dir']
 end
 
 directory "#{node['logstash']['base_dir']}/config" do
@@ -211,25 +197,11 @@ directory node['kibana']['data_volume']['data_dir'] do
   recursive true
 end
 
-link node['kibana']['data_dir'] do
-  owner node['kibana']['user']
-  group node['kibana']['group']
-  mode '0750'
-  to node['kibana']['data_volume']['data_dir']
-end
-
 directory node['kibana']['data_volume']['log_dir'] do
   owner node['hopslog']['user']
   group node['hopslog']['group']
   mode '0750'
   recursive true
-end
-
-link node['kibana']['log_dir'] do
-  owner node['hopslog']['user']
-  group node['hopslog']['group']
-  mode '0750'
-  to node['kibana']['data_volume']['log_dir']
 end
 
 #
@@ -283,13 +255,6 @@ directory node['filebeat']['data_volume']['logs_dir'] do
   recursive true
 end
 
-link node['filebeat']['logs_dir'] do
-  owner node['filebeat']['user']
-  group node['filebeat']['group']
-  mode '0770'
-  to node['filebeat']['data_volume']['logs_dir']
-end
-
 directory node['filebeat']['data_volume']['data_dir'] do
   owner node['hopslog']['user']
   group node['hopslog']['group']
@@ -301,13 +266,47 @@ hopslog_migrate "logstash, filebeat, opensearch-dashboards" do
   action :run
 end
 
+link node['logstash']['data_dir'] do
+  owner node['logstash']['user']
+  group node['logstash']['group']
+  mode '0750'
+  to node['logstash']['data_volume']['data_dir']
+end
+
+link node['logstash']['logs_dir'] do
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
+  mode '0750'
+  to node['logstash']['data_volume']['logs_dir']
+end
+
+link node['kibana']['data_dir'] do
+  owner node['kibana']['user']
+  group node['kibana']['group']
+  mode '0750'
+  to node['kibana']['data_volume']['data_dir']
+end
+
+link node['kibana']['log_dir'] do
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
+  mode '0750'
+  to node['kibana']['data_volume']['log_dir']
+end
+
+link node['filebeat']['logs_dir'] do
+  owner node['filebeat']['user']
+  group node['filebeat']['group']
+  mode '0770'
+  to node['filebeat']['data_volume']['logs_dir']
+end
+
 link node['filebeat']['data_dir'] do
   owner node['filebeat']['user']
   group node['filebeat']['group']
   mode '0770'
   to node['filebeat']['data_volume']['data_dir']
 end
-
 
 #
 # Cleanup/Disable kibana service to handle upgrades to OpenSearch Dashboards

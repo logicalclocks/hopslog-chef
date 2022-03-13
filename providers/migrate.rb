@@ -3,7 +3,6 @@ action :run do
   bash 'Move logstash data to data volume' do
     user 'root'
     code <<-EOH
-    set -e
     mv -f #{node['logstash']['data_dir']}/* #{node['logstash']['data_volume']['data_dir']}
     rm -rf #{node['logstash']['data_dir']}
   EOH
@@ -15,7 +14,6 @@ action :run do
   bash 'Move logstash logs to data volume' do
     user 'root'
     code <<-EOH
-    set -e
     mv -f #{node['logstash']['logs_dir']}/* #{node['logstash']['data_volume']['logs_dir']}
     rm -rf #{node['logstash']['logs_dir']}
   EOH
@@ -27,7 +25,6 @@ action :run do
   bash 'Move opensearch-dashboards data to data volume' do
     user 'root'
     code <<-EOH
-    set -e
     mv -f #{node['kibana']['data_dir']}/* #{node['kibana']['data_volume']['data_dir']}
     rm -rf #{node['kibana']['data_dir']}
   EOH
@@ -39,7 +36,6 @@ action :run do
   bash 'Move opensearch-dashboards logs to data volume' do
     user 'root'
     code <<-EOH
-    set -e
     mv -f #{node['kibana']['log_dir']}/* #{node['kibana']['data_volume']['log_dir']}
     rm -rf #{node['kibana']['log_dir']}
   EOH
@@ -51,7 +47,6 @@ action :run do
   bash 'Move filebeat logs to data volume' do
     user 'root'
     code <<-EOH
-    set -e
     mv -f #{node['filebeat']['logs_dir']}/* #{node['filebeat']['data_volume']['logs_dir']}
     rm -rf #{node['filebeat']['logs_dir']}
   EOH
@@ -64,7 +59,6 @@ action :run do
   bash 'Move filebeat data to data volume' do
     user 'root'
     code <<-EOH
-    set -e
     mv -f #{node['filebeat']['data_dir']}/* #{node['filebeat']['data_volume']['data_dir']}
     rm -rf #{node['filebeat']['data_dir']}
   EOH
