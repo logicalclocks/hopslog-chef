@@ -345,5 +345,11 @@ if node['install']['current_version'] != "" and node['install']['current_version
     action :delete
   end
 
+  if node['kagent']['enabled'] == "true"
+    kagent_config "kibana" do
+      service "ELK"
+      action :remove
+    end
+  end
   
 end
