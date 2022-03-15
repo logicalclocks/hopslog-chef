@@ -166,7 +166,7 @@ opensearch_security.multitenancy.tenants.enable_global: <%= node['kibana']['open
 opensearch_security.multitenancy.tenants.enable_private: <%= node['kibana']['opensearch_security']['multitenancy']['private']['enabled'].casecmp?("true") %>
 opensearch_security.multitenancy.tenants.preferred: ["Private","Global"]
 <% end %>
-opensearch_security.multitenancy.enable_filter: false
+#opensearch_security.multitenancy.enable_filter: false
 
 # Set the allowlist to check input graphite Url. Allowlist is the default check list.
 #vis_type_timeline.graphiteAllowedUrls: ['https://www.hostedgraphite.com/UID/ACCESS_KEY/graphite']
