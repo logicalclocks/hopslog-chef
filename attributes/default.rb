@@ -93,8 +93,8 @@ default['hopslog']['public_ips']          = ['10.0.2.15']
 
 # Kibana Opensearch Security plugin
 default['kibana']['opensearch_security']['https']['enabled']                      = "true"
-default['kibana']['opensearch_security']['multitenancy']['global']['enabled']     = "false"
-default['kibana']['opensearch_security']['multitenancy']['private']['enabled']    = "false"
+default['kibana']['opensearch_security']['multitenancy']['global']['enabled']     = "true"
+default['kibana']['opensearch_security']['multitenancy']['private']['enabled']    = "true"
 default['kibana']['opensearch_security']['cookie']['ttl']                         = node['elastic']['opensearch_security']['jwt']['exp_ms'].to_i
 # the session ttl time is set to be twice the time the cookie ttl time, in order to solve the session expiry issue in kibana_addr
 # https://github.com/opendistro-for-elasticsearch/security-kibana-plugin/issues/31
