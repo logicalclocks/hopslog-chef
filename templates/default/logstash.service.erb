@@ -7,6 +7,7 @@ StartLimitBurst=15
 [Service]
 User = <%= node['hopslog']['user'] %>
 
+Nice = 19
 PIDFile = <%= node['logstash']['pid_file'] %>
 ExecStart = <%= node['logstash']['base_dir'] %>/bin/start-logstash.sh
 ExecStop = <%= node['logstash']['base_dir'] %>/bin/stop-logstash.sh
