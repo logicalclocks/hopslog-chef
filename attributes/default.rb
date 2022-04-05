@@ -12,7 +12,7 @@ default['hopslog']['user-home']                 = "/home/#{node['hopslog']['user
 #
 # Logstash
 #
-default['logstash']['version']                               = "7.16.2"
+default['logstash']['version']                               = "7.16.3"
 default['logstash']['url']                                   = "#{node['download_url']}/opensearch/logstash-oss-with-opensearch-output-plugin-#{node['logstash']['version']}-linux-x64.tar.gz"
 #default['logstash']['sha512']                                = "de5c7ee0d1296787032d91733bb18d6cb9669e8887e683930f9d9c285b28e582b4b4aaf2e8e2365283496e71d00baec8dd109f532170f0e0cc88d35497f79424"
 default['logstash']['beats']['spark_port']                   = "5044"
@@ -46,7 +46,7 @@ default['logstash']['pipeline']['batch_delay']  = 200
 #
 # Kibana
 #
-default['kibana']['version']                    = "1.2.0"
+default['kibana']['version']                    = "1.3.0"
 default['kibana']['url']                        = "#{node['download_url']}/opensearch/opensearch-dashboards-#{node['kibana']['version']}-linux-x64.tar.gz"
 #default['kibana']['sha512']                     = "57c3b59b8f5970e781f2ea78db98af9d0b0ff183dcb15f2e87b8ff29098704ab08b093c0bd2dcb05ea01883a0c49572d54800d8789e5398c36b2aa1f56179ba2"
 default['kibana']['port']                       = "5601"
