@@ -2,7 +2,7 @@ module Hopslog
   module Helpers
 
     def get_kibana_url()
-      if node['kibana']['opendistro_security']['https']['enabled'].casecmp?("true")
+      if node['kibana']['opensearch_security']['https']['enabled'].casecmp?("true")
         return "https://#{my_host()}:#{node['kibana']['port']}"
       else
         return "http://#{my_private_ip()}:#{node['kibana']['port']}"

@@ -16,16 +16,16 @@ kagent_hopsify "Generate x.509" do
   not_if { node["kagent"]["enabled"] == "false" }
 end
 
-elastic_url = any_elastic_url()
+opensearch_url = any_elastic_url()
 elastic_addrs = all_elastic_urls_str()
-kibana_url = get_kibana_url()
+opensearch_dashboards_url = get_kibana_url()
 
 # delete .kibana index created from previous hopsworks versions if it exists
 elastic_http 'delete old hopsworks .kibana index directly from elasticsearch' do
   action :delete
-  url "#{elastic_url}/.kibana"
-  user node['elastic']['opendistro_security']['admin']['username']
-  password node['elastic']['opendistro_security']['admin']['password']
+  url "#{opensearch_url}/.kibana"
+  user node['elastic']['opensearch_security']['admin']['username']
+  password node['elastic']['opensearch_security']['admin']['password']
   only_if_cond node['install']['version'].start_with?("0.6")
   only_if_exists true
 end
@@ -34,11 +34,19 @@ file "#{node['kibana']['base_dir']}/config/kibana.xml" do
   action :delete
 end
 
+hopsworks_alt_url = "https://#{private_recipe_ip("hopsworks","default")}:8181"
+if node.attribute? "hopsworks"
+  if node["hopsworks"].attribute? "https" and node["hopsworks"]['https'].attribute? ('port')
+    hopsworks_alt_url = "https://#{private_recipe_ip("hopsworks","default")}:#{node['hopsworks']['https']['port']}"
+  end
+end
+
+
 private_key = "#{crypto_dir}/#{x509_helper.get_private_key_pkcs8_name(node['hopslog']['user'])}"
 certificate = "#{crypto_dir}/#{x509_helper.get_certificate_bundle_name(node['hopslog']['user'])}"
 hops_ca = "#{crypto_dir}/#{x509_helper.get_hops_ca_bundle_name()}"
-template"#{node['kibana']['base_dir']}/config/kibana.yml" do
-  source "kibana.yml.erb"
+template"#{node['kibana']['base_dir']}/config/opensearch_dashboards.yml" do
+  source "opensearch_dashboards.yml.erb"
   owner node['hopslog']['user']
   group node['hopslog']['group']
   mode 0655
@@ -47,20 +55,21 @@ template"#{node['kibana']['base_dir']}/config/kibana.yml" do
      :elastic_addr => elastic_addrs,
      :private_key => private_key,
      :certificate => certificate,
-     :hops_ca => hops_ca
+     :hops_ca => hops_ca,
+     :hopsworks_addr => hopsworks_alt_url
   })
 end
 
 
-template"#{node['kibana']['base_dir']}/bin/start-kibana.sh" do
-  source "start-kibana.sh.erb"
+template"#{node['kibana']['base_dir']}/bin/start-opensearch-dashboards.sh" do
+  source "start-opensearch-dashboards.sh.erb"
   owner node['hopslog']['user']
   group node['hopslog']['group']
   mode 0750
 end
 
-template"#{node['kibana']['base_dir']}/bin/stop-kibana.sh" do
-  source "stop-kibana.sh.erb"
+template"#{node['kibana']['base_dir']}/bin/stop-opensearch-dashboards.sh" do
+  source "stop-opensearch-dashboards.sh.erb"
   owner node['hopslog']['user']
   group node['hopslog']['group']
   mode 0750
@@ -69,9 +78,9 @@ end
 
 deps = ""
 if exists_local("elastic", "default")
-  deps = "elasticsearch.service"
+  deps = "opensearch.service"
 end
-service_name="kibana"
+service_name="opensearch-dashboards"
 
 service service_name do
   provider Chef::Provider::Service::Systemd
@@ -108,7 +117,7 @@ end
 if node['kagent']['enabled'] == "true"
    kagent_config service_name do
      service "ELK"
-     log_file "#{node['kibana']['base_dir']}/log/kibana.log"
+     log_file node['kibana']['log_file']
    end
 end
 
@@ -124,9 +133,9 @@ bash 'wait_for_kibana_green' do
   retry_delay 30
   code <<-EOH
     set -eo pipefail
-    curl "#{kibana_url}/api/status" \
-      -H "Authorization: Basic #{Base64.strict_encode64("#{node['elastic']['opendistro_security']['kibana']['username']}:#{node['elastic']['opendistro_security']['kibana']['password']}")}" \
-      -H "kbn-xsrf:required" \
+    curl "#{opensearch_dashboards_url}/api/status" \
+      -H "Authorization: Basic #{Base64.strict_encode64("#{node['elastic']['opensearch_security']['kibana']['username']}:#{node['elastic']['opensearch_security']['kibana']['password']}")}" \
+      -H "osd-xsrf:required" \
       --cacert #{hops_ca} | jq -e '.status.overall.state=="green"'
   EOH
 end
@@ -134,9 +143,9 @@ end
 bash 'create_index_pattern' do
   user 'root'
   code <<-EOH
-    curl "#{kibana_url}/api/saved_objects/index-pattern/#{node['kibana']['service_index_pattern']}" \
-      -H "Authorization: Basic #{Base64.strict_encode64("#{node['elastic']['opendistro_security']['service_log_viewer']['username']}:#{node['elastic']['opendistro_security']['service_log_viewer']['password']}")}" \
-      -H "kbn-xsrf:required" \
+    curl "#{opensearch_dashboards_url}/api/saved_objects/index-pattern/#{node['kibana']['service_index_pattern']}" \
+      -H "Authorization: Basic #{Base64.strict_encode64("#{node['elastic']['opensearch_security']['service_log_viewer']['username']}:#{node['elastic']['opensearch_security']['service_log_viewer']['password']}")}" \
+      -H "osd-xsrf:required" \
       -H "Content-Type:application/json" \
       --cacert #{hops_ca} \
       -d '{"attributes": {"title": "#{node['kibana']['service_index_pattern']}", "timeFieldName": "logdate"}}'

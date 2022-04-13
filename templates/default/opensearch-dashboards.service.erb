@@ -8,8 +8,8 @@ StartLimitBurst=15
 User = <%= node['hopslog']['user'] %>
 
 PIDFile = <%= node['kibana']['pid_file'] %>
-ExecStart = <%= node['kibana']['base_dir'] %>/bin/start-kibana.sh
-ExecStop = <%= node['kibana']['base_dir'] %>/bin/stop-kibana.sh
+ExecStart = <%= node['kibana']['base_dir'] %>/bin/start-opensearch-dashboards.sh
+ExecStop = <%= node['kibana']['base_dir'] %>/bin/stop-opensearch-dashboards.sh
 LimitNOFILE = 20000
 Restart=on-failure
 RestartSec=1

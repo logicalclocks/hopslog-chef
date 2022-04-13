@@ -132,48 +132,10 @@ directory node['logstash']['data_volume']['data_dir'] do
   mode '0750'
 end
 
-bash 'Move logstash data to data volume' do
-  user 'root'
-  code <<-EOH
-    set -e
-    mv -f #{node['logstash']['data_dir']}/* #{node['logstash']['data_volume']['data_dir']}
-    rm -rf #{node['logstash']['data_dir']}
-  EOH
-  only_if { conda_helpers.is_upgrade }
-  only_if { File.directory?(node['logstash']['data_dir'])}
-  not_if { File.symlink?(node['logstash']['data_dir'])}
-end
-
-link node['logstash']['data_dir'] do
-  owner node['logstash']['user']
-  group node['logstash']['group']
-  mode '0750'
-  to node['logstash']['data_volume']['data_dir']
-end
-
 directory node['logstash']['data_volume']['logs_dir'] do
   owner node['hopslog']['user']
   group node['hopslog']['group']
   mode '0750'
-end
-
-bash 'Move logstash logs to data volume' do
-  user 'root'
-  code <<-EOH
-    set -e
-    mv -f #{node['logstash']['logs_dir']}/* #{node['logstash']['data_volume']['logs_dir']}
-    rm -rf #{node['logstash']['logs_dir']}
-  EOH
-  only_if { conda_helpers.is_upgrade }
-  only_if { File.directory?(node['logstash']['logs_dir'])}
-  not_if { File.symlink?(node['logstash']['logs_dir'])}
-end
-
-link node['logstash']['logs_dir'] do
-  owner node['hopslog']['user']
-  group node['hopslog']['group']
-  mode '0750'
-  to node['logstash']['data_volume']['logs_dir']
 end
 
 directory "#{node['logstash']['base_dir']}/config" do
@@ -235,71 +197,11 @@ directory node['kibana']['data_volume']['data_dir'] do
   recursive true
 end
 
-bash 'Move kibana data to data volume' do
-  user 'root'
-  code <<-EOH
-    set -e
-    mv -f #{node['kibana']['data_dir']}/* #{node['kibana']['data_volume']['data_dir']}
-    rm -rf #{node['kibana']['data_dir']}
-  EOH
-  only_if { conda_helpers.is_upgrade }
-  only_if { File.directory?(node['kibana']['data_dir'])}
-  not_if { File.symlink?(node['kibana']['data_dir'])}
-end
-
-link node['kibana']['data_dir'] do
-  owner node['kibana']['user']
-  group node['kibana']['group']
-  mode '0750'
-  to node['kibana']['data_volume']['data_dir']
-end
-
-bash "remove_existing_opendistro_security_plugin" do
-  user node['hopslog']['user']
-  code <<-EOF
-  	#{node['kibana']['base_dir']}/bin/kibana-plugin remove opendistro_security 
-  EOF
-  only_if "#{node['kibana']['base_dir']}/bin/kibana-plugin list | grep opendistro_security", :user => node['hopslog']['user']
-end
-
-bash "install_opendistro_security_plugin" do
-  user node['hopslog']['user']
-  code <<-EOF
-    #{node['kibana']['base_dir']}/bin/kibana-plugin install #{node['kibana']['opendistro_security']['url']}
-  EOF
-end
-
 directory node['kibana']['data_volume']['log_dir'] do
   owner node['hopslog']['user']
   group node['hopslog']['group']
   mode '0750'
   recursive true
-end
-
-bash 'Move kibana logs to data volume' do
-  user 'root'
-  code <<-EOH
-    set -e
-    mv -f #{node['kibana']['log_dir']}/* #{node['kibana']['data_volume']['log_dir']}
-    rm -rf #{node['kibana']['log_dir']}
-  EOH
-  only_if { conda_helpers.is_upgrade }
-  only_if { File.directory?(node['kibana']['log_dir'])}
-  not_if { File.symlink?(node['kibana']['log_dir'])}
-end
-
-link node['kibana']['log_dir'] do
-  owner node['hopslog']['user']
-  group node['hopslog']['group']
-  mode '0750'
-  to node['kibana']['data_volume']['log_dir']
-end
-
-directory "#{node['kibana']['base_dir']}/conf" do
-  owner node['hopslog']['user']
-  group node['hopslog']['group']
-  mode "750"
-  action :create
 end
 
 #
@@ -353,16 +255,43 @@ directory node['filebeat']['data_volume']['logs_dir'] do
   recursive true
 end
 
-bash 'Move filebeat logs to data volume' do
-  user 'root'
-  code <<-EOH
-    set -e
-    mv -f #{node['filebeat']['logs_dir']}/* #{node['filebeat']['data_volume']['logs_dir']}
-    rm -rf #{node['filebeat']['logs_dir']}
-  EOH
-  only_if { conda_helpers.is_upgrade }
-  only_if { File.directory?(node['filebeat']['logs_dir'])}
-  not_if { File.symlink?(node['filebeat']['logs_dir'])}
+directory node['filebeat']['data_volume']['data_dir'] do
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
+  mode '0770'
+  recursive true
+end
+
+hopslog_migrate "logstash, filebeat, opensearch-dashboards" do
+  action :run
+end
+
+link node['logstash']['data_dir'] do
+  owner node['logstash']['user']
+  group node['logstash']['group']
+  mode '0750'
+  to node['logstash']['data_volume']['data_dir']
+end
+
+link node['logstash']['logs_dir'] do
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
+  mode '0750'
+  to node['logstash']['data_volume']['logs_dir']
+end
+
+link node['kibana']['data_dir'] do
+  owner node['kibana']['user']
+  group node['kibana']['group']
+  mode '0750'
+  to node['kibana']['data_volume']['data_dir']
+end
+
+link node['kibana']['log_dir'] do
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
+  mode '0750'
+  to node['kibana']['data_volume']['log_dir']
 end
 
 link node['filebeat']['logs_dir'] do
@@ -372,47 +301,55 @@ link node['filebeat']['logs_dir'] do
   to node['filebeat']['data_volume']['logs_dir']
 end
 
-directory node['filebeat']['data_volume']['data_dir'] do
-  owner node['hopslog']['user']
-  group node['hopslog']['group']
-  mode '0770'
-  recursive true
-end
-
-bash 'Move filebeat data to data volume' do
-  user 'root'
-  code <<-EOH
-    set -e
-    mv -f #{node['filebeat']['data_dir']}/* #{node['filebeat']['data_volume']['data_dir']}
-    rm -rf #{node['filebeat']['data_dir']}
-  EOH
-  only_if { conda_helpers.is_upgrade }
-  only_if { File.directory?(node['filebeat']['data_dir']) }
-  not_if { File.symlink?(node['filebeat']['data_dir']) }
-  not_if { ::Dir.empty?(node['filebeat']['data_dir']) }
-end
-
-dirs_bug_fix = ['/data/jupyter', '/data/service', '/data/sklearn_serving', '/data/spark', '/data/tf_serving']
-for dir in dirs_bug_fix do
-  bash "Move filebeat data #{dir} to the correct data volume - bug fix" do
-    user 'root'
-    # The guards do not contain the non-normal exit code inside the resource
-    # if the dir does not exist AND IF you add the resource inside a for loop.
-    # I don't know why this is happening but ignore_failure hides the
-    # underlying error code
-    ignore_failure true
-    code <<-EOH
-      mv -f #{dir} #{node['filebeat']['data_volume']['data_dir']}
-    EOH
-    only_if { conda_helpers.is_upgrade }
-    only_if { ::File.directory?(dir) }
-    not_if { ::File.directory?("#{node['filebeat']['data_volume']['data_dir']}/#{File.basename(dir)}") }
-  end
-end
-
 link node['filebeat']['data_dir'] do
   owner node['filebeat']['user']
   group node['filebeat']['group']
   mode '0770'
   to node['filebeat']['data_volume']['data_dir']
+end
+
+#
+# Cleanup/Disable kibana service to handle upgrades to OpenSearch Dashboards
+#
+if node['install']['current_version'] != "" and node['install']['current_version'].to_f <= 2.5
+
+  # If the data-dir is not in a separate directory, refuse to upgrade
+  if node['install']['current_version'].to_f <= 2.3
+    Chef::Log.fatal('You cannot upgrade from a version earlier than 2.4 to 2.6+')
+  end
+  
+  service "kibana" do
+    provider Chef::Provider::Service::Systemd
+    supports :restart => true, :stop => true, :start => true, :status => true
+    action [:disable, :stop]
+  end
+
+  old_kibana = "/lib/systemd/system/kibana.service"
+
+  case node['platform_family']
+  when "rhel"
+    old_kibana =  "/usr/lib/systemd/system/kibana.service"
+  end
+
+  file old_kibana do
+    action :delete
+  end
+
+  # We had kibana 7.2.0 in both hopsworks 2.4 and 2.5
+  # directory "{node['install']['dir']}/kibana-7.2.0-linux-x86_64" do
+  #   recursive true
+  #   action :delete
+  # end
+
+  link "{node['install']['dir']}/kibana" do
+    action :delete
+  end
+
+  if node['kagent']['enabled'] == "true"
+    kagent_config "kibana" do
+      service "ELK"
+      action :remove
+    end
+  end
+  
 end

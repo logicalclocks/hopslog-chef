@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PID_FILE=<%= node['logstash']['pid_file'] %>
+export PID_FILE=<%= node['logstash']['pid_file'] %>
 if [ -f $PID_FILE ] ; then
  PID=`cat $PID_FILE`
  kill -0 $PID 2>&1 > /dev/null
@@ -9,6 +9,8 @@ if [ -f $PID_FILE ] ; then
      exit 1
  fi
 fi
+
+export OPENSEARCH_JAVA_HOME=<%= node['elastic']['base_dir'] %>/jdk
 
 nohup <%= node['logstash']['base_dir'] %>/bin/logstash -l <%= node['logstash']['base_dir'] %>/log --http.host 0.0.0.0 --http.port <%= node['logstash']['http']['port'] %> 2>&1 > /dev/null &
 echo $! > $PID_FILE
