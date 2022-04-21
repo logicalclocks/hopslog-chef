@@ -9,7 +9,7 @@ input {
 # - "local", includes [fields][model_server]
 # - "kube", from mode [kubernetes][labels][serving_hops_works/tool]:          
 #          - "default"    includes [kubernetes][labels]
-#          - "kfserving"  includes [kubernetes][labels]
+#          - "kserve"     includes [kubernetes][labels]
 
 filter {
   if [message] =~ /^\s*$/ {
@@ -46,8 +46,8 @@ filter {
       add_field => [ "model-server", "%{[kubernetes][labels][serving_hops_works/model-server]}" ]
     }
 
-    # KFServing
-    if [kubernetes][labels][serving_hops_works/tool] == "kfserving" {
+    # KServe
+    if [kubernetes][labels][serving_hops_works/tool] == "kserve" {
       grok {
         match => { "message" => "%{GREEDYDATA:log_message}" }
       }
