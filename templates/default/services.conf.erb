@@ -46,6 +46,18 @@ filter {
         mapping => {"message" => "%{templogdate} %{+templogdate} %{priority} %{logger_name}: %{log_message}"}
       }
     }
+  } else if [service] == "onlinefs" {
+    grok {
+    match => {"message" => "(?<templogdate>%{YEAR}-%{MONTHNUM2}-%{MONTHDAY} %{HOUR}:%{MINUTE}:%{SECOND}.%{NONNEGINT}) %{LOGLEVEL:priority} %{DATA:logger_name}: %{GREEDYDATA:log_message}"}
+      }
+
+    if "_grokparsefailure" in [tags] {
+    drop { }
+    }
+
+    grok {
+    match => {"log_message" => "(?<projectid>[0-9]+)_(?<fgid>[0-9]+)_(?<fgname>[a-z0-9_]+)_(?<fgversion>[0-9]+)_onlinefs"}
+    }
   } else {
     # Rest of the log4j services
     dissect {
