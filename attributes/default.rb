@@ -46,7 +46,7 @@ default['logstash']['pipeline']['batch_delay']  = 200
 #
 # Kibana
 #
-default['kibana']['version']                    = "1.3.0"
+default['kibana']['version']                    = "1.3.3"
 default['kibana']['url']                        = "#{node['download_url']}/opensearch/opensearch-dashboards-#{node['kibana']['version']}-linux-x64.tar.gz"
 #default['kibana']['sha512']                     = "57c3b59b8f5970e781f2ea78db98af9d0b0ff183dcb15f2e87b8ff29098704ab08b093c0bd2dcb05ea01883a0c49572d54800d8789e5398c36b2aa1f56179ba2"
 default['kibana']['port']                       = "5601"
