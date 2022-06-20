@@ -57,6 +57,7 @@ filter {
 
     grok {
     match => {"log_message" => "(?<projectid>[0-9]+)_(?<fgid>[0-9]+)_(?<fgname>[a-z0-9_]+)_(?<fgversion>[0-9]+)_onlinefs"}
+    add_tag => "onlinefs"
     }
   } else {
     # Rest of the log4j services
@@ -106,18 +107,33 @@ filter {
 
 output {
   <% if @elastic_output -%>
-  opensearch {
-    hosts => [<%= @elastic_addr %>]
-    index => "<%= node['logstash']['service_index'] %>%{+YYYY.MM.dd}"
-    <% if node['elastic']['opensearch_security']['enabled'] %>
-    user => "<%=node['elastic']['opensearch_security']['logstash']['username']%>"
-    password => "<%=node['elastic']['opensearch_security']['logstash']['password']%>"
-    <% if node['elastic']['opensearch_security']['https']['enabled'] %>
-    cacert => "<%= @hops_ca %>"
-    ssl => true
-    <% end %>
-    <% end %>
-  }
+    if "onlinefs" in [tags] {
+      opensearch {
+      hosts => [<%= @elastic_addr %>]
+      index => "onlinefs_%{projectid}_%{fgid}_%{fgname}_logs-%{+YYYY.MM.dd}"
+      <% if node['elastic']['opensearch_security']['enabled'] %>
+        user => "<%=node['elastic']['opensearch_security']['logstash']['username']%>"
+        password => "<%=node['elastic']['opensearch_security']['logstash']['password']%>"
+        <% if node['elastic']['opensearch_security']['https']['enabled'] %>
+          cacert => "<%= @hops_ca %>"
+          ssl => true
+        <% end %>
+      <% end %>
+      }
+    } else {
+      opensearch {
+      hosts => [<%= @elastic_addr %>]
+      index => "<%= node['logstash']['service_index'] %>%{+YYYY.MM.dd}"
+      <% if node['elastic']['opensearch_security']['enabled'] %>
+        user => "<%=node['elastic']['opensearch_security']['logstash']['username']%>"
+        password => "<%=node['elastic']['opensearch_security']['logstash']['password']%>"
+        <% if node['elastic']['opensearch_security']['https']['enabled'] %>
+          cacert => "<%= @hops_ca %>"
+          ssl => true
+        <% end %>
+      <% end %>
+      }
+    }
   <% end -%>
 
   <% if @http_output -%>
