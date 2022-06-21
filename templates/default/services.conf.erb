@@ -110,7 +110,7 @@ output {
     if "onlinefs" in [tags] {
       opensearch {
       hosts => [<%= @elastic_addr %>]
-      index => "onlinefs_%{projectid}_logs-%{+YYYY.MM.dd}"
+      index => ".onlinefs-%{projectid}_logs-%{+YYYY.MM.dd}"
       <% if node['elastic']['opensearch_security']['enabled'] %>
         user => "<%=node['elastic']['opensearch_security']['logstash']['username']%>"
         password => "<%=node['elastic']['opensearch_security']['logstash']['password']%>"
