@@ -6,13 +6,13 @@ input {
 
 filter {
 
-  grok {
-    match => {"message" => "%{GREEDYDATA:log_message}"}
+  dissect {
+    mapping => {"message" => "%{log_message}"}
   }
 
-  #Ignore failed parse enties. Grok filter has been tested with http://grokconstructor.appspot.com
-  if "_grokparsefailure" in [tags] {
-    drop { }
+  #Ignore failed parse entries. Dissect filter patterns can be tested with https://dissect-tester.jorgelbg.me/
+  if "_dissectfailure" in [tags] {
+      drop { }
   }
 
   # For backwards compatibility with filebeat v6.x, we need to pick the correct field
@@ -30,46 +30,17 @@ filter {
      }
   }
 
-  mutate {
-    replace => [ "project", "%{[jupyterinfo][0]}"]
+  dissect {
+    # project__user-57971.log
+    mapping => { "filepath" => "%{}logs/%{project}__%{application}-%{}.log" }
   }
 
-  grok {
-    match => { "filepath" => ".+logs/(%{GREEDYDATA:jupyterinfo}).log" }
-  }
-
-  mutate {
-    add_field => [ "project", "" ]
-  }
   mutate {
     add_field => [ "jobname", "nbserver" ]
   }
-  mutate {
-    add_field => [ "application", "" ]
-  }
 
   mutate {
-    split => ["jupyterinfo", "__"]
-  }
-
-  mutate {
-    replace => [ "project", "%{[jupyterinfo][0]}"]
-  }
-
-  mutate {
-    add_field => [ "userinfo", "%{[jupyterinfo][1]}" ]
-  }
-
-  mutate {
-    split => ["userinfo", "-"]
-  }
-
-  mutate {
-    replace => [ "application", "%{[userinfo][0]}"]
-  }
-
-  mutate {
-    remove_field => ["fields", "source", "log", "ecs", "message", "agent", "prospector", "beat", "tags", "jupyterinfo", "host"]
+    remove_field => ["fields", "source", "log", "ecs", "message", "agent", "prospector", "beat", "tags", "host"]
   }
 }
 
