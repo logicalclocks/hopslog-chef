@@ -22,7 +22,7 @@ filter {
     dissect {
       # datetime [string] severity -- message
       # 2021-08-12 09:16:52
-      mapping => {"message" => "%{templogdate} [%{logger_name}] %{priority}     -- %{log_message}"}
+      mapping => {"message" => "%{templogdate} %{+templogdate} [%{logger_name}] %{priority} %{?blank}--%{}%{log_message}"}
     }
   } else if [service] == "hive" {
      dissect {
