@@ -88,7 +88,7 @@ filter {
     # Message pattern: Tensorflow
     if [fields][model_server] == "tensorflow_serving" {
       dissect {
-          mapping => {"message" => "%{project_name},%{serving_name}, %{templogdate} %{+templogdate}: %{priority} %{logger_name} %{log_message}"}
+          mapping => {"message" => "%{project_name},%{serving_name} %{templogdate} %{+templogdate}: %{priority} %{logger_name} %{log_message}"}
           add_field => {"model_name" => "%{serving_name}"}
       }
 
@@ -110,7 +110,7 @@ filter {
   }
 
   # Common actions
-  
+
   #Ignore failed parse entries. Dissect filter patterns can be tested with https://dissect-tester.jorgelbg.me/
   if "_dissectfailure" in [tags] {
     drop { }
