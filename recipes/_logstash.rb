@@ -20,6 +20,13 @@ template"#{node['logstash']['base_dir']}/config/jvm.options" do
   mode 0600
 end
 
+template"#{node['logstash']['base_dir']}/config/log4j2.properties" do
+  source "logstash_log4j2.properties.erb"
+  owner node['hopslog']['user']
+  group node['hopslog']['group']
+  mode 0600
+end
+
 template"#{node['logstash']['base_dir']}/config/serving.conf" do
   source "serving.conf.erb"
   owner node['hopslog']['user']

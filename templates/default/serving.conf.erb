@@ -48,8 +48,8 @@ filter {
 
     # KServe
     if [kubernetes][labels][serving_hops_works/tool] == "kserve" {
-      grok {
-        match => { "message" => "%{GREEDYDATA:log_message}" }
+      dissect {
+        mapping => { "message" => "%{log_message}" }
       }
       mutate {
         add_field => [ "serving_component", "%{[kubernetes][labels][component]}" ]
@@ -63,22 +63,13 @@ filter {
 
       # Tensorflow serving
       if [kubernetes][labels][serving_hops_works/model-server] == "tensorflow_serving" {
-        grok {
-          match => { "message" => "(?<templogdate>%{YEAR}-%{MONTHNUM2}-%{MONTHDAY} %{HOUR}:%{MINUTE}:%{SECOND}.%{NONNEGINT}): %{WORD:priority} %{DATA:logger_name}] %{GREEDYDATA:log_message}" }
-        }
-        # Ignore failed parse enties. Grok filter has been tested with http://grokconstructor.appspot.com
-        if "_grokparsefailure" in [tags] {
-          drop { }
-        }
-        date {
-          match  => [ "templogdate", ISO8601 ]
-          target => "logdate"
-        }
-      
+        dissect {
+          mapping => {"message" => "%{templogdate} %{+templogdate}: %{priority} %{logger_name} %{log_message}"}
+        }   
       # Python (sklearn)
       } else if [kubernetes][labels][serving_hops_works/model-server] == "python" {
-        grok {
-          match => { "message" => "%{GREEDYDATA:log_message}" }
+        dissect {
+          mapping => { "message" => "%{log_message}" }
         }
 
       # Drop unknown model server
@@ -96,40 +87,21 @@ filter {
 
     # Message pattern: Tensorflow
     if [fields][model_server] == "tensorflow_serving" {
-      grok {
-        match => { "message" => "%{DATA:serving_info} (?<templogdate>%{YEAR}-%{MONTHNUM2}-%{MONTHDAY} %{HOUR}:%{MINUTE}:%{SECOND}.%{NONNEGINT}): %{WORD:priority} %{DATA:logger_name}] %{GREEDYDATA:log_message}" }
+      dissect {
+          mapping => {"message" => "%{project_name},%{serving_name} %{templogdate} %{+templogdate}: %{priority} %{logger_name} %{log_message}"}
+          add_field => {"model_name" => "%{serving_name}"}
       }
 
     # Message pattern: Scikit-learn
     } else if [fields][model_server] == "python" {
-      grok {
-        match => { "message" => "%{DATA:serving_info} %{GREEDYDATA:log_message}" }
+      dissect {
+          mapping => {"message" => "%{project_name},%{serving_name} %{log_message}"}
+          add_field => {"model_name" => "%{serving_name}"}
       }
 
     # Drop unknown model server
     } else {
       drop { }
-    }
-
-    # Ignore failed parse enties. Grok filter has been tested with http://grokconstructor.appspot.com
-    if "_grokparsefailure" in [tags] {
-      drop { }
-    }
-    date {
-      match  => [ "templogdate", ISO8601 ]
-      target => "logdate"
-    }
-    mutate {
-      split => ["serving_info", ","]
-    }
-    mutate {
-      replace => [ "project_name", "%{[serving_info][0]}"]
-    }
-    mutate {
-      replace => [ "serving_name", "%{[serving_info][1]}"]
-    }
-    mutate {
-      replace => [ "model_name", "%{[serving_info][1]}"]
     }
 
   # Drop unknown source
@@ -138,6 +110,17 @@ filter {
   }
 
   # Common actions
+
+  #Ignore failed parse entries. Dissect filter patterns can be tested with https://dissect-tester.jorgelbg.me/
+  if "_dissectfailure" in [tags] {
+    drop { }
+  }
+
+  date {
+    match  => [ "templogdate", ISO8601 ]
+    target => "logdate"
+  }
+
   mutate {
     remove_field => [ "[host]" ]
   }
@@ -148,7 +131,7 @@ filter {
     drop { }
   }
   mutate {
-    remove_field => [ "message", "service_info", "source", "fields", "kubernetes", "container", "input", "tags", "stream", "templogdate", "prospector", "agent", "jobinfo", "log", "input", "ecs"]
+    remove_field => [ "message", "source", "fields", "kubernetes", "container", "input", "tags", "stream", "templogdate", "prospector", "agent", "jobinfo", "log", "input", "ecs"]
   }
 }
 

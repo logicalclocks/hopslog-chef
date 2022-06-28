@@ -83,7 +83,7 @@ default['filebeat']['data_volume']['root_dir']  = "#{node['data']['dir']}/filebe
 default['filebeat']['data_volume']['logs_dir']  = "#{node['filebeat']['data_volume']['root_dir']}/log"
 default['filebeat']['data_volume']['data_dir']  = "#{node['filebeat']['data_volume']['root_dir']}/data"
 
-default['filebeat']['spark_read_logs']          = node['hops']['base_dir'] + "/logs/userlogs/**/"
+default['filebeat']['spark_read_logs']          = [node['hops']['base_dir'] + "/logs/userlogs/**/stdout*", node['hops']['base_dir'] + "/logs/userlogs/**/stderr*"]
 
 default['logstash']['service_index']            = ".services-"
 default['kibana']['service_index_pattern']      = ".services-*"
@@ -109,3 +109,4 @@ default['logstash']['managed_cloud']['pipeline']['ordered']                     
 #opensearch-dashboards logo
 default['opensearch-dashboards']['logo'] = "search-400x70.png"
 
+default['logstash']['filterdissect']['log_level']                   = "ERROR"

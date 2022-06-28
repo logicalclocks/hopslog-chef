@@ -131,3 +131,6 @@ attribute "logstash/pipeline/batch_delay",
           :description => "Delay between sending of batches to OpenSearch by Logstash in ms. Higher means less CPU, slower msg delivery. Default: 200",
           :type => "string"
 
+attribute "logstash/filterdissect/log_level",
+          :description => "Log level for the dissect filter. Default: ERROR",
+          :type => "string"

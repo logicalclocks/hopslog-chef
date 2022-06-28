@@ -6,9 +6,9 @@ input {
 
 filter {
 
-  grok { 
+  grok {
     pattern_definitions => {"SERVICE_NAME" => "(namenode|resourcemanager|nodemanager|datanode|hive|domain1|mysql|onlinefs|kafka)"}
-    match => {"[log][file][path]" => "%{GREEDYDATA}%{SERVICE_NAME:service}%{GREEDYDATA}.log"}
+    match => {"[log][file][path]" => "%{NOTSPACE}%{SERVICE_NAME:service}%{NOTSPACE}.log"}
   }
 
 
@@ -19,22 +19,48 @@ filter {
       match => {"message" => "\[#\|%{NOTSPACE:templogdate}\|%{LOGLEVEL:priority}\|%{DATA:product_id}\|%{DATA:logger_name}\|%{GREEDYDATA:key_value_pairs}\|%{GREEDYDATA:log_message}\|#\]"}
     }
   } else if [service] == "mysql" {
-    grok {
+    dissect {
       # datetime [string] severity -- message
       # 2021-08-12 09:16:52
-      match => {"message" => "%{DATA:templogdate} \[%{DATA:logger_name}\] %{LOGLEVEL:priority}((.|\r|\n)*)-- %{GREEDYDATA:log_message}"}
+      mapping => {"message" => "%{templogdate} %{+templogdate} [%{logger_name}] %{priority} %{?blank}--%{}%{log_message}"}
+    }
+  } else if [service] == "hive" {
+     dissect {
+      mapping => {"message" => "%{templogdate} %{priority} %{logger_name}: %{log_message}"}
+    }
+  } else if [service] == "kafka" {
+    dissect {
+      mapping => {"[log][file][path]" => "%{}/logs/kafka%{kafka_mod}.log"}
+    }
+    if [kafka_mod] == "-gc" {
+       dissect {
+         mapping => {"message" => "%{templogdate}:%{+templogdate}: %{gc_time}: %{log_message}"}
+       }
+      mutate {
+        add_field => {
+          "logger_name" => "GC"
+        }
+      }
+    } else {
+      dissect {
+        mapping => {"message" => "%{templogdate} %{+templogdate} %{priority} %{logger_name}: %{log_message}"}
+      }
     }
   } else {
     # Rest of the log4j services
-    grok {
-      match => {"message" => "%{DATA:templogdate} %{LOGLEVEL:priority} %{DATA:logger_name}: %{GREEDYDATA:log_message}"}
+    dissect {
+      mapping => {"message" => "%{templogdate} %{+templogdate} %{priority} %{logger_name}: %{log_message}"}
     }
   }
-
 
   #Ignore failed parse enties. Grok filter has been tested with http://grokconstructor.appspot.com
   if "_grokparsefailure" in [tags] {
     drop { }
+  }
+
+  #Ignore failed parse entries. Dissect filter patterns can be tested with https://dissect-tester.jorgelbg.me/
+  if "_dissectfailure" in [tags] {
+      drop { }
   }
 
   mutate {
@@ -56,7 +82,7 @@ filter {
   }
 
   mutate {
-    remove_field => ["message", "source" , "templogdate", "prospector", "agent", "jobinfo", "log", "input", "ecs", "key_value_pairs"]
+    remove_field => ["message", "source" , "templogdate", "prospector", "agent", "jobinfo", "log", "input", "ecs", "key_value_pairs", "kafka_mod"]
   }
   <% if @http_output -%>
   truncate {
