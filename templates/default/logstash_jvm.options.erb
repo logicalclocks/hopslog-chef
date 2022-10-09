@@ -36,7 +36,9 @@
 ## basic
 
 # set the I/O temp directory
-#-Djava.io.tmpdir=$HOME
+<% if not node['install']['tmp_directory'].eql?("") %>
+-Djava.io.tmpdir=<%= node['install']['tmp_directory'] %>
+<% end %>
 
 # set to headless, just in case
 -Djava.awt.headless=true
