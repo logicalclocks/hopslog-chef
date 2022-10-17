@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+EXIT_ERROR_CODE=2
 CHECK="curl -fail --silent -XGET http://127.0.0.1:<%= node['logstash']['http']['port']%> 2>&1 | grep -q green"
 
 source <%= node['consul']['health-check']['retryable-check-file'] %>
