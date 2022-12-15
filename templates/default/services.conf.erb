@@ -7,7 +7,7 @@ input {
 filter {
 
   grok {
-    pattern_definitions => {"SERVICE_NAME" => "(namenode|resourcemanager|nodemanager|datanode|hive|domain1|mysql|onlinefs|kafka)"}
+    pattern_definitions => {"SERVICE_NAME" => "(namenode|resourcemanager|nodemanager|datanode|hive|domain1|mysql-cluster|onlinefs|kafka)"}
     match => {"[log][file][path]" => "%{NOTSPACE}%{SERVICE_NAME:service}%{NOTSPACE}.log"}
   }
 
@@ -18,12 +18,67 @@ filter {
       # Date format: 2021-08-09T15:56:26.257+0000
       match => {"message" => "\[#\|%{NOTSPACE:templogdate}\|%{LOGLEVEL:priority}\|%{DATA:product_id}\|%{DATA:logger_name}\|%{GREEDYDATA:key_value_pairs}\|%{GREEDYDATA:log_message}\|#\]"}
     }
-  } else if [service] == "mysql" {
+  }  else if [service] == "mysql-cluster" {
     dissect {
-      # datetime [string] severity -- message
-      # 2021-08-12 09:16:52
-      mapping => {"message" => "%{templogdate} %{+templogdate} [%{logger_name}] %{priority} %{?blank}--%{}%{log_message}"}
+      mapping => {"[log][file][path]" => "%{}/mysql-cluster/log/%{rondb_log}.log"}
     }
+    mutate { update => {"service" => "rondb" } } 
+    if [rondb_log] == "cluster" {
+      mutate { add_field => {"rondb_node" => "mgm" } } 
+      # default RonDB log format the should cover cluster.log and ndb_X_out.log and part of mysql_X_out.log
+      # 2022-12-15 15:01:12 [NdbApi] INFO     -- Node 1 disconnected in recv
+      dissect {
+        mapping => {"message" => "%{templogdate} %{+templogdate} [%{logger_name}] %{priority} %{?blank}-- %{log_message}"}
+      }
+    } else {
+      dissect {
+      	mapping => {"[rondb_log]" => "%{rondb_node}_%{rondb_nodeid}_out"}
+      }
+      if [rondb_node] == "mysql" {
+          # RonDB info logs 
+          if [message] =~ /^.*\[RonDB\].*$/ {
+            # try with RonDB connection info logs
+            # 2022-12-15 15:02:18:[RonDB] (N68) Node 1 Connected
+            dissect {
+              mapping => {"message" => "%{templogdate} %{+templogdate}:[%{logger_name}] (N%{api_slot}) %{log_message}"}
+            }
+            mutate { add_field => {"priority" => "INFO" } }
+          }
+          # Server/InnoDB logs 
+          else if [message] =~ /^.*[MY.*].*$/ {
+            # 2022-12-15T16:51:19.707278Z 0 [System] [MY-010116] [Server] /srv/hops/mysql/bin/mysqld (mysqld 21.04.9-cluster) starting as process 12677
+            dissect {
+              mapping => {"message" => "%{templogdate} %{thread} [%{priority}] %{logger_name} %{+logger_name} %{log_message}"}
+            }
+            mutate { add_field => {"parse_iso" => "true" } }
+          }
+          # default 
+          else {
+            # default RonDB log format the should cover cluster.log and ndb_X_out.log and part of mysql_X_out.log
+            # 2022-12-15 15:01:12 [NdbApi] INFO     -- Node 1 disconnected in recv
+            dissect {
+              mapping => {"message" => "%{templogdate} %{+templogdate} [%{logger_name}] %{priority} %{?blank}-- %{log_message}"}
+            }
+          }
+      } else if [rondb_node] == "ndb" {
+        # MGMD set client 0x7fb9b00019a0 version to 21.04.9
+        if [message] =~ /^MGMD.*/ {
+          dissect { mapping => {"message" => "%{log_message}"}}
+          mutate {
+            add_field => {"templogdate" => "%{@timestamp}" }
+            add_field => {"parse_iso" => "true" }
+            add_field => {"priority" => "INFO" }
+            update => {"rondb_node" => "mgm" }
+          }
+        } else {
+          # default RonDB log format the should cover cluster.log and ndb_X_out.log and part of mysql_X_out.log
+          # 2022-12-15 15:01:12 [NdbApi] INFO     -- Node 1 disconnected in recv
+          dissect {
+            mapping => {"message" => "%{templogdate} %{+templogdate} [%{logger_name}] %{priority} %{?blank}-- %{log_message}"}
+          }
+        }
+      }
+   }
   } else if [service] == "hive" {
      dissect {
       mapping => {"message" => "%{templogdate} %{priority} %{logger_name}: %{log_message}"}
@@ -64,12 +119,12 @@ filter {
   }
 
   mutate {
-    add_field => {
+    update => {
      "host" => "%{[agent][hostname]}"
     }
   }
 
-  if [service] == "mysql" {
+  if [service] == "rondb" and [parse_iso] != "true" {
     date {
       match => [ "templogdate", "yyyy-MM-dd HH:mm:ss" ]
       target => "logdate"
@@ -82,7 +137,7 @@ filter {
   }
 
   mutate {
-    remove_field => ["message", "source" , "templogdate", "prospector", "agent", "jobinfo", "log", "input", "ecs", "key_value_pairs", "kafka_mod"]
+    remove_field => ["message", "source" , "templogdate", "prospector", "agent", "jobinfo", "log", "input", "ecs", "key_value_pairs", "kafka_mod", "rondb_log", "parse_iso"]
   }
   <% if @http_output -%>
   truncate {
