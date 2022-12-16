@@ -43,6 +43,7 @@ log_paths = [
   "#{node['install']['dir']}/domains/domain1/logs/*.log",
   "#{node['install']['dir']}/mysql-cluster/log/*.log",
   "#{node['install']['dir']}/kafka/logs/*.log",
+  "#{node['install']['dir']}/epipe/logs/*.log",
 ]
 
 template "#{node['filebeat']['base_dir']}/filebeat-service.yml" do
