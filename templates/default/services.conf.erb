@@ -7,7 +7,7 @@ input {
 filter {
 
   grok {
-    pattern_definitions => {"SERVICE_NAME" => "(namenode|resourcemanager|nodemanager|datanode|hive|domain1|mysql-cluster|onlinefs|kafka)"}
+    pattern_definitions => {"SERVICE_NAME" => "(namenode|resourcemanager|nodemanager|datanode|hive|domain1|mysql-cluster|onlinefs|kafka|epipe)"}
     match => {"[log][file][path]" => "%{NOTSPACE}%{SERVICE_NAME:service}%{NOTSPACE}.log"}
   }
 
@@ -101,6 +101,11 @@ filter {
         mapping => {"message" => "%{templogdate} %{+templogdate} %{priority} %{logger_name}: %{log_message}"}
       }
     }
+  } else if [service] == "epipe" {
+    # 2022-Dec-16 10:44:28.720739:[info]- (ClusterConnectionBase.cpp:55:connect_to_cluster) Succefully connected to NDB cluster with NodeId 191
+    dissect {
+        mapping => {"message" => "%{templogdate} %{+templogdate}:[%{priority}]- (%{logger_name}) %{log_message}"}
+    }
   } else {
     # Rest of the log4j services
     dissect {
@@ -127,6 +132,11 @@ filter {
   if [service] == "rondb" and [parse_iso] != "true" {
     date {
       match => [ "templogdate", "yyyy-MM-dd HH:mm:ss" ]
+      target => "logdate"
+    }
+  } else if [service] == "epipe" {
+    date {
+      match => [ "templogdate", "yyyy-MMM-dd HH:mm:ss.SSSSSS" ]
       target => "logdate"
     }
   } else {
