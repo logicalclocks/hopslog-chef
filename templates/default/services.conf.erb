@@ -7,7 +7,7 @@ input {
 filter {
 
   grok {
-    pattern_definitions => {"SERVICE_NAME" => "(namenode|resourcemanager|nodemanager|datanode|hive|domain1|mysql-cluster|onlinefs|kafka|epipe)"}
+    pattern_definitions => {"SERVICE_NAME" => "(namenode|resourcemanager|nodemanager|datanode|hive|domain1|mysql-cluster|onlinefs|kafka|epipe|flyingduck)"}
     match => {"[log][file][path]" => "%{NOTSPACE}%{SERVICE_NAME:service}%{NOTSPACE}.log"}
   }
 

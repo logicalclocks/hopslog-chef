@@ -44,6 +44,7 @@ log_paths = [
   "#{node['install']['dir']}/mysql-cluster/log/*.log",
   "#{node['install']['dir']}/kafka/logs/*.log",
   "#{node['install']['dir']}/epipe/logs/*.log",
+  "#{node['install']['dir']}/flyingduck/logs/*.log",
 ]
 
 template "#{node['filebeat']['base_dir']}/filebeat-service.yml" do
