@@ -108,7 +108,7 @@ filter {
     }
   } else if [service] == "flyingduck" {
     dissect {
-        # %(asctime)s %(levelname)s %(funcName)s(%(lineno)d) %(message)s
+        # 2023-02-22 14:24:23,931 INFO main(263) Serving on grpc+tls://flyingduck.service.consul:5005
         mapping => {"message" => "%{templogdate} %{+templogdate} %{priority} %{logger_name} %{log_message}"}
     }
   } else {
