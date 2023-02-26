@@ -7,7 +7,7 @@ input {
 filter {
 
   grok {
-    pattern_definitions => {"SERVICE_NAME" => "(namenode|resourcemanager|nodemanager|datanode|hive|domain1|mysql-cluster|onlinefs|kafka|epipe)"}
+    pattern_definitions => {"SERVICE_NAME" => "(namenode|resourcemanager|nodemanager|datanode|hive|domain1|mysql-cluster|onlinefs|kafka|epipe|flyingduck)"}
     match => {"[log][file][path]" => "%{NOTSPACE}%{SERVICE_NAME:service}%{NOTSPACE}.log"}
   }
 
@@ -105,6 +105,11 @@ filter {
     # 2022-Dec-16 10:44:28.720739:[info]- (ClusterConnectionBase.cpp:55:connect_to_cluster) Succefully connected to NDB cluster with NodeId 191
     dissect {
         mapping => {"message" => "%{templogdate} %{+templogdate}:[%{priority}]- (%{logger_name}) %{log_message}"}
+    }
+  } else if [service] == "flyingduck" {
+    dissect {
+        # 2023-02-22 14:24:23,931 INFO main(263) Serving on grpc+tls://flyingduck.service.consul:5005
+        mapping => {"message" => "%{templogdate} %{+templogdate} %{priority} %{logger_name} %{log_message}"}
     }
   } else {
     # Rest of the log4j services
