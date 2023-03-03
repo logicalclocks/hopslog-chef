@@ -29,3 +29,10 @@ logging.files:
     permissions: 0644
 
 path.data: <%= node['filebeat']['base_dir'] %>/data/<%= @log_name %>
+
+seccomp:
+  default_action: allow
+  syscalls:
+    - action: allow
+      names:
+        - rseq
