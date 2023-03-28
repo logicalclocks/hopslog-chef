@@ -111,10 +111,16 @@ filter {
         # 2023-02-22 14:24:23,931 INFO main(263) Serving on grpc+tls://flyingduck.service.consul:5005
         mapping => {"message" => "%{templogdate} %{+templogdate} %{priority} %{logger_name} %{log_message}"}
     }
-  } else {
+  } else if [service] == "onlinefs" {
     # Rest of the log4j services
     dissect {
       mapping => {"message" => "%{templogdate} %{+templogdate} %{priority} %{logger_name}: %{log_message}"}
+    }
+  } else {
+    # Rest of the log4j services
+    # namenode, datanode, resourcemanager, nodemanager
+    dissect {
+      mapping => {"message" => "%{templogdate} %{priority} %{logger_name}: %{log_message}"}
     }
   }
 
