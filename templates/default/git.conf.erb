@@ -95,18 +95,17 @@ filter {
 
 
 output {
-  elasticsearch {
-    hosts => [<%= @elastic_addr %>]
-    index => "%{project}_git_logs-%{+YYYY.MM.dd}"
-    <% if node['elastic']['opensearch_security']['enabled'] %>
-    user => "<%=node['elastic']['opensearch_security']['logstash']['username']%>"
-    password => "<%=node['elastic']['opensearch_security']['logstash']['password']%>"
-    <% if node['elastic']['opensearch_security']['https']['enabled'] %>
+opensearch {
+hosts => [<%= @elastic_addr %>]
+index => "%{project}_git_logs-%{+YYYY.MM.dd}"
+<% if node['elastic']['opensearch_security']['enabled'] %>
+  user => "<%=node['elastic']['opensearch_security']['logstash']['username']%>"
+  password => "<%=node['elastic']['opensearch_security']['logstash']['password']%>"
+  <% if node['elastic']['opensearch_security']['https']['enabled'] %>
     cacert => "<%= @hops_ca %>"
     ssl => true
-    ilm_enabled => false
-    <% end %>
-    <% end %>
-  }
+  <% end %>
+<% end %>
+}
 }
 

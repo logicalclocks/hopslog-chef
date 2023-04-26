@@ -17,10 +17,7 @@ group node['elastic']['group'] do
   not_if { node['install']['external_users'].casecmp("true") == 0 }
 end
 
-log_glob = "#{node['install']['dir']}/git/*/*/*/*/logs/*.log"
-if node.attribute?("git") && node['git'].attribute?("base_dir")
-  log_glob = "#{node['git']['base_dir']}/*/*/*/*/logs/*.log"
-end
+log_glob = "#{node['install']['dir']}/staging/private_dirs/*/git_logs/*.log"
 
 logstash_fqdn = consul_helper.get_service_fqdn("logstash")
 logstash_endpoint = "#{logstash_fqdn}:#{node['logstash']['beats']['git_port']}"
