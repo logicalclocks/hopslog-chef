@@ -113,7 +113,7 @@ filter {
 output {
 opensearch {
 hosts => [<%= @elastic_addr %>]
-index => "%{project}_git_logs-%{+YYYY.MM.dd}"
+index => "%{project}_git-%{+YYYY.MM.dd}"
 <% if node['elastic']['opensearch_security']['enabled'] %>
   user => "<%=node['elastic']['opensearch_security']['logstash']['username']%>"
   password => "<%=node['elastic']['opensearch_security']['logstash']['password']%>"
