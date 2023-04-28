@@ -57,6 +57,14 @@ filter {
   }
 
   mutate {
+    add_field => [ "command", ""]
+  }
+
+  mutate {
+    add_field => [ "repository", ""]
+  }
+
+  mutate {
     add_field => [ "jobname", "gitcommandexecution" ]
   }
 
@@ -86,6 +94,14 @@ filter {
 
   mutate {
     replace => [ "executionid", "%{[userinfo][1]}"]
+  }
+
+  mutate {
+    replace => [ "repository", "%{[userinfo][2]}"]
+  }
+
+  mutate {
+    replace => [ "command", "%{[userinfo][3]}"]
   }
 
   mutate {
