@@ -5,14 +5,13 @@ input {
 }
 
 filter {
-
-  grok {
-    match => {"message" => "%{GREEDYDATA:log_message}"}
+  dissect {
+    mapping => {"message" => "%{log_message}"}
   }
 
-  #Ignore failed parse enties. Grok filter has been tested with http://grokconstructor.appspot.com
-  if "_grokparsefailure" in [tags] {
-    drop { }
+  #Ignore failed parse entries. Dissect filter patterns can be tested with https://dissect-tester.jorgelbg.me/
+  if "_dissectfailure" in [tags] {
+      drop { }
   }
 
   # For backwards compatibility with filebeat v6.x, we need to pick the correct field
