@@ -112,9 +112,11 @@ filter {
         mapping => {"message" => "%{templogdate} %{+templogdate} %{priority} %{logger_name} %{log_message}"}
     }
   } else if [service] == "onlinefs" {
-    # Rest of the log4j services
     dissect {
       mapping => {"message" => "%{templogdate} %{+templogdate} %{priority} %{logger_name}: %{log_message}"}
+    }
+    json {
+      source => "log_message"
     }
   } else {
     # Rest of the log4j services
