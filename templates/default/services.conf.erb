@@ -7,12 +7,12 @@ input {
 filter {
 
   grok {
-    pattern_definitions => {"SERVICE_NAME" => "(namenode|resourcemanager|nodemanager|datanode|hive|domain1|mysql-cluster|onlinefs|kafka|epipe|flyingduck)"}
+    pattern_definitions => {"SERVICE_NAME" => "(namenode|resourcemanager|nodemanager|datanode|hive|domain1|nodes|mysql-cluster|onlinefs|kafka|epipe|flyingduck)"}
     match => {"[log][file][path]" => "%{NOTSPACE}%{SERVICE_NAME:service}%{NOTSPACE}.log"}
   }
 
-
-  if [service] == "domain1" {
+  if ([service] == "domain1" or [service] == "nodes") {
+    mutate { update => {"service" => "domain1" } }
     grok {
       # [#|DATETIME|LOG_LEVEL|PRODUCT_ID|LOGGER NAME|OPTIONAL KEY VALUE PAIRS| MESSAGE|#]
       # Date format: 2021-08-09T15:56:26.257+0000
