@@ -117,6 +117,7 @@ filter {
     }
     json {
       source => "log_message"
+      skip_on_invalid_json => true
     }
   } else {
     # Rest of the log4j services
@@ -172,17 +173,32 @@ filter {
 
 output {
   <% if @elastic_output -%>
-  opensearch {
-    hosts => [<%= @elastic_addr %>]
-    index => "<%= node['logstash']['service_index'] %>%{+YYYY.MM.dd}"
-    <% if node['elastic']['opensearch_security']['enabled'] %>
-    user => "<%=node['elastic']['opensearch_security']['logstash']['username']%>"
-    password => "<%=node['elastic']['opensearch_security']['logstash']['password']%>"
-    <% if node['elastic']['opensearch_security']['https']['enabled'] %>
-    cacert => "<%= @hops_ca %>"
-    ssl => true
-    <% end %>
-    <% end %>
+  if "onlinefs" in [tags] and [log_arguments][project_id] {
+    opensearch {
+      hosts => [<%= @elastic_addr %>]
+      index => "onlinefs_%{[log_arguments][project_id]}-%{+YYYY.MM.dd}"
+      <% if node['elastic']['opensearch_security']['enabled'] %>
+        user => "<%=node['elastic']['opensearch_security']['logstash']['username']%>"
+        password => "<%=node['elastic']['opensearch_security']['logstash']['password']%>"
+        <% if node['elastic']['opensearch_security']['https']['enabled'] %>
+          cacert => "<%= @hops_ca %>"
+          ssl => true
+        <% end %>
+      <% end %>
+    }
+  } else {
+    opensearch {
+      hosts => [<%= @elastic_addr %>]
+      index => "<%= node['logstash']['service_index'] %>%{+YYYY.MM.dd}"
+      <% if node['elastic']['opensearch_security']['enabled'] %>
+        user => "<%=node['elastic']['opensearch_security']['logstash']['username']%>"
+        password => "<%=node['elastic']['opensearch_security']['logstash']['password']%>"
+        <% if node['elastic']['opensearch_security']['https']['enabled'] %>
+          cacert => "<%= @hops_ca %>"
+          ssl => true
+        <% end %>
+      <% end %>
+    }
   }
   <% end -%>
 
