@@ -75,7 +75,7 @@ default['filebeat']['base_dir']                 = node['hopslog']['dir'] + "/fil
 default['filebeat']['logs_dir']                 = "#{node['filebeat']['base_dir']}/log"
 default['filebeat']['data_dir']                 = "#{node['filebeat']['base_dir']}/data"
 default['filebeat']['systemd']                  = "true"
-default['filebeat']['pid_dir']                  = "/tmp"
+default['filebeat']['pid_dir']                  = node['install']['tmp_directory'].empty? ? "/tmp" : node['install']['tmp_directory']
 default['filebeat']['port']                     = "5000"
 
 # Data volume directories
