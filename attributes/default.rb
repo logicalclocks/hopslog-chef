@@ -25,7 +25,7 @@ default['logstash']['http']['port']                          = "9600"
 default['logstash']['systemd']                  = "true"
 default['logstash']['home']                     = node['hopslog']['dir'] + "/logstash-" + "#{node['logstash']['version']}"
 default['logstash']['base_dir']                 = node['hopslog']['dir'] + "/logstash"
-default['logstash']['pid_file']                 = "/tmp/logstash.pid"
+default['logstash']['pid_file']                 = "#{node['install']['tmp_directory'].empty? ? "/tmp" : node['install']['tmp_directory']}/logstash.pid"
 default['logstash']['bin_dir']                  = node['logstash']['base_dir'] + "/bin"
 default['logstash']['consul_dir']               = node['logstash']['bin_dir'] + "/consul"
 default['logstash']['logs_dir']                 = "#{node['logstash']['base_dir']}/log"
@@ -55,7 +55,7 @@ default['kibana']['home']                       = node['hopslog']['dir'] + "/ope
 default['kibana']['base_dir']                   = node['hopslog']['dir'] + "/opensearch-dashboards"
 default['kibana']['log_dir']                    = node['kibana']['base_dir'] + "/log"
 default['kibana']['data_dir']                   = "#{node['kibana']['base_dir']}/data"
-default['kibana']['pid_file']                   = "/tmp/opensearch-dashboards.pid"
+default['kibana']['pid_file']                   = "#{node['install']['tmp_directory'].empty? ? "/tmp" : node['install']['tmp_directory']}/opensearch-dashboards.pid"
 default['kibana']['log_file']                   = node['kibana']['base_dir'] + "/log/opensearch-dashboards.log"
 
 
