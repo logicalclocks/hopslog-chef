@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PID_FILE=/tmp/logstash.pid
+PID_FILE=<%= node['logstash']['pid_file'] %>
 
 function kill_named {
     PID=`ps aux | grep -i logstash | grep -v bash | grep -v chef | grep -v grep | awk '{print $2}'`
