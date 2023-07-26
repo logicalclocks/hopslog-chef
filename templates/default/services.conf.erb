@@ -24,7 +24,7 @@ filter {
     }
     mutate { update => {"service" => "rondb" } } 
     if [rondb_log] == "cluster" {
-      mutate { add_field => {"rondb_node" => "mgm" } } 
+      mutate { add_field => {"rondb_node" => "mgm" } }
       # default RonDB log format the should cover cluster.log and ndb_X_out.log and part of mysql_X_out.log
       # 2022-12-15 15:01:12 [NdbApi] INFO     -- Node 1 disconnected in recv
       dissect {
@@ -115,9 +115,18 @@ filter {
     dissect {
       mapping => {"message" => "%{templogdate} %{+templogdate} %{priority} %{logger_name}: %{log_message}"}
     }
-    json {
-      source => "log_message"
-      skip_on_invalid_json => true
+		clone {
+			clones => ["onlinefs_service_log"]
+		}
+		if [type] != "onlinefs_service_log" {
+			json {
+				source => "log_message"
+				skip_on_invalid_json => true
+			}
+			if [log_message][log_arguments][project_id] != nil {
+				add_tag => [ "onlinefs_project_log" ]
+				mutate { add_field => {"log_arguments" => %{[log_message][log_arguments]} } }
+      }
     }
   } else {
     # Rest of the log4j services
@@ -173,7 +182,7 @@ filter {
 
 output {
   <% if @elastic_output -%>
-  if "onlinefs" in [tags] and [log_arguments][project_id] {
+  if "onlinefs_project_log" in [tags] {
     opensearch {
       hosts => [<%= @elastic_addr %>]
       index => "onlinefs_%{[log_arguments][project_id]}-%{+YYYY.MM.dd}"
