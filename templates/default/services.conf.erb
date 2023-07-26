@@ -126,6 +126,7 @@ filter {
 			if [log_message][log_arguments][project_id] != nil {
 				add_tag => [ "onlinefs_project_log" ]
 				mutate { add_field => {"log_arguments" => %{[log_message][log_arguments]} } }
+				mutate { update => {"log_message" => "%{[log_message][log_message]} "} }
       }
     }
   } else {
