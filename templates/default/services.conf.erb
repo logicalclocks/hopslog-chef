@@ -123,10 +123,11 @@ filter {
 				source => "log_message"
 				skip_on_invalid_json => true
 			}
-			if [log_message][log_arguments][project_id] != nil {
-				add_tag => [ "onlinefs_project_log" ]
-				mutate { add_field => {"log_arguments" => %{[log_message][log_arguments]} } }
-				mutate { update => {"log_message" => "%{[log_message][log_message]} "} }
+			if [log_arguments][project_id] {
+				mutate { add_tag => [ "onlinefs_project_log" ] }
+      } else {
+        # we should drop it because we already cloned one
+        drop{}
       }
     }
   } else {
