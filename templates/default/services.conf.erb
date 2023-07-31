@@ -115,7 +115,7 @@ filter {
     dissect {
       mapping => {"message" => "%{templogdate} %{+templogdate} %{priority} %{logger_name}: %{log_message}"}
     }
-		clone {
+    clone {
       clones => ["service_log"]
     }
     if [type] != "service_log" {
