@@ -116,19 +116,19 @@ filter {
       mapping => {"message" => "%{templogdate} %{+templogdate} %{priority} %{logger_name}: %{log_message}"}
     }
 		clone {
-			clones => ["onlinefs_service_log"]
-		}
-		if [type] != "onlinefs_service_log" {
-			json {
-				source => "log_message"
-				skip_on_invalid_json => true
-			}
-			if [log_arguments][project_id] {
-				mutate { add_tag => [ "onlinefs_project_log" ] }
-			} else {
-				# we should drop it because we already cloned one
-				drop{}
-			}
+      clones => ["service_log"]
+    }
+    if [type] != "service_log" {
+      json {
+        source => "log_message"
+        skip_on_invalid_json => true
+      }
+      if [log_arguments][project_id] {
+        mutate { add_tag => [ "project_log" ] }
+      } else {
+        # we should drop it because we already cloned one
+        drop{}
+      }
     }
   } else {
     # Rest of the log4j services
@@ -184,7 +184,7 @@ filter {
 
 output {
   <% if @elastic_output -%>
-  if "onlinefs_project_log" in [tags] {
+  if "project_log" in [tags] {
     opensearch {
       hosts => [<%= @elastic_addr %>]
       index => "onlinefs_%{[log_arguments][project_id]}-%{+YYYY.MM.dd}"
