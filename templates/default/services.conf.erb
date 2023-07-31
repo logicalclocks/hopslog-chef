@@ -125,10 +125,10 @@ filter {
 			}
 			if [log_arguments][project_id] {
 				mutate { add_tag => [ "onlinefs_project_log" ] }
-      } else {
-        # we should drop it because we already cloned one
-        drop{}
-      }
+			} else {
+				# we should drop it because we already cloned one
+				drop{}
+			}
     }
   } else {
     # Rest of the log4j services
