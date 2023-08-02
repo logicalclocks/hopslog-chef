@@ -24,7 +24,7 @@ filter {
     }
     mutate { update => {"service" => "rondb" } } 
     if [rondb_log] == "cluster" {
-      mutate { add_field => {"rondb_node" => "mgm" } } 
+      mutate { add_field => {"rondb_node" => "mgm" } }
       # default RonDB log format the should cover cluster.log and ndb_X_out.log and part of mysql_X_out.log
       # 2022-12-15 15:01:12 [NdbApi] INFO     -- Node 1 disconnected in recv
       dissect {
@@ -112,9 +112,23 @@ filter {
         mapping => {"message" => "%{templogdate} %{+templogdate} %{priority} %{logger_name} %{log_message}"}
     }
   } else if [service] == "onlinefs" {
-    # Rest of the log4j services
     dissect {
       mapping => {"message" => "%{templogdate} %{+templogdate} %{priority} %{logger_name}: %{log_message}"}
+    }
+    clone {
+      clones => ["service_log"]
+    }
+    if [type] != "service_log" {
+      json {
+        source => "log_message"
+        skip_on_invalid_json => true
+      }
+      if [log_arguments][project_id] {
+        mutate { add_tag => [ "project_log" ] }
+      } else {
+        # we should drop it because we already cloned one
+        drop{}
+      }
     }
   } else {
     # Rest of the log4j services
@@ -170,17 +184,32 @@ filter {
 
 output {
   <% if @elastic_output -%>
-  opensearch {
-    hosts => [<%= @elastic_addr %>]
-    index => "<%= node['logstash']['service_index'] %>%{+YYYY.MM.dd}"
-    <% if node['elastic']['opensearch_security']['enabled'] %>
-    user => "<%=node['elastic']['opensearch_security']['logstash']['username']%>"
-    password => "<%=node['elastic']['opensearch_security']['logstash']['password']%>"
-    <% if node['elastic']['opensearch_security']['https']['enabled'] %>
-    cacert => "<%= @hops_ca %>"
-    ssl => true
-    <% end %>
-    <% end %>
+  if "project_log" in [tags] {
+    opensearch {
+      hosts => [<%= @elastic_addr %>]
+      index => "onlinefs_%{[log_arguments][project_id]}-%{+YYYY.MM.dd}"
+      <% if node['elastic']['opensearch_security']['enabled'] %>
+        user => "<%=node['elastic']['opensearch_security']['logstash']['username']%>"
+        password => "<%=node['elastic']['opensearch_security']['logstash']['password']%>"
+        <% if node['elastic']['opensearch_security']['https']['enabled'] %>
+          cacert => "<%= @hops_ca %>"
+          ssl => true
+        <% end %>
+      <% end %>
+    }
+  } else {
+    opensearch {
+      hosts => [<%= @elastic_addr %>]
+      index => "<%= node['logstash']['service_index'] %>%{+YYYY.MM.dd}"
+      <% if node['elastic']['opensearch_security']['enabled'] %>
+        user => "<%=node['elastic']['opensearch_security']['logstash']['username']%>"
+        password => "<%=node['elastic']['opensearch_security']['logstash']['password']%>"
+        <% if node['elastic']['opensearch_security']['https']['enabled'] %>
+          cacert => "<%= @hops_ca %>"
+          ssl => true
+        <% end %>
+      <% end %>
+    }
   }
   <% end -%>
 
