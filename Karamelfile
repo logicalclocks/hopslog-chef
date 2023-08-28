@@ -21,3 +21,4 @@ dependencies:
   - recipe: hopslog::_filebeat-services
     global:
       - hopslog::default
+      - kagent::default
