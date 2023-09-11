@@ -1,0 +1,126 @@
+input {
+  beats {
+    port => <%= node['logstash']['beats']['git_port'] %>
+  }
+}
+
+filter {
+  dissect {
+    mapping => {"message" => "%{log_message}"}
+  }
+
+  #Ignore failed parse entries. Dissect filter patterns can be tested with https://dissect-tester.jorgelbg.me/
+  if "_dissectfailure" in [tags] {
+      drop { }
+  }
+
+  # For backwards compatibility with filebeat v6.x, we need to pick the correct field
+  mutate {
+    add_field => [ "filepath", "" ]
+  }
+
+  if [log][file][path] {
+    mutate {
+      replace => [ "filepath", "%{[log][file][path]}"]
+    }
+  } else if [source] {
+    mutate {
+         replace => [ "filepath", "%{[source]}"]
+     }
+  }
+
+  if "command_output.log" in [filepath] {
+    mutate {
+      replace => [ "logtype", "commandexecution" ]
+    }
+  } else if "hopsfs_mount.log" in [filepath] {
+    mutate {
+      replace => [ "logtype", "hopsfsmount" ]
+    }
+  }
+
+  mutate {
+    replace => [ "project", "%{[gitinfo][0]}"]
+  }
+
+  grok {
+    match => { "filepath" => ".+logs/(%{GREEDYDATA:gitinfo}).log" }
+  }
+
+  mutate {
+    add_field => [ "project", "" ]
+  }
+
+  mutate {
+    add_field => [ "executionid", ""]
+  }
+
+  mutate {
+    add_field => [ "command", ""]
+  }
+
+  mutate {
+    add_field => [ "repository", ""]
+  }
+
+  mutate {
+    add_field => [ "jobname", "gitcommandexecution" ]
+  }
+
+  mutate {
+    add_field => [ "application", "" ]
+  }
+
+  mutate {
+    split => ["gitinfo", "__"]
+  }
+
+  mutate {
+    replace => [ "project", "%{[gitinfo][0]}"]
+  }
+
+  mutate {
+    add_field => [ "userinfo", "%{[gitinfo][1]}" ]
+  }
+
+  mutate {
+    split => ["userinfo", "--s--"]
+  }
+
+  mutate {
+    replace => [ "application", "%{[userinfo][0]}"]
+  }
+
+  mutate {
+    replace => [ "executionid", "%{[userinfo][1]}"]
+  }
+
+  mutate {
+    replace => [ "repository", "%{[userinfo][2]}"]
+  }
+
+  mutate {
+    replace => [ "command", "%{[userinfo][3]}"]
+  }
+
+  mutate {
+    remove_field => ["fields", "source", "log", "ecs", "message", "agent", "prospector", "beat", "tags", "gitinfo","host"]
+  }
+}
+
+
+output {
+opensearch {
+hosts => [<%= @elastic_addr %>]
+index => "%{project}_git-%{+YYYY.MM.dd}"
+<% if node['elastic']['opensearch_security']['enabled'] %>
+  user => "<%=node['elastic']['opensearch_security']['logstash']['username']%>"
+  password => "<%=node['elastic']['opensearch_security']['logstash']['password']%>"
+  <% if node['elastic']['opensearch_security']['https']['enabled'] %>
+    cacert => "<%= @hops_ca %>"
+    ssl => true
+  <% end %>
+<% end %>
+}
+}
+
